@@ -19,6 +19,13 @@ export const metadata: Metadata = {
   applicationName: "FindYourTow",
   metadataBase: new URL("https://findyourtow.com"),
   manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/icons/findyourtow-192.jpg", sizes: "192x192", type: "image/jpeg" },
+      { url: "/icons/findyourtow-512.jpg", sizes: "512x512", type: "image/jpeg" },
+    ],
+    apple: [{ url: "/icons/findyourtow-192.jpg", sizes: "192x192", type: "image/jpeg" }],
+  },
   appleWebApp: {
     capable: true,
     title: "FindYourTow",

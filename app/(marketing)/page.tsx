@@ -50,8 +50,11 @@ export default function Home() {
 
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 rounded-full border border-white/10 bg-white/[0.06] px-4 py-3 shadow-2xl shadow-black/30 backdrop-blur-2xl">
           <Link href="/" className="flex items-center gap-3" aria-label="FindYourTow home">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-sm font-black text-black shadow-[0_0_40px_rgba(255,255,255,0.18)]">FYT</span>
-            <span className="hidden text-base font-black tracking-tight sm:inline">FindYourTow</span>
+            <img
+              src="/brand/findyourtow-logo.jpg"
+              alt="FindYourTow logo"
+              className="h-12 w-auto rounded-2xl object-contain shadow-[0_0_40px_rgba(56,189,248,0.22)] sm:h-14"
+            />
           </Link>
           <div className="hidden items-center gap-7 text-sm font-bold text-white/62 lg:flex">
             <a href="#apps" className="transition hover:text-white">Apps</a>

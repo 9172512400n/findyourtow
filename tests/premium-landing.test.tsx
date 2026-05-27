@@ -16,6 +16,10 @@ describe('premium landing page', () => {
       }),
     ).toBeInTheDocument();
 
+    expect(screen.getByRole('img', { name: /findyourtow logo/i })).toHaveAttribute(
+      'src',
+      '/brand/findyourtow-logo.jpg',
+    );
     expect(screen.getByRole('link', { name: /try customer app/i })).toHaveAttribute('href', '/request');
     expect(screen.getByRole('link', { name: /view dispatch demo/i })).toHaveAttribute('href', '/admin/dispatch');
 
