@@ -44,16 +44,17 @@ const areas = ["New York City", "Long Island", "Westchester", "New Jersey", "Air
 export default function Home() {
   return (
     <main className="min-h-screen overflow-hidden bg-[#050608] text-white">
-      <section className="relative isolate px-5 py-6 sm:px-8 lg:px-12">
+      <section className="relative isolate pb-6">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_12%,rgba(67,141,255,0.42),transparent_30%),radial-gradient(circle_at_78%_8%,rgba(35,255,185,0.22),transparent_26%),linear-gradient(180deg,#06080c_0%,#080b10_46%,#020304_100%)]" />
         <div className="absolute left-1/2 top-24 -z-10 h-80 w-80 -translate-x-1/2 rounded-full bg-blue-500/20 blur-3xl lg:h-[38rem] lg:w-[38rem]" />
 
-        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 rounded-full border border-white/10 bg-white/[0.06] px-4 py-3 shadow-2xl shadow-black/30 backdrop-blur-2xl">
-          <Link href="/" className="flex items-center gap-3" aria-label="FindYourTow home">
+        <nav className="relative z-10 w-full border-b border-white/10 bg-black/80 px-5 py-4 shadow-2xl shadow-black/30 backdrop-blur-2xl sm:px-8 lg:px-12">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
+          <Link href="/" className="flex shrink-0 items-center" aria-label="FindYourTow home">
             <img
               src="/brand/findyourtow-logo-transparent.png"
               alt="FindYourTow logo"
-              className="h-14 w-auto rounded-2xl object-contain shadow-[0_0_40px_rgba(56,189,248,0.22)] sm:h-16"
+              className="h-16 w-auto object-contain drop-shadow-[0_0_28px_rgba(56,189,248,0.3)] sm:h-20"
             />
           </Link>
           <div className="hidden items-center gap-7 text-sm font-bold text-white/62 lg:flex">
@@ -63,12 +64,13 @@ export default function Home() {
             <a href="#areas" className="transition hover:text-white">Areas</a>
           </div>
           <div className="flex items-center gap-2">
-            <BackendModePill />
+            <div className="hidden sm:block"><BackendModePill /></div>
             <Link href="/request" className="rounded-full bg-white px-5 py-2.5 text-sm font-black text-black transition hover:scale-[1.02] hover:bg-blue-100">Request tow</Link>
+          </div>
           </div>
         </nav>
 
-        <div className="mx-auto grid max-w-7xl items-center gap-12 pb-20 pt-16 lg:min-h-[calc(100vh-5.5rem)] lg:grid-cols-[1.02fr_0.98fr] lg:pt-12">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-20 pt-12 sm:px-8 lg:min-h-[calc(100vh-5.5rem)] lg:grid-cols-[1.02fr_0.98fr] lg:px-12 lg:pt-12">
           <div className="max-w-3xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.07] px-3 py-2 text-sm font-bold text-blue-100 backdrop-blur-xl">
               <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_18px_rgba(110,231,183,0.9)]" />

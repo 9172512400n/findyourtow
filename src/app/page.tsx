@@ -34,17 +34,18 @@ const serviceTypes = ["Tow", "Jump start", "Lockout", "Flat tire"];
 export default function Home() {
   return (
     <main className="min-h-screen overflow-hidden bg-[#050608] text-white">
-      <section className="relative isolate min-h-screen px-5 py-6 sm:px-8 lg:px-12">
+      <section className="relative isolate min-h-screen pb-6">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_12%,rgba(67,141,255,0.38),transparent_32%),radial-gradient(circle_at_78%_8%,rgba(35,255,185,0.2),transparent_28%),linear-gradient(180deg,#06080c_0%,#080b10_45%,#020304_100%)]" />
         <div className="absolute left-1/2 top-24 -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-blue-500/20 blur-3xl lg:h-[34rem] lg:w-[34rem]" />
         <div className="absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
 
-        <nav className="mx-auto flex max-w-7xl items-center justify-between rounded-full border border-white/10 bg-white/[0.06] px-4 py-3 shadow-2xl shadow-black/30 backdrop-blur-2xl">
-          <Link href="/" className="flex items-center gap-3" aria-label="FindYourTow home">
+        <nav className="relative z-10 w-full border-b border-white/10 bg-black/80 px-5 py-4 shadow-2xl shadow-black/30 backdrop-blur-2xl sm:px-8 lg:px-12">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
+          <Link href="/" className="flex shrink-0 items-center" aria-label="FindYourTow home">
             <img
               src="/brand/findyourtow-logo-transparent.png"
               alt="FindYourTow logo"
-              className="h-14 w-auto rounded-2xl object-contain shadow-[0_0_40px_rgba(56,189,248,0.22)] sm:h-16"
+              className="h-16 w-auto object-contain drop-shadow-[0_0_28px_rgba(56,189,248,0.3)] sm:h-20"
             />
           </Link>
           <div className="hidden items-center gap-7 text-sm font-medium text-white/68 md:flex">
@@ -64,9 +65,10 @@ export default function Home() {
           >
             Request now
           </Link>
+          </div>
         </nav>
 
-        <div className="mx-auto grid max-w-7xl items-center gap-12 pb-16 pt-16 lg:min-h-[calc(100vh-5.5rem)] lg:grid-cols-[1.02fr_0.98fr] lg:pt-8">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-12 sm:px-8 lg:min-h-[calc(100vh-5.5rem)] lg:grid-cols-[1.02fr_0.98fr] lg:px-12 lg:pt-8">
           <div className="max-w-3xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.07] px-3 py-2 text-sm font-semibold text-blue-100 backdrop-blur-xl">
               <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_18px_rgba(110,231,183,0.9)]" />
