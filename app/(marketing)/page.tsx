@@ -72,7 +72,7 @@ export default function Home() {
               Advanced demo · no real accounts or payments
             </div>
             <h1 className="text-balance text-5xl font-black leading-[0.9] tracking-[-0.07em] sm:text-7xl lg:text-8xl">
-              Uber-style towing, built for real operators.
+              On-demand towing, built for real operators.
             </h1>
             <p className="mt-7 max-w-2xl text-pretty text-lg leading-8 text-white/74 sm:text-xl">
               FindYourTow turns roadside chaos into a premium marketplace: customers request help, drivers accept nearby paid jobs, and dispatchers manage the network from one command center.

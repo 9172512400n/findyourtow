@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the default Next scaffold with a premium Uber-style landing page for FindYourTow.
+**Goal:** Replace the default Next scaffold with a premium on-demand towing landing page for FindYourTow.
 
 **Architecture:** Keep this Task 1 scope static and self-contained. Use a server component page with structured content arrays and Tailwind utility styling, plus global theme polish and metadata updates.
 

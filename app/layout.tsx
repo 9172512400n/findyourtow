@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FindYourTow | Uber-Style Tow Dispatch",
+  title: "FindYourTow | On-Demand Tow Dispatch",
   description:
     "A scalable towing and roadside marketplace for customers, drivers, dispatchers, and admins with instant quotes, payments, and live tracking.",
   applicationName: "FindYourTow",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
   },
   openGraph: {
-    title: "FindYourTow | Uber-Style Tow Dispatch",
+    title: "FindYourTow | On-Demand Tow Dispatch",
     description: "Request roadside help, pay securely, and track the tow truck live.",
     type: "website",
   },

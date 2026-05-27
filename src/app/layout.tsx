@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://findyourtow.com"),
   openGraph: {
     title: "FindYourTow | Premium Tow Dispatch",
-    description: "The Uber-style roadside platform for fast, transparent tow dispatch.",
+    description: "The on-demand roadside platform for fast, transparent tow dispatch.",
     type: "website",
   },
 };

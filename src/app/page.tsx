@@ -76,7 +76,7 @@ export default function Home() {
               Premium tow dispatch in minutes.
             </h1>
             <p className="mt-7 max-w-2xl text-pretty text-lg leading-8 text-white/76 sm:text-xl">
-              FindYourTow gives customers instant help, drivers better jobs, and operators a command center that feels fast, calm, and premium — like the Uber of towing.
+              FindYourTow gives customers instant help, drivers better jobs, and operators a command center that feels fast, calm, and premium.
             </p>
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
