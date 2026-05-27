@@ -53,7 +53,7 @@ export default function Home() {
             <img
               src="/brand/findyourtow-logo-transparent.png"
               alt="FindYourTow logo"
-              className="h-12 w-auto rounded-2xl object-contain shadow-[0_0_40px_rgba(56,189,248,0.22)] sm:h-14"
+              className="h-14 w-auto rounded-2xl object-contain shadow-[0_0_40px_rgba(56,189,248,0.22)] sm:h-16"
             />
           </Link>
           <div className="hidden items-center gap-7 text-sm font-bold text-white/62 lg:flex">
