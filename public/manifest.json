@@ -1,0 +1,11 @@
+{
+  "name": "FindYourTow",
+  "short_name": "FindYourTow",
+  "description": "Uber-style towing and roadside dispatch platform.",
+  "start_url": "/request",
+  "display": "standalone",
+  "background_color": "#050608",
+  "theme_color": "#050608",
+  "orientation": "portrait-primary",
+  "icons": []
+}

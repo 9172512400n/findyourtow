@@ -1,0 +1,363 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CUSTOMER
+  DRIVER
+  DISPATCHER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum DriverStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  ONLINE
+  OFFLINE
+  BUSY
+  SUSPENDED
+}
+
+enum ServiceTypeCode {
+  STANDARD_TOW
+  FLATBED_TOW
+  JUMP_START
+  FLAT_TIRE
+  LOCKOUT
+  FUEL_DELIVERY
+  WINCH_OUT
+  ACCIDENT_TOW
+  VEHICLE_TRANSPORT
+}
+
+enum TowStatus {
+  QUOTE_CREATED
+  AWAITING_PAYMENT
+  PAID
+  SEARCHING_FOR_DRIVER
+  DRIVER_ASSIGNED
+  DRIVER_ON_THE_WAY
+  DRIVER_ARRIVED
+  VEHICLE_PICKED_UP
+  IN_TRANSIT
+  VEHICLE_DELIVERED
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  REQUIRES_PAYMENT_METHOD
+  REQUIRES_CONFIRMATION
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum DocumentType {
+  LICENSE
+  INSURANCE
+  TRUCK_REGISTRATION
+  TRUCK_PHOTO
+  BACKGROUND_CHECK
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  phone        String?    @unique
+  passwordHash String?
+  role         UserRole   @default(CUSTOMER)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  profile      Profile?
+  customer     Customer?
+  driver       Driver?
+  auditLogs    AuditLog[] @relation("AuditActor")
+
+  @@index([role])
+  @@map("users")
+}
+
+model Profile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  firstName String
+  lastName  String
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model Customer {
+  id          String       @id @default(cuid())
+  userId      String       @unique
+  stripeCustomerId String? @unique
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  towRequests TowRequest[]
+
+  @@map("customers")
+}
+
+model Driver {
+  id                 String              @id @default(cuid())
+  userId             String              @unique
+  status             DriverStatus        @default(PENDING_APPROVAL)
+  rating             Decimal             @default(5.00) @db.Decimal(3, 2)
+  stripeConnectAccountId String?         @unique
+  approvedAt         DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents          DriverDocument[]
+  trucks             TowTruck[]
+  locations          DriverLocation[]
+  assignedRequests   TowRequest[]
+  earnings           DriverEarning[]
+
+  @@index([status])
+  @@map("drivers")
+}
+
+model DriverDocument {
+  id        String       @id @default(cuid())
+  driverId  String
+  type      DocumentType
+  fileUrl   String
+  status    String       @default("pending")
+  reviewedBy String?
+  reviewedAt DateTime?
+  createdAt DateTime     @default(now())
+  driver    Driver       @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@index([driverId, type])
+  @@index([status])
+  @@map("driver_documents")
+}
+
+model TowTruck {
+  id          String            @id @default(cuid())
+  driverId    String
+  label       String
+  plateNumber String
+  vin         String?
+  capacityLbs Int?
+  truckType   String
+  photos      String[]
+  active      Boolean           @default(true)
+  services    ServiceTypeCode[]
+  driver      Driver            @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@index([driverId, active])
+  @@map("tow_trucks")
+}
+
+model ServiceType {
+  id          String          @id @default(cuid())
+  code        ServiceTypeCode @unique
+  name        String
+  description String
+  active      Boolean         @default(true)
+  pricingRule PricingRule?
+  requests    TowRequest[]
+
+  @@index([active])
+  @@map("service_types")
+}
+
+model PricingRule {
+  id                String      @id @default(cuid())
+  serviceTypeId     String      @unique
+  baseFeeCents      Int
+  pricePerMileCents Int         @default(500)
+  minimumCents      Int?
+  afterHoursCents   Int         @default(3500)
+  heavyVehicleCents Int         @default(5000)
+  rushCents         Int         @default(4000)
+  adminFeeBps       Int         @default(1000)
+  active            Boolean     @default(true)
+  serviceType       ServiceType @relation(fields: [serviceTypeId], references: [id])
+
+  @@index([active])
+  @@map("pricing_rules")
+}
+
+model TowRequest {
+  id              String            @id @default(cuid())
+  customerId      String
+  driverId        String?
+  serviceTypeId   String
+  status          TowStatus         @default(QUOTE_CREATED)
+  pickupAddress   String
+  pickupLat       Decimal           @db.Decimal(10, 7)
+  pickupLng       Decimal           @db.Decimal(10, 7)
+  dropoffAddress  String?
+  dropoffLat      Decimal?          @db.Decimal(10, 7)
+  dropoffLng      Decimal?          @db.Decimal(10, 7)
+  distanceMiles   Decimal?          @db.Decimal(8, 2)
+  etaMinutes      Int?
+  vehicleMake     String
+  vehicleModel    String
+  vehicleYear     String?
+  vehicleColor    String?
+  vehiclePhotoUrl String?
+  notes           String?
+  quoteCents      Int
+  totalCents      Int
+  cancelledAt     DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  customer        Customer          @relation(fields: [customerId], references: [id])
+  driver          Driver?           @relation(fields: [driverId], references: [id])
+  serviceType     ServiceType       @relation(fields: [serviceTypeId], references: [id])
+  statusUpdates   TowStatusUpdate[]
+  payment         Payment?
+  notifications   Notification[]
+  earnings        DriverEarning[]
+
+  @@index([status, createdAt])
+  @@index([driverId, status])
+  @@index([customerId, createdAt])
+  @@index([pickupLat, pickupLng])
+  @@map("tow_requests")
+}
+
+model TowStatusUpdate {
+  id           String     @id @default(cuid())
+  towRequestId String
+  status       TowStatus
+  message      String?
+  createdById  String?
+  createdAt    DateTime   @default(now())
+  towRequest   TowRequest @relation(fields: [towRequestId], references: [id], onDelete: Cascade)
+
+  @@index([towRequestId, createdAt])
+  @@map("tow_status_updates")
+}
+
+model DriverLocation {
+  id        String   @id @default(cuid())
+  driverId  String
+  lat       Decimal  @db.Decimal(10, 7)
+  lng       Decimal  @db.Decimal(10, 7)
+  heading   Decimal? @db.Decimal(6, 2)
+  speedMph  Decimal? @db.Decimal(6, 2)
+  createdAt DateTime @default(now())
+  driver    Driver   @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@index([driverId, createdAt])
+  @@index([lat, lng])
+  @@map("driver_locations")
+}
+
+model Payment {
+  id                    String        @id @default(cuid())
+  towRequestId           String        @unique
+  stripePaymentIntentId  String        @unique
+  status                PaymentStatus
+  amountCents           Int
+  currency              String        @default("usd")
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  towRequest            TowRequest    @relation(fields: [towRequestId], references: [id], onDelete: Cascade)
+  refunds               Refund[]
+
+  @@index([status, createdAt])
+  @@map("payments")
+}
+
+model Refund {
+  id              String   @id @default(cuid())
+  paymentId       String
+  stripeRefundId  String?  @unique
+  amountCents     Int
+  reason          String?
+  createdById     String?
+  createdAt       DateTime @default(now())
+  payment         Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId, createdAt])
+  @@map("refunds")
+}
+
+model Notification {
+  id           String      @id @default(cuid())
+  userId       String?
+  towRequestId String?
+  channel      String
+  title        String
+  body         String
+  readAt       DateTime?
+  createdAt    DateTime    @default(now())
+  towRequest   TowRequest? @relation(fields: [towRequestId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+  @@index([towRequestId])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  actor     User?    @relation("AuditActor", fields: [actorId], references: [id])
+
+  @@index([actorId, createdAt])
+  @@index([entity, entityId])
+  @@map("audit_logs")
+}
+
+model AdminSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("admin_settings")
+}
+
+model ServiceArea {
+  id        String   @id @default(cuid())
+  name      String
+  polygon   Json
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([active])
+  @@map("service_areas")
+}
+
+model DriverEarning {
+  id           String     @id @default(cuid())
+  driverId     String
+  towRequestId String
+  grossCents   Int
+  platformFeeCents Int
+  netCents     Int
+  paidOutAt    DateTime?
+  createdAt    DateTime   @default(now())
+  driver       Driver     @relation(fields: [driverId], references: [id])
+  towRequest   TowRequest @relation(fields: [towRequestId], references: [id])
+
+  @@index([driverId, createdAt])
+  @@index([paidOutAt])
+  @@map("driver_earnings")
+}
