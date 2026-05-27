@@ -72,10 +72,10 @@ export default function Home() {
               Advanced demo · no real accounts or payments
             </div>
             <h1 className="text-balance text-5xl font-black leading-[0.9] tracking-[-0.07em] sm:text-7xl lg:text-8xl">
-              On-demand towing, built for real operators.
+              Smart towing platform for real roadside operators.
             </h1>
             <p className="mt-7 max-w-2xl text-pretty text-lg leading-8 text-white/74 sm:text-xl">
-              FindYourTow turns roadside chaos into a premium marketplace: customers request help, drivers accept nearby paid jobs, and dispatchers manage the network from one command center.
+              FindYourTow connects customers, drivers, and dispatchers in a live roadside assistance network with real-time requests, clear pricing, and a calm command center.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link href="/request" className="inline-flex h-14 items-center justify-center rounded-full bg-blue-500 px-7 text-base font-black text-white shadow-[0_18px_60px_rgba(59,130,246,0.38)] transition hover:-translate-y-0.5 hover:bg-blue-400">Try customer app</Link>
@@ -116,7 +116,7 @@ export default function Home() {
 
       <section id="apps" className="px-5 py-20 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-7xl">
-          <div className="max-w-3xl"><p className="text-sm font-black uppercase tracking-[0.35em] text-blue-300">Complete prototype</p><h2 className="mt-4 text-4xl font-black tracking-[-0.045em] sm:text-6xl">Three polished apps, one believable towing marketplace.</h2></div>
+          <div className="max-w-3xl"><p className="text-sm font-black uppercase tracking-[0.35em] text-blue-300">Complete prototype</p><h2 className="mt-4 text-4xl font-black tracking-[-0.045em] sm:text-6xl">Three polished apps, one connected dispatch system.</h2></div>
           <div className="mt-10 grid gap-4 lg:grid-cols-3">
             {appPreviews.map((app) => <Link key={app.title} href={app.href} className="group rounded-[2rem] border border-white/10 bg-white/[0.055] p-7 backdrop-blur-xl transition hover:-translate-y-1 hover:bg-white/[0.085]"><p className="text-sm font-black uppercase tracking-[0.28em] text-white/38">{app.eyebrow}</p><h3 className="mt-5 text-2xl font-black tracking-tight">{app.title}</h3><p className="mt-4 text-base leading-7 text-white/66">{app.description}</p><div className="mt-6 flex flex-wrap gap-2">{app.points.map((point) => <span key={point} className="rounded-full bg-black/28 px-3 py-2 text-xs font-black text-white/62">{point}</span>)}</div><div className="mt-7 h-px bg-gradient-to-r from-blue-300/70 via-white/15 to-transparent" /></Link>)}
           </div>
@@ -139,7 +139,7 @@ export default function Home() {
 
       <footer id="areas" className="px-5 pb-10 sm:px-8 lg:px-12">
         <div className="mx-auto grid max-w-7xl gap-8 rounded-[2.25rem] border border-white/10 bg-white/[0.045] p-8 text-white/68 sm:p-10 lg:grid-cols-[1fr_1.1fr]">
-          <div><h2 className="text-2xl font-black text-white">FindYourTow</h2><p className="mt-3 max-w-lg leading-7">Investor-ready advanced demo for an on-demand towing marketplace. Ready for Supabase, Stripe, Mapbox, and live dispatch when credentials are intentionally connected.</p><p className="mt-5 font-bold text-white">Contact: demo@findyourtow.com · (516) 555-TOWS</p></div>
+          <div><h2 className="text-2xl font-black text-white">FindYourTow</h2><p className="mt-3 max-w-lg leading-7">Investor-ready advanced demo for a modern towing marketplace. Ready for Supabase, Stripe, Mapbox, and live dispatch when credentials are intentionally connected.</p><p className="mt-5 font-bold text-white">Contact: demo@findyourtow.com · (516) 555-TOWS</p></div>
           <div><p className="text-sm font-black uppercase tracking-[0.28em] text-white/42">Demo service areas</p><div className="mt-4 flex flex-wrap gap-2">{areas.map((area) => <span key={area} className="rounded-full bg-black/28 px-4 py-2 text-sm font-bold text-white/70">{area}</span>)}</div></div>
         </div>
       </footer>

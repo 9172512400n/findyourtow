@@ -6,13 +6,13 @@ import { describe, expect, it } from 'vitest';
 import Home from '../app/(marketing)/page';
 
 describe('premium landing page', () => {
-  it('presents FindYourTow as an investor-ready on-demand towing platform', () => {
+  it('presents FindYourTow as an investor-ready smart towing platform', () => {
     render(<Home />);
 
     expect(
       screen.getByRole('heading', {
         level: 1,
-        name: /on-demand towing, built for real operators/i,
+        name: /smart towing platform for real roadside operators/i,
       }),
     ).toBeInTheDocument();
 

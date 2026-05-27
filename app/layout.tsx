@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FindYourTow | On-Demand Tow Dispatch",
+  title: "FindYourTow | Real-Time Roadside Dispatch",
   description:
-    "A scalable towing and roadside marketplace for customers, drivers, dispatchers, and admins with instant quotes, payments, and live tracking.",
+    "A smart towing platform for customers, drivers, dispatchers, and admins with instant quotes, secure payments, and live roadside coordination.",
   applicationName: "FindYourTow",
   metadataBase: new URL("https://findyourtow.com"),
   manifest: "/manifest.json",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
   },
   openGraph: {
-    title: "FindYourTow | On-Demand Tow Dispatch",
+    title: "FindYourTow | Real-Time Roadside Dispatch",
     description: "Request roadside help, pay securely, and track the tow truck live.",
     type: "website",
   },

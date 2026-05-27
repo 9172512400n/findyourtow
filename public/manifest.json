@@ -1,7 +1,7 @@
 {
   "name": "FindYourTow",
   "short_name": "FindYourTow",
-  "description": "On-demand towing and roadside dispatch platform.",
+  "description": "Real-time roadside dispatch and towing platform.",
   "start_url": "/request",
   "display": "standalone",
   "background_color": "#050608",

@@ -1,6 +1,6 @@
 # FindYourTow
 
-FindYourTow is an on-demand towing and roadside service platform for customers, drivers, dispatchers, admins, and super admins.
+FindYourTow is a premium real-time roadside dispatch platform for customers, drivers, dispatchers, admins, and super admins.
 
 ## Production Slice Built
 
