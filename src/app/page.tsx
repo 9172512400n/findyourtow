@@ -42,7 +42,7 @@ export default function Home() {
         <nav className="mx-auto flex max-w-7xl items-center justify-between rounded-full border border-white/10 bg-white/[0.06] px-4 py-3 shadow-2xl shadow-black/30 backdrop-blur-2xl">
           <Link href="/" className="flex items-center gap-3" aria-label="FindYourTow home">
             <img
-              src="/brand/findyourtow-logo.jpg"
+              src="/brand/findyourtow-logo-transparent.png"
               alt="FindYourTow logo"
               className="h-12 w-auto rounded-2xl object-contain shadow-[0_0_40px_rgba(56,189,248,0.22)] sm:h-14"
             />
