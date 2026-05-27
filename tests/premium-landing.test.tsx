@@ -1,39 +1,37 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import Home from '../app/(marketing)/page';
 
-describe('FindYourTow app-first home', () => {
-  it('starts as a mobile roadside app with service selection first', () => {
+describe('FindYourTow premium mobile homepage', () => {
+  it('opens with a calm consumer app homepage instead of stacked pricing cards', () => {
     render(<Home />);
 
-    expect(screen.getByRole('heading', { name: /what rescue do you need/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /roadside help in minutes/i })).toBeInTheDocument();
+    expect(screen.getByText(/towing, lockouts, jump starts, tire help, fuel delivery, and more/i)).toBeInTheDocument();
     expect(screen.getByRole('img', { name: /findyourtow logo/i })).toHaveAttribute(
       'src',
       '/brand/findyourtow-logo-transparent.png',
     );
 
-    for (const service of [
-      'Tow truck',
-      'Flatbed tow',
-      'Jump start',
-      'Flat tire',
-      'Lockout',
-      'Fuel delivery',
-      'Winch out',
-      'Accident tow',
-      'Motorcycle tow',
-      'Battery help',
-      'Vehicle transport',
-    ]) {
-      expect(screen.getByText(service)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /open menu/i })).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /account/i }).some((link) => link.getAttribute('href') === '/customer')).toBe(true);
+    expect(screen.queryByRole('link', { name: /^start$/i })).not.toBeInTheDocument();
+
+    const helpCard = screen.getByLabelText(/where do you need help/i);
+    expect(within(helpCard).getByRole('button', { name: /use current location/i })).toBeInTheDocument();
+    expect(within(helpCard).getByPlaceholderText(/enter address or landmark/i)).toBeInTheDocument();
+    expect(within(helpCard).getByRole('button', { name: /service tow/i })).toBeInTheDocument();
+
+    const services = screen.getByLabelText(/quick service selector/i);
+    for (const service of ['Tow', 'Flatbed', 'Jump', 'Flat Tire', 'Lockout', 'Fuel', 'Winch', 'Battery']) {
+      expect(within(services).getByRole('button', { name: new RegExp(service, 'i') })).toBeInTheDocument();
     }
 
-    expect(screen.getAllByRole('link', { name: /home/i }).some((link) => link.getAttribute('href') === '/')).toBe(true);
-    expect(screen.getAllByRole('link', { name: /request/i }).some((link) => link.getAttribute('href') === '/request')).toBe(true);
-    expect(screen.getByRole('link', { name: /track/i })).toHaveAttribute('href', '/customer/trip/demo');
-    expect(screen.getByRole('link', { name: /account/i })).toHaveAttribute('href', '/customer');
+    expect(screen.queryByText(/choose the roadside rescue you need/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/fast local towing for cars and small suvs/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/\$95\.00\+/i)).not.toBeInTheDocument();
   });
 });
