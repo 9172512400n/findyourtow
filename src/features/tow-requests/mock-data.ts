@@ -3,15 +3,17 @@ import { demoDrivers } from "@/features/demo/drivers";
 import type { AvailableDriver, ServiceOption, TowRequestPayload, TowTrip } from "./types";
 
 export const serviceOptions: ServiceOption[] = [
-  { id: "standard_tow", label: "Standard tow", description: "Fast local towing for cars and small SUVs.", basePriceCents: 9500, etaMinutes: 8, icon: "Tow" },
-  { id: "flatbed_tow", label: "Flatbed tow", description: "Protected tow for luxury, low, or disabled vehicles.", basePriceCents: 12500, etaMinutes: 12, icon: "Flatbed" },
-  { id: "jump_start", label: "Jump start", description: "Battery service at your location.", basePriceCents: 7500, etaMinutes: 7, icon: "Bolt" },
-  { id: "flat_tire", label: "Flat tire", description: "Spare install or tire assistance.", basePriceCents: 8500, etaMinutes: 10, icon: "Tire" },
-  { id: "lockout", label: "Lockout", description: "Get back into your vehicle safely.", basePriceCents: 8000, etaMinutes: 9, icon: "Key" },
-  { id: "fuel_delivery", label: "Fuel delivery", description: "Emergency fuel delivered to you.", basePriceCents: 8000, etaMinutes: 14, icon: "Fuel" },
-  { id: "winch_out", label: "Winch out", description: "Recovery from snow, mud, ditch, or tight spots.", basePriceCents: 15000, etaMinutes: 18, icon: "Winch" },
-  { id: "accident_tow", label: "Accident tow", description: "Priority accident recovery and transport.", basePriceCents: 17500, etaMinutes: 11, icon: "Alert" },
-  { id: "vehicle_transport", label: "Vehicle transport", description: "Scheduled point-to-point vehicle transport.", basePriceCents: 17500, etaMinutes: 22, icon: "Route" },
+  { id: "standard_tow", label: "Tow truck", description: "Fast local towing for cars and small SUVs.", basePriceCents: 9500, etaMinutes: 8, icon: "🛻" },
+  { id: "flatbed_tow", label: "Flatbed tow", description: "Protected towing for luxury, low, or disabled vehicles.", basePriceCents: 12500, etaMinutes: 12, icon: "🚚" },
+  { id: "jump_start", label: "Jump start", description: "Battery boost at your location.", basePriceCents: 7500, etaMinutes: 7, icon: "⚡" },
+  { id: "flat_tire", label: "Flat tire", description: "Spare install or tire assistance.", basePriceCents: 8500, etaMinutes: 10, icon: "🛞" },
+  { id: "lockout", label: "Lockout", description: "Get back into your vehicle safely.", basePriceCents: 8000, etaMinutes: 9, icon: "🔑" },
+  { id: "fuel_delivery", label: "Fuel delivery", description: "Emergency fuel delivered to you.", basePriceCents: 8000, etaMinutes: 14, icon: "⛽" },
+  { id: "winch_out", label: "Winch out", description: "Recovery from snow, mud, ditch, or tight spots.", basePriceCents: 15000, etaMinutes: 18, icon: "🪝" },
+  { id: "accident_tow", label: "Accident tow", description: "Priority accident recovery and transport.", basePriceCents: 17500, etaMinutes: 11, icon: "🚨" },
+  { id: "motorcycle_tow", label: "Motorcycle tow", description: "Motorcycle-safe transport with proper equipment.", basePriceCents: 11000, etaMinutes: 13, icon: "🏍️" },
+  { id: "battery_help", label: "Battery help", description: "Battery diagnosis, jump support, or replacement help.", basePriceCents: 9500, etaMinutes: 9, icon: "🔋" },
+  { id: "vehicle_transport", label: "Vehicle transport", description: "Scheduled point-to-point vehicle transport.", basePriceCents: 17500, etaMinutes: 22, icon: "🛣️" },
 ];
 
 export const availableDrivers: AvailableDriver[] = demoDrivers;
@@ -39,12 +41,12 @@ export function buildMockTrip(payload: TowRequestPayload): TowTrip {
       { lat: 40.7614, lng: -73.9776 },
     ],
     timeline: [
-      { status: "quote_created", label: "Quote created", timestamp: now.toISOString(), complete: true },
-      { status: "paid", label: "Payment authorized", timestamp: now.toISOString(), complete: true },
-      { status: "searching_for_driver", label: "Matching nearby truck", timestamp: now.toISOString(), complete: true },
-      { status: "driver_assigned", label: `${driver.name} assigned`, timestamp: new Date(now.getTime() + 60_000).toISOString(), complete: false },
-      { status: "driver_on_the_way", label: "Driver en route", timestamp: new Date(now.getTime() + 120_000).toISOString(), complete: false },
-      { status: "completed", label: "Tow completed", timestamp: new Date(now.getTime() + 45 * 60_000).toISOString(), complete: false },
+      { status: "quote_created", label: "Request confirmed", timestamp: now.toISOString(), complete: true },
+      { status: "driver_assigned", label: "Provider assigned", timestamp: now.toISOString(), complete: true },
+      { status: "driver_on_the_way", label: "Provider on the way", timestamp: new Date(now.getTime() + 120_000).toISOString(), complete: true },
+      { status: "driver_arrived", label: "Provider arrived", timestamp: new Date(now.getTime() + 9 * 60_000).toISOString(), complete: false },
+      { status: "vehicle_picked_up", label: payload.dropoffAddress ? "Vehicle picked up" : "Service started", timestamp: new Date(now.getTime() + 14 * 60_000).toISOString(), complete: false },
+      { status: "completed", label: "Completed", timestamp: new Date(now.getTime() + 45 * 60_000).toISOString(), complete: false },
     ],
   };
 }

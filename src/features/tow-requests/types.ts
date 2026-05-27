@@ -7,6 +7,8 @@ export const serviceTypeIds = [
   "fuel_delivery",
   "winch_out",
   "accident_tow",
+  "motorcycle_tow",
+  "battery_help",
   "vehicle_transport",
 ] as const;
 

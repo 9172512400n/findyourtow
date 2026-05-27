@@ -1,8 +1,8 @@
 {
   "name": "FindYourTow",
   "short_name": "FindYourTow",
-  "description": "Real-time roadside dispatch and towing platform.",
-  "start_url": "/request",
+  "description": "Mobile-first roadside rescue app with instant quote, demo payment, provider matching, and live tracking.",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#050608",
   "theme_color": "#050608",

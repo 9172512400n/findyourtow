@@ -21,6 +21,8 @@ export const pricingRules: Record<ServiceTypeId, PricingRule> = {
   fuel_delivery: { label: "Fuel delivery", baseFeeCents: 80 * DOLLARS, towService: false },
   winch_out: { label: "Winch out", baseFeeCents: 150 * DOLLARS, towService: true },
   accident_tow: { label: "Accident tow", baseFeeCents: 175 * DOLLARS, towService: true },
+  motorcycle_tow: { label: "Motorcycle tow", baseFeeCents: 110 * DOLLARS, minimumCents: 125 * DOLLARS, towService: true },
+  battery_help: { label: "Battery help", baseFeeCents: 95 * DOLLARS, towService: false },
   vehicle_transport: { label: "Vehicle transport", baseFeeCents: 175 * DOLLARS, minimumCents: 175 * DOLLARS, towService: true },
 };
 
