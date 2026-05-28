@@ -5,7 +5,10 @@ import { cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it } from 'vitest';
 import Home from '../app/(marketing)/page';
+import AccountPage from '../app/account/page';
 import RequestTowPage from '../app/request/page';
+import ServicesPage from '../app/services/page';
+import TrackPage from '../app/track/page';
 
 afterEach(cleanup);
 
@@ -22,7 +25,7 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(screen.getByText('FindYourTow')).toBeInTheDocument();
 
     expect(screen.getByRole('button', { name: /open menu/i })).toBeInTheDocument();
-    expect(screen.getAllByRole('link', { name: /account/i }).some((link) => link.getAttribute('href') === '/customer')).toBe(true);
+    expect(screen.getAllByRole('link', { name: /account/i }).some((link) => link.getAttribute('href') === '/account')).toBe(true);
     expect(screen.queryByRole('link', { name: /^start$/i })).not.toBeInTheDocument();
 
     const helpCard = screen.getByLabelText(/where do you need help/i);
@@ -50,9 +53,9 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(bottomNav).toHaveClass('fixed', 'bottom-0', 'z-[70]');
     expect(within(bottomNav).getByRole('link', { name: /home/i })).toHaveAttribute('href', '/');
     expect(within(bottomNav).getByRole('link', { name: /request/i })).toHaveAttribute('href', '/request');
-    expect(within(bottomNav).getByRole('link', { name: /track/i })).toHaveAttribute('href', '/customer/trip/demo');
-    expect(within(bottomNav).getByRole('link', { name: /services/i })).toHaveAttribute('href', '#services');
-    expect(within(bottomNav).getByRole('link', { name: /account/i })).toHaveAttribute('href', '/customer');
+    expect(within(bottomNav).getByRole('link', { name: /track/i })).toHaveAttribute('href', '/track');
+    expect(within(bottomNav).getByRole('link', { name: /services/i })).toHaveAttribute('href', '/services');
+    expect(within(bottomNav).getByRole('link', { name: /account/i })).toHaveAttribute('href', '/account');
 
     expect(screen.getByLabelText(/request flow sheet area/i)).toHaveClass('pb-[calc(5.75rem+env(safe-area-inset-bottom))]');
   });
@@ -64,5 +67,31 @@ describe('FindYourTow premium mobile homepage', () => {
     const bottomNav = screen.getByRole('navigation', { name: /main app navigation/i });
     expect(within(bottomNav).getByRole('link', { name: /request/i })).toHaveAttribute('aria-current', 'page');
     expect(within(bottomNav).getByRole('link', { name: /home/i })).not.toHaveAttribute('aria-current');
+  });
+
+  it('uses separate pages for every bottom navigation tab and keeps the bar fixed on each page', () => {
+    const pages = [
+      { component: <Home />, active: /home/i, heading: /roadside help in minutes/i },
+      { component: <RequestTowPage />, active: /request/i, heading: /add destination/i },
+      { component: <TrackPage />, active: /track/i, heading: /track your tow/i },
+      { component: <ServicesPage />, active: /services/i, heading: /services/i },
+      { component: <AccountPage />, active: /account/i, heading: /account/i },
+    ];
+
+    for (const page of pages) {
+      const { unmount } = render(page.component);
+
+      expect(screen.getByRole('heading', { name: page.heading })).toBeInTheDocument();
+      const bottomNav = screen.getByRole('navigation', { name: /main app navigation/i });
+      expect(bottomNav).toHaveClass('fixed', 'bottom-0', 'z-[70]');
+      expect(within(bottomNav).getByRole('link', { name: /home/i })).toHaveAttribute('href', '/');
+      expect(within(bottomNav).getByRole('link', { name: /request/i })).toHaveAttribute('href', '/request');
+      expect(within(bottomNav).getByRole('link', { name: /track/i })).toHaveAttribute('href', '/track');
+      expect(within(bottomNav).getByRole('link', { name: /services/i })).toHaveAttribute('href', '/services');
+      expect(within(bottomNav).getByRole('link', { name: /account/i })).toHaveAttribute('href', '/account');
+      expect(within(bottomNav).getByRole('link', { name: page.active })).toHaveAttribute('aria-current', 'page');
+
+      unmount();
+    }
   });
 });

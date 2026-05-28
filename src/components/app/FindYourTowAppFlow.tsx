@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { AppBottomNav, type AppTabLabel } from "@/components/app/AppBottomNav";
 import { DriverCard } from "@/components/platform/DriverCard";
 import { MapExperience } from "@/components/platform/MapExperience";
 import { StatusTimeline } from "@/components/platform/StatusTimeline";
@@ -27,14 +28,6 @@ const serviceShortNames: Record<ServiceTypeId, string> = {
   battery_help: "Battery",
   vehicle_transport: "Transport",
 };
-
-const appTabs = [
-  { label: "Home", href: "/", icon: "⌂" },
-  { label: "Request", href: "/request", icon: "+" },
-  { label: "Track", href: "/customer/trip/demo", icon: "◉" },
-  { label: "Services", href: "#services", icon: "▦" },
-  { label: "Account", href: "/customer", icon: "◌" },
-];
 
 type FlowData = {
   serviceType: ServiceTypeId;
@@ -67,8 +60,6 @@ const initialData: FlowData = {
   photoAttached: false,
   paymentMethod: "card",
 };
-
-type AppTabLabel = (typeof appTabs)[number]["label"];
 
 export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { activeTab?: AppTabLabel; initialStep?: number } = {}) {
   const [step, setStep] = useState(initialStep);
@@ -140,7 +131,7 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
         </aside>
       </section>
 
-      <BottomNav activeTab={activeTab} />
+      <AppBottomNav activeTab={activeTab} />
 
       {step > 0 && (
         <div aria-label="Request flow sheet area" className="fixed inset-0 z-50 flex items-end justify-center bg-black/52 px-0 pt-0 pb-[calc(5.75rem+env(safe-area-inset-bottom))] backdrop-blur-sm sm:px-5 sm:pt-5 sm:pb-28 lg:p-5">
@@ -171,7 +162,7 @@ function MinimalTopBar() {
         <span className="text-lg font-black tracking-[-0.045em] text-white drop-shadow-[0_0_18px_rgba(255,255,255,0.16)]">FindYourTow</span>
       </Link>
       <div className="flex items-center gap-2">
-        <Link href="/customer" aria-label="Account" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-lg text-white/78 backdrop-blur-xl">◌</Link>
+        <Link href="/account" aria-label="Account" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-lg text-white/78 backdrop-blur-xl">◌</Link>
         <button type="button" aria-label="Open menu" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-xl text-white/78 backdrop-blur-xl">☰</button>
       </div>
     </nav>
@@ -239,24 +230,6 @@ function CompactServices({ selectedService, onSelect }: { selectedService: Servi
         </button>
       ))}
     </div>
-  );
-}
-
-function BottomNav({ activeTab }: { activeTab: AppTabLabel }) {
-  return (
-    <nav aria-label="Main app navigation" className="fixed inset-x-0 bottom-0 z-[70] border-t border-white/10 bg-black/72 px-4 pb-[max(env(safe-area-inset-bottom),0.75rem)] pt-3 backdrop-blur-2xl lg:hidden">
-      <div className="mx-auto grid max-w-[460px] grid-cols-5 gap-1">
-        {appTabs.map((tab) => {
-          const isActive = tab.label === activeTab;
-          return (
-            <Link key={tab.label} href={tab.href} aria-current={isActive ? "page" : undefined} className={`flex min-h-14 flex-col items-center justify-center rounded-2xl text-xs font-black transition ${isActive ? "bg-white text-black" : "text-white/52"}`}>
-              <span className="text-lg leading-none">{tab.icon}</span>
-              <span className="mt-1">{tab.label}</span>
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
   );
 }
 
