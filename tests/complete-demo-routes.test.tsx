@@ -5,6 +5,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import LoginPage from '../app/login/page';
 import RegisterPage from '../app/register/page';
+import AccountSetupPage from '../app/account/setup/page';
 import AccountVehiclesPage from '../app/account/vehicles/page';
 import AccountPaymentsPage from '../app/account/payments/page';
 import ApplePayPage from '../app/account/payments/apple-pay/page';
@@ -38,6 +39,22 @@ describe('complete FindYourTow demo routes', () => {
       expect(screen.getAllByText(/FindYourTow/i).length).toBeGreaterThan(0);
       unmount();
     }
+  });
+
+  it('renders account setup as a premium mobile onboarding flow', () => {
+    render(<AccountSetupPage />);
+
+    expect(screen.getByRole('heading', { name: /your account is almost ready/i })).toBeInTheDocument();
+    expect(screen.getByText(/80% complete/i)).toBeInTheDocument();
+    for (const step of ['Profile', 'Vehicle', 'Payment', 'Ready']) {
+      expect(screen.getAllByText(new RegExp(step, 'i')).length).toBeGreaterThan(0);
+    }
+    expect(screen.getByText(/2021 Toyota Camry/i)).toBeInTheDocument();
+    expect(screen.getByText(/Black • Sedan/i)).toBeInTheDocument();
+    expect(screen.getByText(/Plate: KRF-2048/i)).toBeInTheDocument();
+    expect(screen.getByText(/Visa ending in 4242/i)).toBeInTheDocument();
+    expect(screen.getByText(/Apple Pay enabled/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /start roadside request/i })).toHaveAttribute('href', '/request');
   });
 
   it('renders provider and admin pages with actionable demo controls', () => {
