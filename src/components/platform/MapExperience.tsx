@@ -1,3 +1,4 @@
+import { Truck } from "lucide-react";
 import type { AvailableDriver, Coordinate } from "@/features/tow-requests/types";
 
 type MapExperienceProps = {
@@ -38,7 +39,7 @@ export function MapExperience({ drivers = [], route = [], focus = "customer", ti
         <div className="relative h-80">
           <div className="absolute left-[8%] top-[72%] rounded-full bg-white px-3 py-1 text-xs font-black text-black shadow-xl">Pickup</div>
           <div className="absolute right-[5%] top-[9%] rounded-full bg-blue-300 px-3 py-1 text-xs font-black text-blue-950 shadow-xl">Drop-off</div>
-          <div className="truck-marker absolute left-[46%] top-[45%] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 bg-white text-xl shadow-[0_22px_70px_rgba(59,130,246,0.42)]">🚚</div>
+          <div className="truck-marker absolute left-[46%] top-[45%] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 bg-white text-black shadow-[0_22px_70px_rgba(59,130,246,0.42)]"><Truck size={22} /></div>
           {drivers.map((driver, index) => (
             <div
               key={driver.id}

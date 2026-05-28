@@ -3,17 +3,21 @@ import { demoDrivers } from "@/features/demo/drivers";
 import type { AvailableDriver, ServiceOption, TowRequestPayload, TowTrip } from "./types";
 
 export const serviceOptions: ServiceOption[] = [
-  { id: "standard_tow", label: "Tow truck", description: "Fast local towing for cars and small SUVs.", basePriceCents: 9500, etaMinutes: 8, icon: "🛻" },
-  { id: "flatbed_tow", label: "Flatbed tow", description: "Protected towing for luxury, low, or disabled vehicles.", basePriceCents: 12500, etaMinutes: 12, icon: "🚚" },
-  { id: "jump_start", label: "Jump start", description: "Battery boost at your location.", basePriceCents: 7500, etaMinutes: 7, icon: "⚡" },
-  { id: "flat_tire", label: "Flat tire", description: "Spare install or tire assistance.", basePriceCents: 8500, etaMinutes: 10, icon: "🛞" },
-  { id: "lockout", label: "Lockout", description: "Get back into your vehicle safely.", basePriceCents: 8000, etaMinutes: 9, icon: "🔑" },
-  { id: "fuel_delivery", label: "Fuel delivery", description: "Emergency fuel delivered to you.", basePriceCents: 8000, etaMinutes: 14, icon: "⛽" },
-  { id: "winch_out", label: "Winch out", description: "Recovery from snow, mud, ditch, or tight spots.", basePriceCents: 15000, etaMinutes: 18, icon: "🪝" },
-  { id: "accident_tow", label: "Accident tow", description: "Priority accident recovery and transport.", basePriceCents: 17500, etaMinutes: 11, icon: "🚨" },
-  { id: "motorcycle_tow", label: "Motorcycle tow", description: "Motorcycle-safe transport with proper equipment.", basePriceCents: 11000, etaMinutes: 13, icon: "🏍️" },
-  { id: "battery_help", label: "Battery help", description: "Battery diagnosis, jump support, or replacement help.", basePriceCents: 9500, etaMinutes: 9, icon: "🔋" },
-  { id: "vehicle_transport", label: "Vehicle transport", description: "Scheduled point-to-point vehicle transport.", basePriceCents: 17500, etaMinutes: 22, icon: "🛣️" },
+  { id: "standard_tow", label: "Tow truck", description: "Fast local towing for cars and small SUVs.", basePriceCents: 9500, etaMinutes: 8, icon: "tow" },
+  { id: "flatbed_tow", label: "Flatbed tow", description: "Protected towing for luxury, low, or disabled vehicles.", basePriceCents: 12500, etaMinutes: 12, icon: "flatbed" },
+  { id: "jump_start", label: "Jump start", description: "Battery boost at your location.", basePriceCents: 7500, etaMinutes: 7, icon: "battery" },
+  { id: "flat_tire", label: "Flat tire", description: "Spare install or tire assistance.", basePriceCents: 8500, etaMinutes: 10, icon: "tire" },
+  { id: "lockout", label: "Lockout", description: "Get back into your vehicle safely.", basePriceCents: 8000, etaMinutes: 9, icon: "lock" },
+  { id: "fuel_delivery", label: "Fuel delivery", description: "Emergency fuel delivered to you.", basePriceCents: 8000, etaMinutes: 14, icon: "fuel" },
+  { id: "winch_out", label: "Winch out", description: "Recovery from snow, mud, ditch, or tight spots.", basePriceCents: 15000, etaMinutes: 18, icon: "winch" },
+  { id: "accident_tow", label: "Accident tow", description: "Priority accident recovery and transport.", basePriceCents: 17500, etaMinutes: 11, icon: "accident" },
+  { id: "motorcycle_tow", label: "Motorcycle tow", description: "Motorcycle-safe transport with proper equipment.", basePriceCents: 11000, etaMinutes: 13, icon: "motorcycle" },
+  { id: "battery_help", label: "Battery help", description: "Battery diagnosis, jump support, or replacement help.", basePriceCents: 9500, etaMinutes: 9, icon: "battery-help" },
+  { id: "vehicle_transport", label: "Long-distance transport", description: "Scheduled point-to-point vehicle transport.", basePriceCents: 17500, etaMinutes: 22, icon: "route" },
+  { id: "heavy_duty_tow", label: "Heavy-duty tow", description: "Larger vehicle towing with heavy-duty equipment.", basePriceCents: 24500, etaMinutes: 28, icon: "heavy" },
+  { id: "box_truck_tow", label: "Box truck tow", description: "Commercial box-truck tow and transport support.", basePriceCents: 26500, etaMinutes: 30, icon: "box" },
+  { id: "private_property_tow", label: "Private property tow", description: "Private-property dispatch and vehicle removal workflow.", basePriceCents: 15500, etaMinutes: 18, icon: "property" },
+  { id: "emergency_roadside", label: "Emergency roadside help", description: "Fast triage for urgent roadside situations.", basePriceCents: 9900, etaMinutes: 8, icon: "emergency" },
 ];
 
 export const availableDrivers: AvailableDriver[] = demoDrivers;

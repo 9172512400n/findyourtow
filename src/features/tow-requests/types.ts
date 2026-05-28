@@ -12,6 +12,10 @@ export const serviceTypeIds = [
   "motorcycle_tow",
   "battery_help",
   "vehicle_transport",
+  "heavy_duty_tow",
+  "box_truck_tow",
+  "private_property_tow",
+  "emergency_roadside",
 ] as const;
 
 export type ServiceTypeId = (typeof serviceTypeIds)[number];

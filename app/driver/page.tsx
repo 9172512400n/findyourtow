@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Star } from "lucide-react";
 import { BackendModePill } from "@/components/platform/BackendModePill";
 import { DriverLiveConsole } from "@/components/platform/DriverLiveConsole";
 import { MapExperience } from "@/components/platform/MapExperience";
@@ -42,7 +43,7 @@ export default function DriverPage() {
         </div>
         <div className="space-y-5">
           <Card>
-            <div className="flex flex-wrap items-center justify-between gap-4"><div><SectionLabel>Online console</SectionLabel><h2 className="mt-3 text-3xl font-black">{driver.name}</h2><p className="text-white/56">{driver.truckType} · {driver.truckNumber} · ★ {driver.rating}</p></div><span className="rounded-full bg-emerald-300 px-4 py-2 text-sm font-black text-emerald-950">Online</span></div>
+            <div className="flex flex-wrap items-center justify-between gap-4"><div><SectionLabel>Online console</SectionLabel><h2 className="mt-3 text-3xl font-black">{driver.name}</h2><p className="inline-flex items-center gap-1 text-white/56">{driver.truckType} · {driver.truckNumber} · <Star size={14} className="fill-white/60" /> {driver.rating}</p></div><span className="rounded-full bg-emerald-300 px-4 py-2 text-sm font-black text-emerald-950">Online</span></div>
           </Card>
           <DriverLiveConsole driverId={driver.id} />
           <Card className="premium-card">

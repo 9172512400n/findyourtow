@@ -24,7 +24,11 @@ export const pricingRules: Record<ServiceTypeId, PricingRule> = {
   accident_tow: { label: "Accident tow", baseFeeCents: 175 * DOLLARS, towService: true },
   motorcycle_tow: { label: "Motorcycle tow", baseFeeCents: 110 * DOLLARS, minimumCents: 125 * DOLLARS, towService: true },
   battery_help: { label: "Battery help", baseFeeCents: 95 * DOLLARS, towService: false },
-  vehicle_transport: { label: "Vehicle transport", baseFeeCents: 175 * DOLLARS, minimumCents: 175 * DOLLARS, towService: true },
+  vehicle_transport: { label: "Long-distance transport", baseFeeCents: 175 * DOLLARS, minimumCents: 175 * DOLLARS, towService: true },
+  heavy_duty_tow: { label: "Heavy-duty tow", baseFeeCents: 245 * DOLLARS, minimumCents: 245 * DOLLARS, towService: true },
+  box_truck_tow: { label: "Box truck tow", baseFeeCents: 265 * DOLLARS, minimumCents: 265 * DOLLARS, towService: true },
+  private_property_tow: { label: "Private property tow", baseFeeCents: 155 * DOLLARS, minimumCents: 155 * DOLLARS, towService: true },
+  emergency_roadside: { label: "Emergency roadside help", baseFeeCents: 99 * DOLLARS, towService: false },
 };
 
 export function calculateQuote(request: QuoteRequest): QuoteResponse {

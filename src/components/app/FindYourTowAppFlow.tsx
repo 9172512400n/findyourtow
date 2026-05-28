@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { BatteryCharging, Car, CreditCard, Fuel, KeyRound, LifeBuoy, LockKeyhole, LocateFixed, Menu, Route, ShieldAlert, Star, Truck, UserRound, Wrench } from "lucide-react";
 import { AppBottomNav, type AppTabLabel } from "@/components/app/AppBottomNav";
 import { DriverCard } from "@/components/platform/DriverCard";
 import { MapExperience } from "@/components/platform/MapExperience";
@@ -12,12 +13,13 @@ import { VehicleRequestStep } from "@/components/app/VehicleRequestStep";
 import { calculateQuote, formatMoney } from "@/features/pricing/pricing-engine";
 import { useDemoAuthStore } from "@/features/auth/demo-auth-store";
 import { useRequestFlowStore } from "@/features/tow-requests/request-flow-store";
+import { useDemoPaymentStore } from "@/features/payments/demo-payment-store";
 import { availableDrivers, serviceOptions } from "@/features/tow-requests/mock-data";
 import { getCurrentPositionAddress, searchUsAddresses, type AddressSuggestion } from "@/lib/addresses/address-service";
 import type { AvailableDriver, ServiceTypeId, TowTrip } from "@/features/tow-requests/types";
 
-const towServiceIds: ServiceTypeId[] = ["standard_tow", "flatbed_tow", "winch_out", "accident_tow", "motorcycle_tow", "vehicle_transport"];
-const compactServiceIds: ServiceTypeId[] = ["standard_tow", "flatbed_tow", "jump_start", "flat_tire", "lockout", "fuel_delivery", "winch_out", "battery_help"];
+const towServiceIds: ServiceTypeId[] = ["standard_tow", "flatbed_tow", "winch_out", "accident_tow", "motorcycle_tow", "vehicle_transport", "heavy_duty_tow", "box_truck_tow", "private_property_tow"];
+const compactServiceIds: ServiceTypeId[] = ["standard_tow", "flatbed_tow", "jump_start", "flat_tire", "lockout", "fuel_delivery", "winch_out", "battery_help"]; 
 
 type FlowStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
@@ -33,6 +35,10 @@ const serviceShortNames: Record<ServiceTypeId, string> = {
   motorcycle_tow: "Moto",
   battery_help: "Battery",
   vehicle_transport: "Transport",
+  heavy_duty_tow: "Heavy",
+  box_truck_tow: "Box Tow",
+  private_property_tow: "Property",
+  emergency_roadside: "Emergency",
 };
 
 const savedPlaces = [
@@ -203,8 +209,8 @@ function MinimalTopBar() {
         <span className="text-lg font-black tracking-[-0.045em] text-white drop-shadow-[0_0_18px_rgba(255,255,255,0.16)]">FindYourTow</span>
       </Link>
       <div className="flex items-center gap-2">
-        <Link href="/account" aria-label="Account" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-lg text-white/78 backdrop-blur-xl">◌</Link>
-        <button type="button" aria-label="Open menu" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-xl text-white/78 backdrop-blur-xl">☰</button>
+        <Link href="/account" aria-label="Account" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-white/78 backdrop-blur-xl"><UserRound size={19} /></Link>
+        <button type="button" aria-label="Open menu" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-white/78 backdrop-blur-xl"><Menu size={21} /></button>
       </div>
     </nav>
   );
@@ -222,7 +228,7 @@ function PremiumMapVisual({ selectedService, quoteEta, large = false }: { select
       </svg>
       <div className="absolute left-[15%] top-[69%] h-8 w-8 rounded-full bg-emerald-300 shadow-[0_0_0_14px_rgba(110,231,183,.12),0_0_70px_rgba(110,231,183,.7)]" />
       <div className="absolute left-[calc(15%+2.2rem)] top-[68%] rounded-full bg-black/55 px-3 py-1.5 text-xs font-black text-white backdrop-blur-xl">Current location</div>
-      <div className="truck-marker absolute left-[50%] top-[43%] grid h-14 w-14 place-items-center rounded-2xl border border-white/25 bg-white text-2xl shadow-[0_25px_80px_rgba(59,130,246,.55)]">🚚</div>
+      <div className="truck-marker absolute left-[50%] top-[43%] grid h-14 w-14 place-items-center rounded-2xl border border-white/25 bg-white text-black shadow-[0_25px_80px_rgba(59,130,246,.55)]"><Truck size={25} /></div>
       <div className="absolute right-[8%] top-[14%] rounded-[1.4rem] border border-white/10 bg-black/58 px-4 py-3 text-right shadow-2xl backdrop-blur-xl"><p className="text-[0.62rem] font-black uppercase tracking-[0.2em] text-white/44">Live ETA</p><p className="mt-1 text-2xl font-black">{quoteEta} min</p></div>
       <div className="absolute bottom-6 left-6 right-6 rounded-[1.7rem] border border-white/10 bg-black/50 p-4 backdrop-blur-2xl"><p className="text-xs font-black uppercase tracking-[0.2em] text-blue-100/60">Selected service</p><div className="mt-2 flex items-center justify-between gap-3"><p className={`${large ? "text-3xl" : "text-xl"} font-black tracking-[-0.04em]`}>{selectedService.label}</p><span className="rounded-full bg-emerald-300 px-3 py-1 text-xs font-black text-emerald-950">available</span></div></div>
     </div>
@@ -312,7 +318,7 @@ function RidePlannerStep({ pickupAddress, dropoffAddress, selectedService, isTow
       <div className="overflow-hidden rounded-[1.4rem] border border-white/10 bg-white/[0.055]">
         {visiblePlaces.slice(0, 7).map((place) => (
           <button key={`${place.name}-${place.address}`} type="button" onClick={() => choose(isTowService ? place.name : place.address)} className="grid w-full grid-cols-[3rem_1fr] items-center gap-2 border-b border-white/8 px-3 py-3 text-left last:border-b-0 active:bg-blue-400/10">
-            <div className="text-center text-[0.72rem] font-bold leading-tight text-white/50"><div className="mx-auto mb-1 grid h-8 w-8 place-items-center rounded-2xl bg-blue-400/14 text-base text-blue-100">⌖</div>{place.distance}</div>
+            <div className="text-center text-[0.72rem] font-bold leading-tight text-white/50"><div className="mx-auto mb-1 grid h-8 w-8 place-items-center rounded-2xl bg-blue-400/14 text-blue-100"><LocateFixed size={15} /></div>{place.distance}</div>
             <div className="min-w-0"><p className="truncate text-base font-black text-white">{place.name}</p><p className="truncate text-sm font-semibold text-white/52">{place.address}</p></div>
           </button>
         ))}
@@ -323,8 +329,27 @@ function RidePlannerStep({ pickupAddress, dropoffAddress, selectedService, isTow
 }
 
 function ServiceCard({ service, active, selecting, onClick, compact = false }: { service: (typeof serviceOptions)[number]; active: boolean; selecting: boolean; onClick: () => void; compact?: boolean }) {
-  return <button type="button" onClick={onClick} aria-pressed={active} className={`relative overflow-hidden rounded-[1.4rem] border transition duration-200 active:scale-95 ${compact ? "flex min-w-[5.4rem] flex-col items-center gap-2 px-4 py-3" : "p-4 text-left"} ${active ? "border-blue-300 bg-blue-500/18 text-white shadow-[0_0_35px_rgba(59,130,246,.22)]" : "border-white/10 bg-white/[0.055] text-white/64"} ${selecting ? "scale-[1.03] ring-2 ring-blue-300" : ""}`}>{selecting && <span className="absolute inset-0 animate-ping rounded-[inherit] bg-blue-400/20" />}<span className="relative text-2xl leading-none">{service.icon}</span><span className={`${compact ? "text-xs" : "mt-3 block text-base"} relative font-black`}>{compact ? serviceShortNames[service.id] : service.label}</span>{!compact && <span className="relative mt-1 block text-xs font-bold leading-5 text-white/46">{service.description}</span>}</button>;
+  const Icon = serviceIconMap[service.id] ?? LifeBuoy;
+  return <button type="button" onClick={onClick} aria-pressed={active} className={`relative overflow-hidden rounded-[1.4rem] border transition duration-200 active:scale-95 ${compact ? "flex min-w-[5.4rem] flex-col items-center gap-2 px-4 py-3" : "p-4 text-left"} ${active ? "border-blue-300 bg-blue-500/18 text-white shadow-[0_0_35px_rgba(59,130,246,.22)]" : "border-white/10 bg-white/[0.055] text-white/64"} ${selecting ? "scale-[1.03] ring-2 ring-blue-300" : ""}`}>{selecting && <span className="absolute inset-0 animate-ping rounded-[inherit] bg-blue-400/20" />}<span className="relative grid h-9 w-9 place-items-center rounded-2xl bg-white/10"><Icon aria-hidden="true" size={20} /></span><span className={`${compact ? "text-xs" : "mt-3 block text-base"} relative font-black`}>{compact ? serviceShortNames[service.id] : service.label}</span>{!compact && <span className="relative mt-1 block text-xs font-bold leading-5 text-white/46">{service.description}</span>}</button>;
 }
+
+const serviceIconMap: Partial<Record<ServiceTypeId, typeof Truck>> = {
+  standard_tow: Truck,
+  flatbed_tow: Truck,
+  jump_start: BatteryCharging,
+  flat_tire: Wrench,
+  lockout: KeyRound,
+  fuel_delivery: Fuel,
+  winch_out: LockKeyhole,
+  accident_tow: ShieldAlert,
+  motorcycle_tow: Car,
+  battery_help: BatteryCharging,
+  vehicle_transport: Route,
+  heavy_duty_tow: Truck,
+  box_truck_tow: Truck,
+  private_property_tow: LockKeyhole,
+  emergency_roadside: LifeBuoy,
+};
 
 function LocationStep({ pickupAddress, onChange, onUseCurrent, onNext }: { pickupAddress: string; onChange: (value: string) => void; onUseCurrent: () => void; onNext: () => void }) {
   return <div className="space-y-4"><StepTitle title="Set pickup" copy="Use current location, choose a saved place, or search with demo autocomplete." /><AddressInputPanel label="Pickup address" value={pickupAddress} onChange={onChange} onUseCurrent={onUseCurrent} includeCurrent /><MiniMap mode="pickup" /><Button className="w-full" disabled={!pickupAddress.trim()} onClick={onNext}>Continue</Button></div>;
@@ -359,15 +384,19 @@ function QuoteStep({ quote, selectedService, distanceMiles, rush, vehicleType, o
 }
 
 function PaymentStep({ quote, onNext }: { quote: ReturnType<typeof calculateQuote>; onNext: () => void }) {
-  return <div className="space-y-4"><StepTitle title="Authorize payment" copy="We authorize the card before dispatch so providers only receive real, ready jobs." /><div className="rounded-[1.8rem] bg-white p-5 text-black"><p className="text-sm font-black text-black/45">Amount authorized today</p><p className="mt-1 text-5xl font-black tracking-[-0.06em]">{formatMoney(quote.totalCents)}</p><div className="mt-4 rounded-2xl bg-black/[0.045] px-4 py-3 text-sm font-bold">Visa ending 4242 · Demo payment method</div><p className="mt-3 text-xs font-bold leading-5 text-black/45">Demo mode: no real card is charged. In production this becomes Stripe authorization before provider search.</p></div><div className="grid grid-cols-2 gap-3"><Metric label="Payment" value="Required" /><Metric label="Dispatch" value="After auth" /></div><Button className="w-full" onClick={onNext}>Authorize & find provider</Button></div>;
+  const methods = useDemoPaymentStore((state) => state.methods);
+  const selectedPaymentMethodId = useDemoPaymentStore((state) => state.selectedPaymentMethodId);
+  const selectMethod = useDemoPaymentStore((state) => state.selectMethod);
+  const selected = methods.find((method) => method.id === selectedPaymentMethodId) ?? methods[0];
+  return <div className="space-y-4"><StepTitle title="Authorize payment" copy="Choose a saved demo method, then authorize before dispatch so providers only receive ready jobs." /><div className="rounded-[1.8rem] bg-white p-5 text-black"><p className="text-sm font-black text-black/45">Amount authorized today</p><p className="mt-1 text-5xl font-black tracking-[-0.06em]">{formatMoney(quote.totalCents)}</p><div className="mt-4 space-y-2">{methods.map((method) => <button key={method.id} type="button" onClick={() => selectMethod(method.id)} className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-bold ${selected.id === method.id ? "bg-blue-100 text-blue-950" : "bg-black/[0.045] text-black/70"}`}><span className="inline-flex items-center gap-2"><CreditCard size={16} />{method.label}</span><span>{method.isDefault ? "Default" : method.type.replace("_", " ")}</span></button>)}</div><p className="mt-3 text-xs font-bold leading-5 text-black/45">Demo mode: no real card is charged. In production this becomes Stripe PaymentIntent authorization and Apple Pay through Stripe.</p></div><div className="grid grid-cols-2 gap-3"><Metric label="Payment" value="Authorized" /><Metric label="Dispatch" value="After auth" /></div><Button className="w-full" onClick={onNext}>Authorize & find provider</Button><Link href="/account/payments" className="block text-center text-sm font-black text-white/52">Manage payment methods</Link></div>;
 }
 
 function MatchingStep({ progress, providers, quote }: { progress: number; providers: AvailableDriver[]; quote: ReturnType<typeof calculateQuote> }) {
-  return <div className="space-y-5 text-center"><div className="mx-auto mt-3 grid h-28 w-28 place-items-center rounded-full bg-blue-500/20"><div className="grid h-20 w-20 animate-pulse place-items-center rounded-full bg-blue-500 text-4xl shadow-[0_0_70px_rgba(59,130,246,.6)]">🚚</div></div><StepTitle title="Finding nearby providers" copy="Checking verified trucks, route fit, rating, and arrival time." /><div className="rounded-full bg-white/10 p-1"><div className="h-3 rounded-full bg-blue-400 transition-all duration-300" style={{ width: `${progress}%` }} /></div><div className="grid grid-cols-2 gap-3"><Metric label="Nearby providers" value={`${providers.length || 1}`} /><Metric label="Best ETA" value={`${quote.estimatedEtaMinutes} min`} /></div><p className="text-sm font-bold text-white/48">Matching the closest available provider…</p></div>;
+  return <div className="space-y-5 text-center"><div className="mx-auto mt-3 grid h-28 w-28 place-items-center rounded-full bg-blue-500/20"><div className="grid h-20 w-20 animate-pulse place-items-center rounded-full bg-blue-500 shadow-[0_0_70px_rgba(59,130,246,.6)]"><Truck size={34} /></div></div><StepTitle title="Finding nearby providers" copy="Checking verified trucks, route fit, rating, and arrival time." /><div className="rounded-full bg-white/10 p-1"><div className="h-3 rounded-full bg-blue-400 transition-all duration-300" style={{ width: `${progress}%` }} /></div><div className="grid grid-cols-2 gap-3"><Metric label="Nearby providers" value={`${providers.length || 1}`} /><Metric label="Best ETA" value={`${quote.estimatedEtaMinutes} min`} /></div><p className="text-sm font-bold text-white/48">Matching the closest available provider…</p></div>;
 }
 
 function ProviderStep({ provider, quote, onNext }: { provider: AvailableDriver; quote: ReturnType<typeof calculateQuote>; onNext: () => void }) {
-  return <div className="space-y-4"><StepTitle title="Provider matched" copy="A verified truck accepted your request." /><ProviderSummary provider={provider} /><MiniMap mode="route" destination="Provider route" distanceMiles={provider.distanceMiles} eta={provider.etaMinutes} /><div className="grid grid-cols-3 gap-3"><Metric label="Rating" value={`★ ${provider.rating}`} /><Metric label="Arrival" value={`${provider.etaMinutes} min`} /><Metric label="Total" value={formatMoney(quote.totalCents)} /></div><Button className="w-full" onClick={onNext}>Review reservation</Button></div>;
+  return <div className="space-y-4"><StepTitle title="Provider matched" copy="A verified truck accepted your request." /><ProviderSummary provider={provider} /><MiniMap mode="route" destination="Provider route" distanceMiles={provider.distanceMiles} eta={provider.etaMinutes} /><div className="grid grid-cols-3 gap-3"><Metric label="Rating" value={`${provider.rating}`} /><Metric label="Arrival" value={`${provider.etaMinutes} min`} /><Metric label="Total" value={formatMoney(quote.totalCents)} /></div><Button className="w-full" onClick={onNext}>Review reservation</Button></div>;
 }
 
 function ConfirmStep({ data, provider, quote, onNext }: { data: ReturnType<typeof useRequestFlowStore.getState>["data"]; provider: AvailableDriver; quote: ReturnType<typeof calculateQuote>; onNext: () => void }) {
@@ -398,7 +427,7 @@ function humanQuoteLabel(code: string, fallback: string) {
 }
 
 function ProviderSummary({ provider }: { provider: AvailableDriver }) {
-  return <div className="rounded-[1.4rem] bg-white/[0.065] p-5"><div className="flex items-start justify-between gap-3"><div><p className="text-xl font-black">{provider.name}</p><p className="mt-1 text-sm font-bold text-white/56">⭐ {provider.rating} · {provider.truckType} · {provider.truckNumber}</p></div><span className="rounded-full bg-emerald-300 px-3 py-1 text-xs font-black text-emerald-950">Verified</span></div><div className="mt-4 grid grid-cols-2 gap-2"><a href="tel:+15166664941" className="rounded-2xl bg-white px-4 py-3 text-center text-sm font-black text-black">Call driver</a><div className="rounded-2xl bg-black/28 px-4 py-3 text-center text-sm font-black text-white/72">ETA {provider.etaMinutes}m</div></div></div>;
+  return <div className="rounded-[1.4rem] bg-white/[0.065] p-5"><div className="flex items-start justify-between gap-3"><div><p className="text-xl font-black">{provider.name}</p><p className="mt-1 inline-flex items-center gap-1 text-sm font-bold text-white/56"><Star size={14} className="fill-white/60" /> {provider.rating} · {provider.truckType} · {provider.truckNumber}</p></div><span className="rounded-full bg-emerald-300 px-3 py-1 text-xs font-black text-emerald-950">Verified</span></div><div className="mt-4 grid grid-cols-2 gap-2"><a href="tel:+15166664941" className="rounded-2xl bg-white px-4 py-3 text-center text-sm font-black text-black">Call driver</a><div className="rounded-2xl bg-black/28 px-4 py-3 text-center text-sm font-black text-white/72">ETA {provider.etaMinutes}m</div></div></div>;
 }
 
 function StepTitle({ title, copy }: { title: string; copy: string }) {
@@ -407,7 +436,7 @@ function StepTitle({ title, copy }: { title: string; copy: string }) {
 
 function MiniMap({ mode, destination, distanceMiles = 5.5, eta }: { mode: "pickup" | "route"; destination?: string; distanceMiles?: number; eta?: number }) {
   const routeWidth = Math.min(72, Math.max(28, distanceMiles * 6));
-  return <div className="relative h-48 overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#07111d]"><div className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(255,255,255,.13)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.13)_1px,transparent_1px)] [background-size:36px_36px]" /><div className="absolute left-[18%] top-[58%] rounded-full bg-white px-3 py-1 text-xs font-black text-black">Pickup</div>{mode === "route" && <><div className="absolute right-[10%] top-[18%] max-w-[9rem] truncate rounded-full bg-blue-300 px-3 py-1 text-xs font-black text-blue-950">{destination ? destination.split(" · ")[0] : "Destination"}</div><div className="absolute left-[30%] top-[45%] h-2 rotate-[-25deg] rounded-full bg-blue-400 transition-all" style={{ width: `${routeWidth}%` }} />{eta && <div className="absolute bottom-3 right-3 rounded-full bg-black/60 px-3 py-1 text-xs font-black text-white">ETA {eta} min</div>}</>}<div className="truck-marker absolute left-[45%] top-[42%] grid h-11 w-11 place-items-center rounded-2xl bg-white text-xl shadow-2xl">🚚</div></div>;
+  return <div className="relative h-48 overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#07111d]"><div className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(255,255,255,.13)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.13)_1px,transparent_1px)] [background-size:36px_36px]" /><div className="absolute left-[18%] top-[58%] rounded-full bg-white px-3 py-1 text-xs font-black text-black">Pickup</div>{mode === "route" && <><div className="absolute right-[10%] top-[18%] max-w-[9rem] truncate rounded-full bg-blue-300 px-3 py-1 text-xs font-black text-blue-950">{destination ? destination.split(" · ")[0] : "Destination"}</div><div className="absolute left-[30%] top-[45%] h-2 rotate-[-25deg] rounded-full bg-blue-400 transition-all" style={{ width: `${routeWidth}%` }} />{eta && <div className="absolute bottom-3 right-3 rounded-full bg-black/60 px-3 py-1 text-xs font-black text-white">ETA {eta} min</div>}</>}<div className="truck-marker absolute left-[45%] top-[42%] grid h-11 w-11 place-items-center rounded-2xl bg-white text-black shadow-2xl"><Truck size={21} /></div></div>;
 }
 
 function Metric({ label, value }: { label: string; value: string }) {

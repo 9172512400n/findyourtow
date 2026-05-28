@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CarFront } from "lucide-react";
 import { useDemoVehicleStore } from "@/features/vehicles/demo-vehicle-store";
 import { type VehicleProfile, type VehicleType, sortVehiclesDefaultFirst, vehicleTypes } from "@/features/vehicles/types";
 import { Button } from "@/components/ui/button";
@@ -100,7 +101,7 @@ function VehicleCard({ vehicle, onEdit, onDelete, onDefault }: { vehicle: Vehicl
           <p className="mt-1 text-lg font-black tracking-[-0.03em]">{vehicle.year} {vehicle.make} {vehicle.model}</p>
           <p className="mt-1 text-sm font-bold text-white/50">{vehicle.color} · {vehicle.vehicleType} · Plate {vehicle.licensePlate}</p>
         </div>
-        <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-white text-2xl">🚗</div>
+        <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-white text-black"><CarFront size={25} /></div>
       </div>
       <div className="mt-4 grid grid-cols-3 gap-2">
         <button type="button" onClick={onEdit} className="min-h-11 rounded-full bg-white px-3 text-xs font-black text-black">Edit</button>

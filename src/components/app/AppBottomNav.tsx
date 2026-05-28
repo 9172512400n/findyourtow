@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { CarFront, Home, MapPinned, Plus, UserRound, Wrench } from "lucide-react";
 
 export const appTabs = [
-  { label: "Home", href: "/", icon: "⌂" },
-  { label: "Request", href: "/request", icon: "+" },
-  { label: "Track", href: "/track", icon: "◉" },
-  { label: "Services", href: "/services", icon: "▦" },
-  { label: "Account", href: "/account", icon: "◌" },
+  { label: "Home", href: "/", Icon: Home },
+  { label: "Request", href: "/request", Icon: Plus },
+  { label: "Track", href: "/track", Icon: MapPinned },
+  { label: "Services", href: "/services", Icon: Wrench },
+  { label: "Account", href: "/account", Icon: UserRound },
 ] as const;
 
 export type AppTabLabel = (typeof appTabs)[number]["label"];
@@ -16,9 +17,10 @@ export function AppBottomNav({ activeTab }: { activeTab: AppTabLabel }) {
       <div className="mx-auto grid max-w-[460px] grid-cols-5 gap-1">
         {appTabs.map((tab) => {
           const isActive = tab.label === activeTab;
+          const Icon = tab.Icon;
           return (
             <Link key={tab.label} href={tab.href} aria-current={isActive ? "page" : undefined} className={`flex min-h-14 flex-col items-center justify-center rounded-2xl text-xs font-black transition ${isActive ? "bg-white text-black" : "text-white/52"}`}>
-              <span className="text-lg leading-none">{tab.icon}</span>
+              <Icon aria-hidden="true" size={19} strokeWidth={2.4} />
               <span className="mt-1">{tab.label}</span>
             </Link>
           );
@@ -26,4 +28,8 @@ export function AppBottomNav({ activeTab }: { activeTab: AppTabLabel }) {
       </div>
     </nav>
   );
+}
+
+export function VehicleIcon() {
+  return <CarFront aria-hidden="true" size={20} />;
 }

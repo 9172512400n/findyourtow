@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CarFront } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDemoVehicleStore } from "@/features/vehicles/demo-vehicle-store";
 import { manualVehicleToSnapshot, sortVehiclesDefaultFirst, type VehicleSnapshot, type VehicleType, vehicleToSnapshot, vehicleTypes } from "@/features/vehicles/types";
@@ -107,7 +108,7 @@ export function VehicleRequestStep({ data, onChange, onNext }: Props) {
                   <p className="mt-1 text-lg font-black tracking-[-0.03em]">{vehicle.year} {vehicle.make} {vehicle.model}</p>
                   <p className="mt-1 text-sm font-bold text-white/50">{vehicle.color} · {vehicle.vehicleType} · {vehicle.licensePlate}</p>
                 </div>
-                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-white text-xl">🚗</span>
+                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-white text-black"><CarFront size={22} /></span>
               </div>
             </button>
           )) : <div className="rounded-[1.4rem] border border-dashed border-white/16 p-5 text-sm font-bold text-white/56">No saved vehicles yet. Use manual entry below.</div>}

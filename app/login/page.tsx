@@ -1,0 +1,7 @@
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
+import { DemoAppShell, DemoSection } from '@/components/app/DemoAppShell';
+
+export default function LoginPage() {
+  return <DemoAppShell activeTab="Account" eyebrow="Demo login" title="Welcome back" copy="Sign in to continue requests, vehicles, payment methods, and live trip tracking." actions={<Link href="/register" className="rounded-full bg-white px-4 py-2 text-sm font-black text-black">Register</Link>}><div className="mx-auto max-w-md"><DemoSection title="Customer login"><div className="space-y-3"><label className="block text-sm font-black text-white/70">Email<input defaultValue="demo@findyourtow.app" className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-4 outline-none focus:border-blue-300" /></label><label className="block text-sm font-black text-white/70">Password<input type="password" defaultValue="demo-password" className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-4 outline-none focus:border-blue-300" /></label><Link href="/account/setup" className="flex min-h-13 items-center justify-center gap-2 rounded-full bg-blue-500 px-5 font-black text-white">Continue demo <ArrowRight size={18} /></Link><div className="flex justify-between text-sm font-bold text-white/52"><Link href="/forgot-password">Forgot password</Link><Link href="/driver/login">Provider login</Link></div></div></DemoSection></div></DemoAppShell>;
+}
