@@ -21,11 +21,11 @@ type CurrentLocationOptions = {
 };
 
 const demoUsAddresses: AddressSuggestion[] = [
-  { id: "demo-350-5th", label: "Demo/offline · 350 5th Ave", address: "350 5th Ave, New York, NY 10118, United States", lat: 40.7484, lng: -73.9857, country: "US", source: "demo-offline" },
-  { id: "demo-jfk-t4", label: "Demo/offline · JFK Terminal 4", address: "Terminal 4, JFK Airport, Queens, NY 11430, United States", lat: 40.6446, lng: -73.7822, country: "US", source: "demo-offline" },
-  { id: "demo-healy", label: "Demo/offline · 2920 Healy Ave", address: "2920 Healy Ave, Far Rockaway, NY 11691, United States", lat: 40.6049, lng: -73.7613, country: "US", source: "demo-offline" },
-  { id: "demo-piermont", label: "Demo/offline · 29 Piermont Ave", address: "29 Piermont Ave, Hewlett, NY 11557, United States", lat: 40.642, lng: -73.694, country: "US", source: "demo-offline" },
-  { id: "demo-lincoln", label: "Demo/offline · 3197 Lincoln Ave", address: "3197 Lincoln Ave, Oceanside, NY 11572, United States", lat: 40.636, lng: -73.637, country: "US", source: "demo-offline" },
+  { id: "demo-sample-auto", label: "Demo/offline · Sample Auto Center", address: "2400 Harbor Point Dr, Meadowbrook, NY 11700, United States", lat: 40.7214, lng: -73.6242, country: "US", source: "demo-offline" },
+  { id: "demo-cedar-loop", label: "Demo/offline · 4827 Cedar Loop", address: "4827 Cedar Loop, Meadowbrook, NY 11700, United States", lat: 40.7132, lng: -73.6318, country: "US", source: "demo-offline" },
+  { id: "demo-blue-ridge", label: "Demo/offline · 1180 Blue Ridge Ave", address: "1180 Blue Ridge Ave, Riverton, NY 11701, United States", lat: 40.7358, lng: -73.642, country: "US", source: "demo-offline" },
+  { id: "demo-maple-ridge", label: "Demo/offline · 77 Maple Ridge Plaza", address: "77 Maple Ridge Plaza, Brookfield, NY 11702, United States", lat: 40.7486, lng: -73.6123, country: "US", source: "demo-offline" },
+  { id: "demo-willow-creek", label: "Demo/offline · 910 Willow Creek Rd", address: "910 Willow Creek Rd, Stonebridge, NY 11703, United States", lat: 40.6991, lng: -73.6551, country: "US", source: "demo-offline" },
 ];
 
 function configuredToken(explicit?: string) {

@@ -17,8 +17,8 @@ type DemoAuthStore = {
 };
 
 const demoUser: DemoUser = {
-  initials: "NM",
-  name: "Nir Maman",
+  initials: "DC",
+  name: "Demo Customer",
   email: "demo@findyourtow.app",
 };
 

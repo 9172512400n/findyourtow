@@ -15,9 +15,9 @@ export default function AccountPage() {
       <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
         <section className="rounded-[2rem] border border-white/10 bg-white/[0.06] p-5 shadow-2xl shadow-black/20 backdrop-blur-xl">
           <div className="flex items-center gap-4">
-            <div className="grid h-16 w-16 place-items-center rounded-3xl bg-white text-2xl font-black text-black">NM</div>
+            <div className="grid h-16 w-16 place-items-center rounded-3xl bg-white text-2xl font-black text-black">DC</div>
             <div>
-              <h2 className="text-2xl font-black tracking-[-0.04em]">Nir Maman</h2>
+              <h2 className="text-2xl font-black tracking-[-0.04em]">Demo Customer</h2>
               <p className="mt-1 text-sm font-bold text-white/52">Demo customer account</p>
             </div>
           </div>

@@ -7,7 +7,7 @@ describe("demo tow request repository", () => {
       customerName: "Nir",
       phone: "+19172512400",
       serviceType: "flatbed_tow",
-      pickupAddress: "350 5th Ave, New York, NY",
+      pickupAddress: "4827 Cedar Loop, Meadowbrook, NY",
       dropoffAddress: "20 W 34th St, New York, NY",
       vehicleMake: "BMW",
       vehicleModel: "X5",
@@ -32,7 +32,7 @@ describe("demo tow request repository", () => {
     expect(saved?.vehicleId).toBe("veh_saved_bmw");
     expect(saved?.vehicleSnapshot).toMatchObject({ make: "BMW", model: "X5", vehicleType: "SUV" });
     expect(saved?.vehicle.make).toBe("BMW");
-    expect(saved?.pickup.address).toContain("350 5th");
+    expect(saved?.pickup.address).toContain("4827 Cedar Loop");
     expect(saved?.dropoff?.address).toContain("20 W 34th");
     expect(saved?.quote.totalCents).toBeGreaterThan(0);
     expect(saved?.payment.status).toBe("demo_authorized");
@@ -53,7 +53,7 @@ describe("demo tow request repository", () => {
       customerName: "Nir",
       phone: "+19172512400",
       serviceType: "standard_tow",
-      pickupAddress: "JFK Terminal 4",
+      pickupAddress: "Sample Auto Center",
       dropoffAddress: "Queens Blvd",
       vehicleMake: "Honda",
       vehicleModel: "Civic",

@@ -11,10 +11,10 @@ export default async function TripPage({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const trip = buildMockTrip({
     customerName: "FindYourTow customer",
-    phone: "+1 917 251 2400",
+    phone: "+1 555 0100",
     serviceType: "flatbed_tow",
-    pickupAddress: "Current location · Midtown Manhattan",
-    dropoffAddress: "Trusted repair shop · Long Island City",
+    pickupAddress: "Current location · 4827 Cedar Loop",
+    dropoffAddress: "Trusted repair shop · 2400 Harbor Point Dr",
     vehicleMake: "BMW",
     vehicleModel: "X5",
     vehicleColor: "Black",

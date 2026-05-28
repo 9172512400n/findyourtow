@@ -42,20 +42,20 @@ const serviceShortNames: Record<ServiceTypeId, string> = {
 };
 
 const savedPlaces = [
-  { label: "Home", address: "Home · 142-20 84th Drive, Queens", distance: 4.2 },
-  { label: "Work", address: "Work · 5th Ave & W 34th St", distance: 6.3 },
-  { label: "Repair Shop", address: "Trusted repair shop · Long Island City", distance: 7.8 },
+  { label: "Home", address: "Home · 4827 Cedar Loop, Meadowbrook", distance: 4.2 },
+  { label: "Work", address: "Work · 1180 Blue Ridge Ave", distance: 6.3 },
+  { label: "Repair Shop", address: "Trusted repair shop · 2400 Harbor Point Dr", distance: 7.8 },
 ];
 
-const recentAddresses = ["Current location · 5th Ave & W 34th St", "JFK Terminal 4 pickup zone", "Atlantic Ave · Brooklyn", "Northern Blvd · Queens"];
+const recentAddresses = ["Current location · 1180 Blue Ridge Ave", "Maple Ridge shopping plaza", "Cedar Loop service lane", "Harbor Point frontage road"];
 const ridePlannerPlaces = [
-  { name: "Terminal 4", address: "John F. Kennedy International Airport (JFK), New York", distance: "6.8 mi" },
-  { name: "29 Piermont Ave", address: "Hewlett, NY", distance: "1.0 mi" },
-  { name: "99 Eastern Blvd", address: "Baldwin, NY", distance: "6.3 mi" },
-  { name: "All Island Marine Power Center", address: "480 Reina Rd, Oceanside, NY", distance: "2.4 mi" },
-  { name: "3197 Lincoln Ave", address: "Oceanside, NY", distance: "2.9 mi" },
-  { name: "2920 Healy Ave", address: "Far Rockaway, NY", distance: "6.6 mi" },
-  { name: "1290 Waverly St", address: "Hewlett, NY", distance: "1.3 mi" },
+  { name: "Sample Auto Center", address: "2400 Harbor Point Dr, Meadowbrook", distance: "2.2 mi" },
+  { name: "4827 Cedar Loop", address: "Meadowbrook, NY", distance: "1.0 mi" },
+  { name: "1180 Blue Ridge Ave", address: "Riverton, NY", distance: "3.4 mi" },
+  { name: "77 Maple Ridge Plaza", address: "Brookfield, NY", distance: "4.1 mi" },
+  { name: "910 Willow Creek Rd", address: "Stonebridge, NY", distance: "5.6 mi" },
+  { name: "315 Harbor Point Dr", address: "Meadowbrook, NY", distance: "2.9 mi" },
+  { name: "640 Summit Auto Lane", address: "Riverton, NY", distance: "6.3 mi" },
 ];
 
 export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { activeTab?: AppTabLabel; initialStep?: FlowStep } = {}) {
@@ -80,7 +80,7 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
 
   useEffect(() => {
     if (activeTab !== "Request" || initialStep !== 1) return;
-    patch({ serviceType: "standard_tow", dropoffAddress: data.dropoffAddress || "Trusted repair shop · Long Island City" });
+    patch({ serviceType: "standard_tow", dropoffAddress: data.dropoffAddress || "Trusted repair shop · 2400 Harbor Point Dr" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -101,7 +101,7 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
 
   function updateService(serviceType: ServiceTypeId) {
     const tow = towServiceIds.includes(serviceType);
-    patch({ serviceType, dropoffAddress: tow ? data.dropoffAddress || "Trusted repair shop · Long Island City" : "" });
+    patch({ serviceType, dropoffAddress: tow ? data.dropoffAddress || "Trusted repair shop · 2400 Harbor Point Dr" : "" });
   }
 
   function selectService(serviceType: ServiceTypeId) {
@@ -116,11 +116,11 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
   async function useCurrentLocation() {
     patch({ pickupAddress: "Finding current phone location…" });
     const result = await getCurrentPositionAddress();
-    patch({ pickupAddress: result.ok ? result.suggestion.address : "Current location · 5th Ave & W 34th St" });
+    patch({ pickupAddress: result.ok ? result.suggestion.address : "Current location · 1180 Blue Ridge Ave" });
   }
 
   function startFlow() {
-    if (!data.pickupAddress.trim()) patch({ pickupAddress: "Current location · 5th Ave & W 34th St" });
+    if (!data.pickupAddress.trim()) patch({ pickupAddress: "Current location · 1180 Blue Ridge Ave" });
     setStep(1);
   }
 
@@ -138,7 +138,7 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
       });
     } else {
       patch({
-        pickupAddress: destination || data.pickupAddress || "Current location · 5th Ave & W 34th St",
+        pickupAddress: destination || data.pickupAddress || "Current location · 1180 Blue Ridge Ave",
         dropoffAddress: "",
       });
     }

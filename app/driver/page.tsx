@@ -10,7 +10,7 @@ import { availableDrivers } from "@/features/tow-requests/mock-data";
 
 const completedJobs = [
   { id: "FYT-2041", service: "Jump start", area: "Chelsea", payout: 6200 },
-  { id: "FYT-2038", service: "Flatbed tow", area: "Long Island City", payout: 14800 },
+  { id: "FYT-2038", service: "Flatbed tow", area: "Harbor Point", payout: 14800 },
   { id: "FYT-2032", service: "Lockout", area: "Upper West Side", payout: 7400 },
 ];
 

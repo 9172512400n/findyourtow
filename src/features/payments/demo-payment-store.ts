@@ -57,7 +57,7 @@ export const useDemoPaymentStore = create<DemoPaymentStore>()(
           set({ applePayReady: true });
           return;
         }
-        get().addMethod({ type: 'apple_pay', label: 'Apple Pay demo', holder: 'Wallet demo', last4: '0000', expiration: 'Wallet', billingZip: '11557', isDefault: true });
+        get().addMethod({ type: 'apple_pay', label: 'Apple Pay demo', holder: 'Wallet demo', last4: '0000', expiration: 'Wallet', billingZip: '11700', isDefault: true });
         set({ applePayReady: true });
       },
       resetDemoPayments: () => set({ methods: demoPaymentMethods, selectedPaymentMethodId: demoPaymentMethods[0].id, applePayReady: true }),
