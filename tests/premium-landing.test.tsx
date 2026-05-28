@@ -147,6 +147,36 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(screen.getByRole('heading', { name: /request roadside help/i })).toBeInTheDocument();
   });
 
+  it('adds booking-progress clarity and stronger payment authorization guidance without changing the app shell', async () => {
+    useDemoAuthStore.getState().signInDemo();
+    const user = userEvent.setup();
+    render(<RequestTowPage />);
+
+    const flow = screen.getByLabelText(/request flow sheet area/i);
+    const progress = screen.getByLabelText(/booking progress/i);
+    expect(within(progress).getByText(/details/i)).toBeInTheDocument();
+    expect(within(progress).getByText(/vehicle/i)).toBeInTheDocument();
+    expect(within(progress).getByText(/quote/i)).toBeInTheDocument();
+    expect(within(progress).getByText(/payment/i)).toBeInTheDocument();
+    expect(within(progress).getByText(/track/i)).toBeInTheDocument();
+    expect(within(progress).getByText(/step 1 of 5/i)).toBeInTheDocument();
+
+    await user.type(within(flow).getByPlaceholderText(/tow destination/i), 'Random Auto Center');
+    await user.click(within(flow).getByRole('button', { name: /random auto center/i }));
+    await user.click(await within(flow).findByRole('button', { name: /get instant quote/i }));
+
+    expect(screen.getByRole('heading', { name: /live quote/i })).toBeInTheDocument();
+    expect(screen.getByText(/payment is authorized now and charged only after service is completed/i)).toBeInTheDocument();
+    expect(within(screen.getByLabelText(/booking progress/i)).getByText(/step 3 of 5/i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /continue to payment/i }));
+
+    expect(screen.getByRole('heading', { name: /authorize payment/i })).toBeInTheDocument();
+    expect(screen.getByText(/stripe authorization/i)).toBeInTheDocument();
+    expect(screen.getByText(/charged only after service is completed/i)).toBeInTheDocument();
+    expect(within(screen.getByLabelText(/booking progress/i)).getByText(/step 4 of 5/i)).toBeInTheDocument();
+  });
+
   it('lets customers manage saved vehicles from the account page', async () => {
     const user = userEvent.setup();
     render(<AccountPage />);

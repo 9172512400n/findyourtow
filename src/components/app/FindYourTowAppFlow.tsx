@@ -272,9 +272,38 @@ function FlowHeader({ step, onBack, onClose, firstStepHref }: { step: FlowStep; 
   const backClass = "rounded-full bg-white px-4 py-2 text-xs font-black text-black";
   const closeClass = "rounded-full bg-white/10 px-4 py-2 text-xs font-black text-white/70";
   return (
-    <div aria-label="Request step controls" className="sticky top-0 z-20 -mx-5 mb-3 flex items-center justify-between gap-3 border-b border-white/10 bg-[#080b11]/95 px-5 pb-3 pt-1 backdrop-blur-2xl">
-      <div className="flex min-w-16 items-center gap-2">{onBack ? <button type="button" onClick={onBack} aria-label="Back" className={backClass}>Back</button> : firstStepHref ? <Link href={firstStepHref} aria-label="Back" className={backClass}>Back</Link> : null}<p className="text-xs font-black uppercase tracking-[0.24em] text-blue-100/62">{labels[step]}</p></div>
-      <div className="flex min-w-16 justify-end">{firstStepHref ? <Link href={firstStepHref} className={closeClass}>Close</Link> : <button type="button" onClick={onClose} className={closeClass}>Close</button>}</div>
+    <div aria-label="Request step controls" className="sticky top-0 z-20 -mx-5 mb-3 border-b border-white/10 bg-[#080b11]/95 px-5 pb-3 pt-1 backdrop-blur-2xl">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-16 items-center gap-2">{onBack ? <button type="button" onClick={onBack} aria-label="Back" className={backClass}>Back</button> : firstStepHref ? <Link href={firstStepHref} aria-label="Back" className={backClass}>Back</Link> : null}<p className="text-xs font-black uppercase tracking-[0.24em] text-blue-100/62">{labels[step]}</p></div>
+        <div className="flex min-w-16 justify-end">{firstStepHref ? <Link href={firstStepHref} className={closeClass}>Close</Link> : <button type="button" onClick={onClose} className={closeClass}>Close</button>}</div>
+      </div>
+      <BookingProgressRail step={step} />
+    </div>
+  );
+}
+
+function BookingProgressRail({ step }: { step: FlowStep }) {
+  const stages = ["Details", "Vehicle", "Quote", "Payment", "Track"];
+  const currentStage = step <= 3 ? 1 : step === 4 ? 2 : step === 5 ? 3 : step === 6 ? 4 : 5;
+  return (
+    <div aria-label="Booking progress" className="mt-3 space-y-2">
+      <div className="flex items-center justify-between text-[0.62rem] font-black uppercase tracking-[0.18em] text-white/38">
+        <span>Step {currentStage} of 5</span>
+        <span>Booking progress</span>
+      </div>
+      <div className="grid grid-cols-5 gap-1.5">
+        {stages.map((stage, index) => {
+          const stageNumber = index + 1;
+          const active = currentStage === stageNumber;
+          const done = currentStage > stageNumber;
+          return (
+            <div key={stage} className="space-y-1">
+              <div className={`h-1.5 rounded-full transition-colors ${done || active ? "bg-blue-300" : "bg-white/10"}`} />
+              <p className={`truncate text-[0.58rem] font-black uppercase tracking-[0.12em] ${active ? "text-blue-100" : done ? "text-white/56" : "text-white/28"}`}>{stage}</p>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -398,7 +427,7 @@ function SuggestionGroup({ title, items, onPick }: { title: string; items: strin
 }
 
 function QuoteStep({ quote, selectedService, distanceMiles, rush, vehicleType, onRushChange, onNext }: { quote: ReturnType<typeof calculateQuote>; selectedService: { label: string }; distanceMiles: number; rush: boolean; vehicleType: string; onRushChange: (value: boolean) => void; onNext: () => void }) {
-  return <div className="space-y-4"><StepTitle title="Live quote" copy="Your estimate reacts to service, distance, vehicle type, and rush priority." /><div className="rounded-[1.8rem] bg-white p-5 text-black"><p className="text-sm font-black text-black/45">{selectedService.label} · {vehicleType} · {distanceMiles.toFixed(1)} mi</p><p className="mt-1 text-5xl font-black tracking-[-0.06em]">{formatMoney(quote.totalCents)}</p><div className="mt-4 space-y-2">{quote.lineItems.map((item) => <div key={`${item.code}-${item.label}`} className="flex justify-between rounded-2xl bg-black/[0.045] px-4 py-3 text-sm font-bold"><span>{humanQuoteLabel(item.code, item.label)}</span><span>{formatMoney(item.amountCents)}</span></div>)}</div></div><label className="flex items-center justify-between rounded-[1.4rem] bg-white/[0.055] px-5 py-4 text-sm font-black text-white/76"><span>Rush priority · faster ETA</span><input type="checkbox" checked={rush} onChange={(event) => onRushChange(event.target.checked)} /></label><div className="grid grid-cols-2 gap-3"><Metric label="ETA" value={`${quote.estimatedEtaMinutes} min`} /><Metric label="Final total" value={formatMoney(quote.totalCents)} /></div><Button className="w-full" onClick={onNext}>Continue to payment</Button></div>;
+  return <div className="space-y-4"><StepTitle title="Live quote" copy="Your estimate reacts to service, distance, vehicle type, and rush priority." /><div className="rounded-[1.8rem] bg-white p-5 text-black"><p className="text-sm font-black text-black/45">{selectedService.label} · {vehicleType} · {distanceMiles.toFixed(1)} mi</p><p className="mt-1 text-5xl font-black tracking-[-0.06em]">{formatMoney(quote.totalCents)}</p><div className="mt-4 space-y-2">{quote.lineItems.map((item) => <div key={`${item.code}-${item.label}`} className="flex justify-between rounded-2xl bg-black/[0.045] px-4 py-3 text-sm font-bold"><span>{humanQuoteLabel(item.code, item.label)}</span><span>{formatMoney(item.amountCents)}</span></div>)}</div></div><div className="rounded-[1.35rem] border border-blue-300/18 bg-blue-400/10 px-4 py-3 text-sm font-bold leading-6 text-blue-50/76">Payment is authorized now and charged only after service is completed. The provider receives a ready-to-dispatch job after authorization.</div><label className="flex items-center justify-between rounded-[1.4rem] bg-white/[0.055] px-5 py-4 text-sm font-black text-white/76"><span>Rush priority · faster ETA</span><input type="checkbox" checked={rush} onChange={(event) => onRushChange(event.target.checked)} /></label><div className="grid grid-cols-2 gap-3"><Metric label="ETA" value={`${quote.estimatedEtaMinutes} min`} /><Metric label="Final total" value={formatMoney(quote.totalCents)} /></div><Button className="w-full" onClick={onNext}>Continue to payment</Button></div>;
 }
 
 function PaymentStep({ quote, onNext }: { quote: ReturnType<typeof calculateQuote>; onNext: () => void }) {
@@ -406,7 +435,7 @@ function PaymentStep({ quote, onNext }: { quote: ReturnType<typeof calculateQuot
   const selectedPaymentMethodId = useDemoPaymentStore((state) => state.selectedPaymentMethodId);
   const selectMethod = useDemoPaymentStore((state) => state.selectMethod);
   const selected = methods.find((method) => method.id === selectedPaymentMethodId) ?? methods[0];
-  return <div className="space-y-4"><StepTitle title="Authorize payment" copy="Choose a saved demo method, then authorize before dispatch so providers only receive ready jobs." /><div className="rounded-[1.8rem] bg-white p-5 text-black"><p className="text-sm font-black text-black/45">Amount authorized today</p><p className="mt-1 text-5xl font-black tracking-[-0.06em]">{formatMoney(quote.totalCents)}</p><div className="mt-4 space-y-2">{methods.map((method) => <button key={method.id} type="button" onClick={() => selectMethod(method.id)} className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-bold ${selected.id === method.id ? "bg-blue-100 text-blue-950" : "bg-black/[0.045] text-black/70"}`}><span className="inline-flex items-center gap-2"><CreditCard size={16} />{method.label}</span><span>{method.isDefault ? "Default" : method.type.replace("_", " ")}</span></button>)}</div><p className="mt-3 text-xs font-bold leading-5 text-black/45">Demo mode: no real card is charged. In production this becomes Stripe PaymentIntent authorization and Apple Pay through Stripe.</p></div><div className="grid grid-cols-2 gap-3"><Metric label="Payment" value="Authorized" /><Metric label="Dispatch" value="After auth" /></div><Button className="w-full" onClick={onNext}>Authorize & find provider</Button><Link href="/account/payments" className="block text-center text-sm font-black text-white/52">Manage payment methods</Link></div>;
+  return <div className="space-y-4"><StepTitle title="Authorize payment" copy="Choose a saved demo method, then authorize before dispatch so providers only receive ready jobs." /><div className="rounded-[1.8rem] bg-white p-5 text-black"><p className="text-sm font-black text-black/45">Amount authorized today</p><p className="mt-1 text-5xl font-black tracking-[-0.06em]">{formatMoney(quote.totalCents)}</p><div className="mt-4 space-y-2">{methods.map((method) => <button key={method.id} type="button" onClick={() => selectMethod(method.id)} className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-bold ${selected.id === method.id ? "bg-blue-100 text-blue-950" : "bg-black/[0.045] text-black/70"}`}><span className="inline-flex items-center gap-2"><CreditCard size={16} />{method.label}</span><span>{method.isDefault ? "Default" : method.type.replace("_", " ")}</span></button>)}</div><p className="mt-3 text-xs font-bold leading-5 text-black/45">Stripe authorization: no demo card is charged. In production this becomes a PaymentIntent hold; the customer is charged only after service is completed.</p></div><div className="rounded-[1.35rem] border border-emerald-300/18 bg-emerald-400/10 px-4 py-3 text-sm font-bold leading-6 text-emerald-50/76">After authorization, FindYourTow dispatches the request to nearby verified providers and opens live tracking when one accepts.</div><div className="grid grid-cols-2 gap-3"><Metric label="Payment" value="Authorized" /><Metric label="Dispatch" value="After auth" /></div><Button className="w-full" onClick={onNext}>Authorize & find provider</Button><Link href="/account/payments" className="block text-center text-sm font-black text-white/52">Manage payment methods</Link></div>;
 }
 
 function MatchingStep({ progress, providers, quote }: { progress: number; providers: AvailableDriver[]; quote: ReturnType<typeof calculateQuote> }) {
