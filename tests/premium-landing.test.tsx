@@ -1,9 +1,12 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest';
-import { render, screen, within } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { cleanup, render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { afterEach, describe, expect, it } from 'vitest';
 import Home from '../app/(marketing)/page';
+
+afterEach(cleanup);
 
 describe('FindYourTow premium mobile homepage', () => {
   it('opens with a calm consumer app homepage instead of stacked pricing cards', () => {
@@ -34,5 +37,22 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(screen.queryByText(/choose the roadside rescue you need/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/fast local towing for cars and small suvs/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/\$95\.00\+/i)).not.toBeInTheDocument();
+  });
+
+  it('keeps the mobile bottom menu stationary and usable while the request sheet is open', async () => {
+    const user = userEvent.setup();
+    render(<Home />);
+
+    await user.click(screen.getAllByRole('button', { name: /continue/i })[0]);
+
+    const bottomNav = screen.getByRole('navigation', { name: /main app navigation/i });
+    expect(bottomNav).toHaveClass('fixed', 'bottom-0', 'z-[70]');
+    expect(within(bottomNav).getByRole('link', { name: /home/i })).toHaveAttribute('href', '/');
+    expect(within(bottomNav).getByRole('link', { name: /request/i })).toHaveAttribute('href', '/request');
+    expect(within(bottomNav).getByRole('link', { name: /track/i })).toHaveAttribute('href', '/customer/trip/demo');
+    expect(within(bottomNav).getByRole('link', { name: /services/i })).toHaveAttribute('href', '#services');
+    expect(within(bottomNav).getByRole('link', { name: /account/i })).toHaveAttribute('href', '/customer');
+
+    expect(screen.getByLabelText(/request flow sheet area/i)).toHaveClass('pb-[calc(5.75rem+env(safe-area-inset-bottom))]');
   });
 });

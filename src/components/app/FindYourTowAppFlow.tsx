@@ -68,7 +68,9 @@ const initialData: FlowData = {
   paymentMethod: "card",
 };
 
-export function FindYourTowAppFlow() {
+type AppTabLabel = (typeof appTabs)[number]["label"];
+
+export function FindYourTowAppFlow({ activeTab = "Home" }: { activeTab?: AppTabLabel } = {}) {
   const [step, setStep] = useState(0);
   const [data, setData] = useState<FlowData>(initialData);
   const selectedService = useMemo(() => serviceOptions.find((service) => service.id === data.serviceType) ?? serviceOptions[0], [data.serviceType]);
@@ -138,10 +140,10 @@ export function FindYourTowAppFlow() {
         </aside>
       </section>
 
-      <BottomNav />
+      <BottomNav activeTab={activeTab} />
 
       {step > 0 && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/52 p-0 backdrop-blur-sm sm:p-5">
+        <div aria-label="Request flow sheet area" className="fixed inset-0 z-50 flex items-end justify-center bg-black/52 px-0 pt-0 pb-[calc(5.75rem+env(safe-area-inset-bottom))] backdrop-blur-sm sm:px-5 sm:pt-5 sm:pb-28 lg:p-5">
           <div className="max-h-[88vh] w-full max-w-[560px] overflow-y-auto rounded-t-[2.2rem] border border-white/10 bg-[#080b11]/95 p-5 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:rounded-[2.4rem]">
             <div className="mx-auto mb-5 h-1.5 w-12 rounded-full bg-white/18" />
             <FlowHeader step={step} onClose={() => setStep(0)} />
@@ -240,18 +242,21 @@ function CompactServices({ selectedService, onSelect }: { selectedService: Servi
   );
 }
 
-function BottomNav() {
+function BottomNav({ activeTab }: { activeTab: AppTabLabel }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-black/72 px-4 pb-[max(env(safe-area-inset-bottom),0.75rem)] pt-3 backdrop-blur-2xl lg:hidden">
+    <nav aria-label="Main app navigation" className="fixed inset-x-0 bottom-0 z-[70] border-t border-white/10 bg-black/72 px-4 pb-[max(env(safe-area-inset-bottom),0.75rem)] pt-3 backdrop-blur-2xl lg:hidden">
       <div className="mx-auto grid max-w-[460px] grid-cols-5 gap-1">
-        {appTabs.map((tab) => (
-          <Link key={tab.label} href={tab.href} className={`flex min-h-14 flex-col items-center justify-center rounded-2xl text-xs font-black transition ${tab.label === "Home" ? "bg-white text-black" : "text-white/52"}`}>
-            <span className="text-lg leading-none">{tab.icon}</span>
-            <span className="mt-1">{tab.label}</span>
-          </Link>
-        ))}
+        {appTabs.map((tab) => {
+          const isActive = tab.label === activeTab;
+          return (
+            <Link key={tab.label} href={tab.href} aria-current={isActive ? "page" : undefined} className={`flex min-h-14 flex-col items-center justify-center rounded-2xl text-xs font-black transition ${isActive ? "bg-white text-black" : "text-white/52"}`}>
+              <span className="text-lg leading-none">{tab.icon}</span>
+              <span className="mt-1">{tab.label}</span>
+            </Link>
+          );
+        })}
       </div>
-    </div>
+    </nav>
   );
 }
 
