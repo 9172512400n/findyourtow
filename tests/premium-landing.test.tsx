@@ -149,6 +149,22 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(screen.getByRole('heading', { name: /request roadside help/i })).toBeInTheDocument();
   });
 
+  it('shows an obvious continue button for a typed custom tow destination', async () => {
+    useDemoAuthStore.getState().signInDemo();
+    const user = userEvent.setup();
+    render(<RequestTowPage />);
+
+    const flow = screen.getByLabelText(/request flow sheet area/i);
+    await user.type(within(flow).getByPlaceholderText(/tow destination/i), 'Exotic');
+
+    expect(within(flow).getByRole('button', { name: /continue booking demo/i })).toBeInTheDocument();
+    expect(within(flow).getByText(/use exotic as the drop-off/i)).toBeInTheDocument();
+
+    await user.click(within(flow).getByRole('button', { name: /continue booking demo/i }));
+
+    expect(await screen.findByRole('heading', { name: /vehicle details/i })).toBeInTheDocument();
+  });
+
   it('adds booking-progress clarity and stronger payment authorization guidance without changing the app shell', async () => {
     useDemoAuthStore.getState().signInDemo();
     const user = userEvent.setup();

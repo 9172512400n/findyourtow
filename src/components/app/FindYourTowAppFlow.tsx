@@ -329,11 +329,14 @@ function RidePlannerStep({ pickupAddress, dropoffAddress, serviceType, selectedS
     return !query.trim() || haystack.includes(query.toLowerCase());
   });
   function choose(value: string) {
-    setQuery(value);
-    if (isTowService) onDestinationChange(value);
-    onChooseDestination(value);
+    const cleanValue = value.trim();
+    if (!cleanValue) return;
+    setQuery(cleanValue);
+    if (isTowService) onDestinationChange(cleanValue);
+    onChooseDestination(cleanValue);
   }
   const placeholder = isTowService ? "Tow destination" : "Where are you?";
+  const pendingDestination = (isTowService ? dropoffAddress || query : query || pickupAddress).trim();
   return (
     <div className="space-y-4 pb-2 text-white">
       <div className="space-y-2">
@@ -379,8 +382,15 @@ function RidePlannerStep({ pickupAddress, dropoffAddress, serviceType, selectedS
             <div className="min-w-0"><p className="truncate text-base font-black text-white">{place.name}</p><p className="truncate text-sm font-semibold text-white/52">{place.address}</p></div>
           </button>
         ))}
-        {visiblePlaces.length === 0 && (dropoffAddress.trim() || query.trim()) && <button type="button" onClick={() => choose(dropoffAddress || query)} className="w-full px-4 py-4 text-left font-black text-white">Use “{dropoffAddress || query}”</button>}
+        {visiblePlaces.length === 0 && pendingDestination && <div className="px-4 py-4 text-sm font-bold text-white/54">No saved match — you can still continue with “{pendingDestination}”.</div>}
       </div>
+
+      {pendingDestination && (
+        <div className="sticky bottom-0 -mx-1 rounded-[1.6rem] border border-blue-300/20 bg-[#07111d]/95 p-3 shadow-[0_-22px_70px_rgba(2,6,23,.72)] backdrop-blur-2xl">
+          <p className="px-1 pb-2 text-xs font-bold text-white/54">Use {pendingDestination} as the {isTowService ? "drop-off" : "service location"}.</p>
+          <button type="button" onClick={() => choose(pendingDestination)} className="min-h-14 w-full rounded-[1.25rem] bg-blue-500 px-5 text-base font-black text-white shadow-[0_18px_45px_rgba(59,130,246,.38)] active:scale-[0.99]">Continue booking demo</button>
+        </div>
+      )}
     </div>
   );
 }
