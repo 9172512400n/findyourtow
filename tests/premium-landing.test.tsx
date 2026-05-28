@@ -9,8 +9,12 @@ import AccountPage from '../app/account/page';
 import RequestTowPage from '../app/request/page';
 import ServicesPage from '../app/services/page';
 import TrackPage from '../app/track/page';
+import { useRequestFlowStore } from '../src/features/tow-requests/request-flow-store';
 
-afterEach(cleanup);
+afterEach(() => {
+  useRequestFlowStore.getState().reset();
+  cleanup();
+});
 
 describe('FindYourTow premium mobile homepage', () => {
   it('opens with a calm consumer app homepage instead of stacked pricing cards', () => {
@@ -60,10 +64,11 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(screen.getByLabelText(/request flow sheet area/i)).toHaveClass('pb-[calc(5.75rem+env(safe-area-inset-bottom))]');
   });
 
-  it('opens the request tab directly into the request flow instead of duplicating the home screen', () => {
+  it('opens the request tab directly into the interactive request flow instead of duplicating the home screen', () => {
     render(<RequestTowPage />);
 
     expect(screen.getByLabelText(/request flow sheet area/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /choose service/i })).toBeInTheDocument();
     const bottomNav = screen.getByRole('navigation', { name: /main app navigation/i });
     expect(within(bottomNav).getByRole('link', { name: /request/i })).toHaveAttribute('aria-current', 'page');
     expect(within(bottomNav).getByRole('link', { name: /home/i })).not.toHaveAttribute('aria-current');
@@ -73,23 +78,27 @@ describe('FindYourTow premium mobile homepage', () => {
     const user = userEvent.setup();
     render(<RequestTowPage />);
 
+    const flow = screen.getByLabelText(/request flow sheet area/i);
+    await user.click(within(flow).getByRole('button', { name: /flatbed tow/i }));
+    await screen.findByRole('heading', { name: /set pickup/i });
+    await user.click(within(screen.getByLabelText(/request flow sheet area/i)).getByRole('button', { name: /use current/i }));
     await user.click(within(screen.getByLabelText(/request flow sheet area/i)).getByRole('button', { name: /^continue$/i }));
 
-    expect(screen.getByRole('heading', { name: /vehicle details/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /add destination/i })).toBeInTheDocument();
     const flowHeader = screen.getByLabelText(/request step controls/i);
     expect(flowHeader).toHaveClass('sticky', 'top-0', 'z-20');
     expect(within(flowHeader).getByRole('button', { name: /back/i })).toBeInTheDocument();
-    expect(within(flowHeader).getByRole('button', { name: /close/i })).toBeInTheDocument();
+    expect(within(flowHeader).getByRole('link', { name: /close/i })).toBeInTheDocument();
 
     await user.click(within(flowHeader).getByRole('button', { name: /back/i }));
 
-    expect(screen.getByRole('heading', { name: /add destination/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /set pickup/i })).toBeInTheDocument();
   });
 
   it('uses separate pages for every bottom navigation tab and keeps the bar fixed on each page', () => {
     const pages = [
       { component: <Home />, active: /home/i, heading: /roadside help in minutes/i },
-      { component: <RequestTowPage />, active: /request/i, heading: /add destination/i },
+      { component: <RequestTowPage />, active: /request/i, heading: /choose service/i },
       { component: <TrackPage />, active: /track/i, heading: /track your tow/i },
       { component: <ServicesPage />, active: /services/i, heading: /services/i },
       { component: <AccountPage />, active: /account/i, heading: /account/i },
