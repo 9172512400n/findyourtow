@@ -9,9 +9,11 @@ import AccountPage from '../app/account/page';
 import RequestTowPage from '../app/request/page';
 import ServicesPage from '../app/services/page';
 import TrackPage from '../app/track/page';
+import { useDemoAuthStore } from '../src/features/auth/demo-auth-store';
 import { useRequestFlowStore } from '../src/features/tow-requests/request-flow-store';
 
 afterEach(() => {
+  useDemoAuthStore.getState().reset();
   useRequestFlowStore.getState().reset();
   cleanup();
 });
@@ -64,30 +66,60 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(screen.getByLabelText(/request flow sheet area/i)).toHaveClass('pb-[calc(5.75rem+env(safe-area-inset-bottom))]');
   });
 
-  it('opens the request tab directly into the interactive request flow instead of duplicating the home screen', () => {
+  it('requires login before a customer can request service', async () => {
+    const user = userEvent.setup();
     render(<RequestTowPage />);
 
-    expect(screen.getByLabelText(/request flow sheet area/i)).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /choose service/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /sign in to request service/i })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /plan your ride/i })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /continue as demo customer/i }));
+
+    expect(screen.getByRole('heading', { name: /plan your ride/i })).toBeInTheDocument();
+  });
+
+  it('opens the request tab as an Uber-style destination-first ride planner after login', () => {
+    useDemoAuthStore.getState().signInDemo();
+    render(<RequestTowPage />);
+
+    const flow = screen.getByLabelText(/request flow sheet area/i);
+    expect(flow).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /plan your ride/i })).toBeInTheDocument();
+    expect(within(flow).getByRole('button', { name: /pickup now/i })).toBeInTheDocument();
+    expect(within(flow).getByRole('button', { name: /for me/i })).toBeInTheDocument();
+    expect(within(flow).getByDisplayValue(/home/i)).toBeInTheDocument();
+    expect(within(flow).getByPlaceholderText(/where to/i)).toBeInTheDocument();
+    expect(within(flow).getByText(/terminal 4/i)).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /choose service/i })).not.toBeInTheDocument();
     const bottomNav = screen.getByRole('navigation', { name: /main app navigation/i });
     expect(within(bottomNav).getByRole('link', { name: /request/i })).toHaveAttribute('aria-current', 'page');
     expect(within(bottomNav).getByRole('link', { name: /home/i })).not.toHaveAttribute('aria-current');
   });
 
+  it('uses location-only pricing for non-tow roadside services before matching a provider', () => {
+    useDemoAuthStore.getState().signInDemo();
+    useRequestFlowStore.getState().patch({ serviceType: 'lockout', dropoffAddress: '' });
+    render(<RequestTowPage />);
+
+    const flow = screen.getByLabelText(/request flow sheet area/i);
+    expect(within(flow).getByPlaceholderText(/where are you/i)).toBeInTheDocument();
+    expect(within(flow).getByText(/add your location, get the price, authorize payment/i)).toBeInTheDocument();
+    expect(within(flow).queryByRole('button', { name: /add stop/i })).not.toBeInTheDocument();
+  });
+
   it('keeps a sticky back control inside the request flow so users cannot get trapped', async () => {
+    useDemoAuthStore.getState().signInDemo();
     const user = userEvent.setup();
     render(<RequestTowPage />);
 
     const flow = screen.getByLabelText(/request flow sheet area/i);
     expect(flow.firstElementChild).toHaveClass('overflow-hidden');
-    expect(within(flow).getByRole('button', { name: /continue with tow truck/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /plan your ride/i })).toBeInTheDocument();
 
-    await user.click(within(flow).getByRole('button', { name: /flatbed tow/i }));
-    await screen.findByRole('heading', { name: /set pickup/i });
-    await user.click(within(screen.getByLabelText(/request flow sheet area/i)).getByRole('button', { name: /use current/i }));
-    await user.click(within(screen.getByLabelText(/request flow sheet area/i)).getByRole('button', { name: /^continue$/i }));
+    await user.type(within(flow).getByPlaceholderText(/where to/i), 'Terminal 4');
+    await user.click(within(flow).getByRole('button', { name: /terminal 4/i }));
 
-    expect(await screen.findByRole('heading', { name: /add destination/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /vehicle details/i })).toBeInTheDocument();
     const flowHeader = screen.getByLabelText(/request step controls/i);
     expect(flowHeader).toHaveClass('sticky', 'top-0', 'z-20');
     expect(within(flowHeader).getByRole('button', { name: /back/i })).toBeInTheDocument();
@@ -95,13 +127,13 @@ describe('FindYourTow premium mobile homepage', () => {
 
     await user.click(within(flowHeader).getByRole('button', { name: /back/i }));
 
-    expect(screen.getByRole('heading', { name: /set pickup/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /plan your ride/i })).toBeInTheDocument();
   });
 
   it('uses separate pages for every bottom navigation tab and keeps the bar fixed on each page', () => {
     const pages = [
       { component: <Home />, active: /home/i, heading: /roadside help in minutes/i },
-      { component: <RequestTowPage />, active: /request/i, heading: /choose service/i },
+      { component: <RequestTowPage />, active: /request/i, heading: /sign in to request service/i },
       { component: <TrackPage />, active: /track/i, heading: /track your tow/i },
       { component: <ServicesPage />, active: /services/i, heading: /services/i },
       { component: <AccountPage />, active: /account/i, heading: /account/i },

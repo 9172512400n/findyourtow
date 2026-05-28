@@ -9,6 +9,7 @@ import { StatusTimeline } from "@/components/platform/StatusTimeline";
 import { Button } from "@/components/ui/button";
 import { Card, SectionLabel } from "@/components/ui/card";
 import { calculateQuote, formatMoney } from "@/features/pricing/pricing-engine";
+import { useDemoAuthStore } from "@/features/auth/demo-auth-store";
 import { useRequestFlowStore } from "@/features/tow-requests/request-flow-store";
 import { availableDrivers, serviceOptions } from "@/features/tow-requests/mock-data";
 import type { AvailableDriver, ServiceTypeId, TowTrip } from "@/features/tow-requests/types";
@@ -17,7 +18,7 @@ const towServiceIds: ServiceTypeId[] = ["standard_tow", "flatbed_tow", "winch_ou
 const compactServiceIds: ServiceTypeId[] = ["standard_tow", "flatbed_tow", "jump_start", "flat_tire", "lockout", "fuel_delivery", "winch_out", "battery_help"];
 const heavyVehicleTypes = new Set(["Large SUV", "Pickup truck", "Van", "Commercial vehicle"]);
 
-type FlowStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+type FlowStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
 const serviceShortNames: Record<ServiceTypeId, string> = {
   standard_tow: "Tow",
@@ -41,11 +42,22 @@ const savedPlaces = [
 
 const recentAddresses = ["Current location · 5th Ave & W 34th St", "JFK Terminal 4 pickup zone", "Atlantic Ave · Brooklyn", "Northern Blvd · Queens"];
 const predictiveAddresses = ["Trusted repair shop · Long Island City", "Pep Boys · Queens Blvd", "Home · 142-20 84th Drive, Queens", "Work · 5th Ave & W 34th St", "JFK Terminal 4 pickup zone", "Atlantic Ave · Brooklyn"];
+const ridePlannerPlaces = [
+  { name: "Terminal 4", address: "John F. Kennedy International Airport (JFK), New York", distance: "6.8 mi" },
+  { name: "29 Piermont Ave", address: "Hewlett, NY", distance: "1.0 mi" },
+  { name: "99 Eastern Blvd", address: "Baldwin, NY", distance: "6.3 mi" },
+  { name: "All Island Marine Power Center", address: "480 Reina Rd, Oceanside, NY", distance: "2.4 mi" },
+  { name: "3197 Lincoln Ave", address: "Oceanside, NY", distance: "2.9 mi" },
+  { name: "2920 Healy Ave", address: "Far Rockaway, NY", distance: "6.6 mi" },
+  { name: "1290 Waverly St", address: "Hewlett, NY", distance: "1.3 mi" },
+];
 
 export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { activeTab?: AppTabLabel; initialStep?: FlowStep } = {}) {
   const [step, setStep] = useState<FlowStep>(initialStep);
   const [matchingProgress, setMatchingProgress] = useState(0);
   const [selectingService, setSelectingService] = useState<ServiceTypeId | null>(null);
+  const user = useDemoAuthStore((state) => state.user);
+  const signInDemo = useDemoAuthStore((state) => state.signInDemo);
   const data = useRequestFlowStore((state) => state.data);
   const patch = useRequestFlowStore((state) => state.patch);
 
@@ -62,10 +74,10 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
   const canContinueFromVehicle = Boolean(data.vehicleMake.trim() && data.vehicleModel.trim() && data.vehicleYear.trim() && data.vehicleColor.trim());
 
   useEffect(() => {
-    if (step !== 6) return;
+    if (step !== 7) return;
     const ticks = [24, 48, 72, 100];
     const timers = ticks.map((value, index) => window.setTimeout(() => setMatchingProgress(value), 280 * (index + 1)));
-    const done = window.setTimeout(() => setStep(7), 1600);
+    const done = window.setTimeout(() => setStep(8), 1600);
     return () => {
       timers.forEach(window.clearTimeout);
       window.clearTimeout(done);
@@ -82,7 +94,7 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
     setSelectingService(serviceType);
     window.setTimeout(() => {
       setSelectingService(null);
-      setStep(2);
+      setStep(1);
     }, 260);
   }
 
@@ -92,9 +104,27 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
   }
 
   function startMatching() {
+    patch({ paymentStatus: "authorized" });
     setMatchingProgress(8);
-    setStep(6);
+    setStep(7);
   }
+
+  function chooseDestination(destination: string) {
+    if (isTowService) {
+      patch({
+        pickupAddress: data.pickupAddress.trim() || "Home",
+        dropoffAddress: destination,
+      });
+    } else {
+      patch({
+        pickupAddress: destination || data.pickupAddress || "Current location · 5th Ave & W 34th St",
+        dropoffAddress: "",
+      });
+    }
+    setStep(4);
+  }
+
+  const isRidePlannerStep = step === 1 && Boolean(user);
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#050608] text-white">
@@ -129,19 +159,21 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
 
       {step > 0 && (
         <div aria-label="Request flow sheet area" className="fixed inset-0 z-50 flex items-end justify-center bg-black/52 px-0 pt-0 pb-[calc(5.75rem+env(safe-area-inset-bottom))] backdrop-blur-sm sm:px-5 sm:pt-5 sm:pb-28 lg:p-5">
-          <div className="flex max-h-[calc(100dvh-5.75rem-env(safe-area-inset-bottom))] w-full max-w-[560px] flex-col overflow-hidden rounded-t-[2.2rem] border border-white/10 bg-[#080b11]/95 p-5 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:max-h-[88vh] sm:rounded-[2.4rem]">
-            <div className="mx-auto mb-3 h-1.5 w-12 shrink-0 rounded-full bg-white/18" />
-            <FlowHeader step={step} onBack={step > 1 ? () => setStep(previousStep(step, isTowService)) : undefined} onClose={() => setStep(0)} firstStepHref={activeTab === "Request" ? "/" : undefined} />
+          <div className={`flex max-h-[calc(100dvh-5.75rem-env(safe-area-inset-bottom))] w-full max-w-[560px] flex-col overflow-hidden rounded-t-[2.2rem] border p-5 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:max-h-[88vh] sm:rounded-[2.4rem] ${isRidePlannerStep ? "border-black/5 bg-[#f7f7f5] text-black" : "border-white/10 bg-[#080b11]/95 text-white"}`}>
+            <div className={`mx-auto mb-3 h-1.5 w-12 shrink-0 rounded-full ${isRidePlannerStep ? "bg-black/10" : "bg-white/18"}`} />
+            <FlowHeader step={step} light={isRidePlannerStep} onBack={step > 1 ? () => setStep(previousStep(step, isTowService)) : undefined} onClose={() => setStep(0)} firstStepHref={activeTab === "Request" ? "/" : undefined} />
             <div className="min-h-0 flex-1 overflow-y-auto pb-1">
-              {step === 1 && <ServiceStep selectedService={data.serviceType} selectingService={selectingService} onSelect={selectService} onContinue={() => selectService(data.serviceType)} />}
-              {step === 2 && <LocationStep pickupAddress={data.pickupAddress} onChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={() => patch({ pickupAddress: "Current location · 5th Ave & W 34th St" })} onNext={nextAfterLocation} />}
-              {step === 3 && isTowService && <DestinationStep dropoffAddress={data.dropoffAddress} quote={quote} distanceMiles={distanceMiles} onChange={(dropoffAddress) => patch({ dropoffAddress })} onNext={() => setStep(4)} />}
-              {step === 4 && <VehicleStep data={data} onChange={patch} onNext={() => setStep(5)} canContinue={canContinueFromVehicle} />}
-              {step === 5 && <QuoteStep quote={quote} distanceMiles={distanceMiles} selectedService={selectedService} rush={data.rush} vehicleType={data.vehicleType} onRushChange={(rush) => patch({ rush })} onNext={startMatching} />}
-              {step === 6 && <MatchingStep progress={matchingProgress} providers={providers} quote={quote} />}
-              {step === 7 && <ProviderStep provider={provider} quote={quote} onNext={() => setStep(8)} />}
-              {step === 8 && <ConfirmStep data={data} provider={provider} quote={quote} onNext={() => setStep(9)} />}
-              {step === 9 && <TrackStep trip={trip} />}
+              {!user && <LoginGate onSignIn={signInDemo} />}
+              {user && step === 1 && <RidePlannerStep pickupAddress={data.pickupAddress || "Home"} dropoffAddress={data.dropoffAddress} selectedService={selectedService} isTowService={isTowService} onPickupChange={(pickupAddress) => patch({ pickupAddress })} onDestinationChange={(dropoffAddress) => patch({ dropoffAddress })} onChooseDestination={chooseDestination} />}
+              {user && step === 2 && <LocationStep pickupAddress={data.pickupAddress} onChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={() => patch({ pickupAddress: "Current location · 5th Ave & W 34th St" })} onNext={nextAfterLocation} />}
+              {user && step === 3 && isTowService && <DestinationStep dropoffAddress={data.dropoffAddress} quote={quote} distanceMiles={distanceMiles} onChange={(dropoffAddress) => patch({ dropoffAddress })} onNext={() => setStep(4)} />}
+              {user && step === 4 && <VehicleStep data={data} onChange={patch} onNext={() => setStep(5)} canContinue={canContinueFromVehicle} />}
+              {user && step === 5 && <QuoteStep quote={quote} distanceMiles={distanceMiles} selectedService={selectedService} rush={data.rush} vehicleType={data.vehicleType} onRushChange={(rush) => patch({ rush })} onNext={() => setStep(6)} />}
+              {user && step === 6 && <PaymentStep quote={quote} onNext={startMatching} />}
+              {user && step === 7 && <MatchingStep progress={matchingProgress} providers={providers} quote={quote} />}
+              {user && step === 8 && <ProviderStep provider={provider} quote={quote} onNext={() => setStep(9)} />}
+              {user && step === 9 && <ConfirmStep data={data} provider={provider} quote={quote} onNext={() => setStep(10)} />}
+              {user && step === 10 && <TrackStep trip={trip} />}
             </div>
           </div>
         </div>
@@ -151,7 +183,8 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
 }
 
 function previousStep(step: FlowStep, isTowService: boolean): FlowStep {
-  if (step === 4 && !isTowService) return 2;
+  if (step === 4) return 1;
+  if (step === 3 && !isTowService) return 1;
   return Math.max(1, step - 1) as FlowStep;
 }
 
@@ -213,21 +246,68 @@ function CompactServices({ selectedService, selectingService, onSelect }: { sele
   return <div id="services" aria-label="Quick service selector" className="mt-6 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">{services.map((service) => <ServiceCard key={service.id} compact service={service} active={selectedService === service.id} selecting={selectingService === service.id} onClick={() => onSelect(service.id)} />)}</div>;
 }
 
-function FlowHeader({ step, onBack, onClose, firstStepHref }: { step: FlowStep; onBack?: () => void; onClose: () => void; firstStepHref?: string }) {
-  const labels: Record<FlowStep, string> = { 0: "", 1: "Service", 2: "Pickup", 3: "Destination", 4: "Vehicle", 5: "Quote", 6: "Matching", 7: "Provider", 8: "Confirm", 9: "Track" };
-  const backClass = "rounded-full bg-white px-4 py-2 text-xs font-black text-black";
-  const closeClass = "rounded-full bg-white/10 px-4 py-2 text-xs font-black text-white/70";
+function FlowHeader({ step, light = false, onBack, onClose, firstStepHref }: { step: FlowStep; light?: boolean; onBack?: () => void; onClose: () => void; firstStepHref?: string }) {
+  const labels: Record<FlowStep, string> = { 0: "", 1: "Plan", 2: "Pickup", 3: "Destination", 4: "Vehicle", 5: "Quote", 6: "Payment", 7: "Matching", 8: "Provider", 9: "Confirm", 10: "Track" };
+  const backClass = light ? "grid h-10 w-10 place-items-center rounded-full text-2xl font-bold text-black hover:bg-black/5" : "rounded-full bg-white px-4 py-2 text-xs font-black text-black";
+  const closeClass = light ? "rounded-full bg-black/5 px-4 py-2 text-xs font-black text-black/55" : "rounded-full bg-white/10 px-4 py-2 text-xs font-black text-white/70";
+  const backLabel = light ? "←" : "Back";
   return (
-    <div aria-label="Request step controls" className="sticky top-0 z-20 -mx-5 mb-5 flex items-center justify-between gap-3 border-b border-white/10 bg-[#080b11]/95 px-5 pb-4 pt-1 backdrop-blur-2xl">
-      <div className="flex items-center gap-2">{onBack ? <button type="button" onClick={onBack} className={backClass}>Back</button> : firstStepHref ? <Link href={firstStepHref} className={backClass}>Back</Link> : null}<p className="text-xs font-black uppercase tracking-[0.24em] text-blue-100/62">{labels[step]}</p></div>
-      {firstStepHref ? <Link href={firstStepHref} className={closeClass}>Close</Link> : <button type="button" onClick={onClose} className={closeClass}>Close</button>}
+    <div aria-label="Request step controls" className={`sticky top-0 z-20 -mx-5 mb-3 flex items-center justify-between gap-3 px-5 pb-3 pt-1 backdrop-blur-2xl ${light ? "bg-[#f7f7f5]/95" : "border-b border-white/10 bg-[#080b11]/95"}`}>
+      <div className="flex min-w-16 items-center gap-2">{onBack ? <button type="button" onClick={onBack} aria-label="Back" className={backClass}>{backLabel}</button> : firstStepHref ? <Link href={firstStepHref} aria-label="Back" className={backClass}>{backLabel}</Link> : null}{!light && <p className="text-xs font-black uppercase tracking-[0.24em] text-blue-100/62">{labels[step]}</p>}</div>
+      {light && <h2 className="text-xl font-black tracking-[-0.03em] text-black">Plan your ride</h2>}
+      <div className="flex min-w-16 justify-end">{!light && (firstStepHref ? <Link href={firstStepHref} className={closeClass}>Close</Link> : <button type="button" onClick={onClose} className={closeClass}>Close</button>)}</div>
     </div>
   );
 }
 
-function ServiceStep({ selectedService, selectingService, onSelect, onContinue }: { selectedService: ServiceTypeId; selectingService: ServiceTypeId | null; onSelect: (serviceType: ServiceTypeId) => void; onContinue: () => void }) {
-  const selectedLabel = serviceOptions.find((service) => service.id === selectedService)?.label ?? "selected service";
-  return <div className="space-y-4"><StepTitle title="Choose service" copy="Tap a service and we’ll move you forward automatically." /><div className="grid grid-cols-2 gap-3">{serviceOptions.slice(0, 10).map((service) => <ServiceCard key={service.id} service={service} active={selectedService === service.id} selecting={selectingService === service.id} onClick={() => onSelect(service.id)} />)}</div><div className="sticky bottom-0 -mx-1 bg-gradient-to-t from-[#080b11] via-[#080b11]/95 to-transparent pb-1 pt-6"><Button className="w-full" onClick={onContinue}>Continue with {selectedLabel}</Button></div></div>;
+function LoginGate({ onSignIn }: { onSignIn: () => void }) {
+  return <div className="space-y-4 rounded-[1.6rem] bg-white p-5 text-black"><h2 className="text-3xl font-black tracking-[-0.04em]">Sign in to request service</h2><p className="text-sm font-semibold leading-6 text-black/58">For safety, payment, saved vehicles, and live trip tracking, every service request must start from a logged-in account.</p><Button className="w-full" onClick={onSignIn}>Continue as demo customer</Button><Link href="/account" className="block text-center text-sm font-black text-black/52">Manage account</Link></div>;
+}
+
+function RidePlannerStep({ pickupAddress, dropoffAddress, selectedService, isTowService, onPickupChange, onDestinationChange, onChooseDestination }: { pickupAddress: string; dropoffAddress: string; selectedService: { label: string }; isTowService: boolean; onPickupChange: (value: string) => void; onDestinationChange: (value: string) => void; onChooseDestination: (value: string) => void }) {
+  const [query, setQuery] = useState("");
+  const visiblePlaces = ridePlannerPlaces.filter((place) => {
+    const haystack = `${place.name} ${place.address}`.toLowerCase();
+    return !query.trim() || haystack.includes(query.toLowerCase());
+  });
+  function choose(value: string) {
+    setQuery(value);
+    if (isTowService) onDestinationChange(value);
+    onChooseDestination(value);
+  }
+  const placeholder = isTowService ? "Where to?" : "Where are you?";
+  return (
+    <div className="space-y-4 pb-2 text-black">
+      <div className="flex gap-2">
+        <button type="button" className="rounded-full bg-black/[0.055] px-4 py-3 text-sm font-black">◷ Pickup now⌄</button>
+        <button type="button" className="rounded-full bg-black/[0.055] px-4 py-3 text-sm font-black">♙ For me⌄</button>
+      </div>
+
+      {!isTowService && <div className="rounded-2xl bg-black/[0.055] px-4 py-3 text-sm font-black text-black/68">{selectedService.label}: add your location, get the price, authorize payment, then we find the closest provider.</div>}
+
+      <div className="flex items-center gap-3">
+        <div className="flex-1 rounded-[1.05rem] border-2 border-black bg-white px-4 py-3 shadow-sm">
+          <div className="grid grid-cols-[1.6rem_1fr] items-center gap-2">
+            <span className="grid h-5 w-5 place-items-center rounded-full border-4 border-black" />
+            <input value={pickupAddress} onChange={(event) => onPickupChange(event.target.value)} aria-label="Pickup" className="min-w-0 border-b border-black/10 py-1 text-base font-black outline-none" />
+            <span className="grid h-5 w-5 place-items-center rounded-[0.2rem] bg-black text-[0.55rem] text-white">■</span>
+            <input autoFocus value={query} onChange={(event) => { setQuery(event.target.value); if (isTowService) onDestinationChange(event.target.value); }} placeholder={placeholder} className="min-w-0 py-1 text-base font-semibold outline-none placeholder:text-black/45" />
+          </div>
+        </div>
+        {isTowService && <button type="button" aria-label="Add stop" className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-black/[0.06] text-2xl">+</button>}
+      </div>
+
+      <div className="divide-y divide-black/8 rounded-[1.2rem] bg-white/60">
+        {visiblePlaces.slice(0, 7).map((place) => (
+          <button key={`${place.name}-${place.address}`} type="button" onClick={() => choose(isTowService ? place.name : place.address)} className="grid w-full grid-cols-[2.8rem_1fr] items-center gap-2 px-2 py-3 text-left active:bg-black/[0.04]">
+            <div className="text-center text-[0.72rem] font-bold leading-tight text-black/64"><div className="mx-auto mb-1 grid h-7 w-7 place-items-center rounded-full bg-black/[0.055] text-base text-black">◷</div>{place.distance}</div>
+            <div className="min-w-0"><p className="truncate text-base font-black">{place.name}</p><p className="truncate text-sm font-semibold text-black/58">{place.address}</p></div>
+          </button>
+        ))}
+        {visiblePlaces.length === 0 && (dropoffAddress.trim() || query.trim()) && <button type="button" onClick={() => choose(dropoffAddress || query)} className="w-full px-4 py-4 text-left font-black">Use “{dropoffAddress || query}”</button>}
+      </div>
+    </div>
+  );
 }
 
 function ServiceCard({ service, active, selecting, onClick, compact = false }: { service: (typeof serviceOptions)[number]; active: boolean; selecting: boolean; onClick: () => void; compact?: boolean }) {
@@ -257,7 +337,11 @@ function VehicleStep({ data, onChange, onNext, canContinue }: { data: ReturnType
 }
 
 function QuoteStep({ quote, selectedService, distanceMiles, rush, vehicleType, onRushChange, onNext }: { quote: ReturnType<typeof calculateQuote>; selectedService: { label: string }; distanceMiles: number; rush: boolean; vehicleType: string; onRushChange: (value: boolean) => void; onNext: () => void }) {
-  return <div className="space-y-4"><StepTitle title="Live quote" copy="Your estimate reacts to service, distance, vehicle type, and rush priority." /><div className="rounded-[1.8rem] bg-white p-5 text-black"><p className="text-sm font-black text-black/45">{selectedService.label} · {vehicleType} · {distanceMiles.toFixed(1)} mi</p><p className="mt-1 text-5xl font-black tracking-[-0.06em]">{formatMoney(quote.totalCents)}</p><div className="mt-4 space-y-2">{quote.lineItems.map((item) => <div key={`${item.code}-${item.label}`} className="flex justify-between rounded-2xl bg-black/[0.045] px-4 py-3 text-sm font-bold"><span>{humanQuoteLabel(item.code, item.label)}</span><span>{formatMoney(item.amountCents)}</span></div>)}</div></div><label className="flex items-center justify-between rounded-[1.4rem] bg-white/[0.055] px-5 py-4 text-sm font-black text-white/76"><span>Rush priority · faster ETA</span><input type="checkbox" checked={rush} onChange={(event) => onRushChange(event.target.checked)} /></label><div className="grid grid-cols-2 gap-3"><Metric label="ETA" value={`${quote.estimatedEtaMinutes} min`} /><Metric label="Final total" value={formatMoney(quote.totalCents)} /></div><Button className="w-full" onClick={onNext}>Find provider</Button></div>;
+  return <div className="space-y-4"><StepTitle title="Live quote" copy="Your estimate reacts to service, distance, vehicle type, and rush priority." /><div className="rounded-[1.8rem] bg-white p-5 text-black"><p className="text-sm font-black text-black/45">{selectedService.label} · {vehicleType} · {distanceMiles.toFixed(1)} mi</p><p className="mt-1 text-5xl font-black tracking-[-0.06em]">{formatMoney(quote.totalCents)}</p><div className="mt-4 space-y-2">{quote.lineItems.map((item) => <div key={`${item.code}-${item.label}`} className="flex justify-between rounded-2xl bg-black/[0.045] px-4 py-3 text-sm font-bold"><span>{humanQuoteLabel(item.code, item.label)}</span><span>{formatMoney(item.amountCents)}</span></div>)}</div></div><label className="flex items-center justify-between rounded-[1.4rem] bg-white/[0.055] px-5 py-4 text-sm font-black text-white/76"><span>Rush priority · faster ETA</span><input type="checkbox" checked={rush} onChange={(event) => onRushChange(event.target.checked)} /></label><div className="grid grid-cols-2 gap-3"><Metric label="ETA" value={`${quote.estimatedEtaMinutes} min`} /><Metric label="Final total" value={formatMoney(quote.totalCents)} /></div><Button className="w-full" onClick={onNext}>Continue to payment</Button></div>;
+}
+
+function PaymentStep({ quote, onNext }: { quote: ReturnType<typeof calculateQuote>; onNext: () => void }) {
+  return <div className="space-y-4"><StepTitle title="Authorize payment" copy="We authorize the card before dispatch so providers only receive real, ready jobs." /><div className="rounded-[1.8rem] bg-white p-5 text-black"><p className="text-sm font-black text-black/45">Amount authorized today</p><p className="mt-1 text-5xl font-black tracking-[-0.06em]">{formatMoney(quote.totalCents)}</p><div className="mt-4 rounded-2xl bg-black/[0.045] px-4 py-3 text-sm font-bold">Visa ending 4242 · Demo payment method</div><p className="mt-3 text-xs font-bold leading-5 text-black/45">Demo mode: no real card is charged. In production this becomes Stripe authorization before provider search.</p></div><div className="grid grid-cols-2 gap-3"><Metric label="Payment" value="Required" /><Metric label="Dispatch" value="After auth" /></div><Button className="w-full" onClick={onNext}>Authorize & find provider</Button></div>;
 }
 
 function MatchingStep({ progress, providers, quote }: { progress: number; providers: AvailableDriver[]; quote: ReturnType<typeof calculateQuote> }) {
