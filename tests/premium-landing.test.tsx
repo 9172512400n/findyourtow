@@ -38,6 +38,8 @@ describe('FindYourTow premium mobile homepage', () => {
 
     const services = screen.getByLabelText(/quick service selector/i);
     const helpCard = screen.getByLabelText(/where do you need help/i);
+    expect(within(services).getByRole('heading', { name: /choose the service you need/i })).toBeInTheDocument();
+    expect(within(services).getByText(/tap what happened/i)).toBeInTheDocument();
     expect(Boolean(services.compareDocumentPosition(helpCard) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
     for (const service of ['Tow', 'Jump', 'Flat Tire', 'Lockout', 'Fuel', 'Winch', 'Battery']) {
       expect(within(services).getByRole('button', { name: new RegExp(service, 'i') })).toBeInTheDocument();

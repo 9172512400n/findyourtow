@@ -264,7 +264,17 @@ function selectedServiceIdFromLabel(label: string): ServiceTypeId {
 
 function CompactServices({ selectedService, selectingService, onSelect }: { selectedService: ServiceTypeId; selectingService: ServiceTypeId | null; onSelect: (serviceType: ServiceTypeId) => void }) {
   const services = compactServiceIds.map((id) => serviceOptions.find((service) => service.id === id)).filter(Boolean) as typeof serviceOptions;
-  return <div id="services" aria-label="Quick service selector" className="mt-6 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">{services.map((service) => <ServiceCard key={service.id} compact service={service} active={selectedService === service.id} selecting={selectingService === service.id} onClick={() => onSelect(service.id)} />)}</div>;
+  return (
+    <section id="services" aria-label="Quick service selector" className="mt-6 space-y-3">
+      <div className="px-1">
+        <h2 className="text-xl font-black tracking-[-0.035em]">Choose the service you need</h2>
+        <p className="mt-1 text-sm font-bold text-white/50">Tap what happened — we’ll get help moving.</p>
+      </div>
+      <div className="flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {services.map((service) => <ServiceCard key={service.id} compact service={service} active={selectedService === service.id} selecting={selectingService === service.id} onClick={() => onSelect(service.id)} />)}
+      </div>
+    </section>
+  );
 }
 
 function FlowHeader({ step, onBack, onClose, firstStepHref }: { step: FlowStep; onBack?: () => void; onClose: () => void; firstStepHref?: string }) {
