@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest';
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it } from 'vitest';
 import Home from '../app/(marketing)/page';
@@ -11,10 +11,12 @@ import ServicesPage from '../app/services/page';
 import TrackPage from '../app/track/page';
 import { useDemoAuthStore } from '../src/features/auth/demo-auth-store';
 import { useRequestFlowStore } from '../src/features/tow-requests/request-flow-store';
+import { useDemoVehicleStore } from '../src/features/vehicles/demo-vehicle-store';
 
 afterEach(() => {
   useDemoAuthStore.getState().reset();
   useRequestFlowStore.getState().reset();
+  useDemoVehicleStore.getState().resetDemoVehicles();
   cleanup();
 });
 
@@ -131,6 +133,70 @@ describe('FindYourTow premium mobile homepage', () => {
     await user.click(within(flowHeader).getByRole('button', { name: /back/i }));
 
     expect(screen.getByRole('heading', { name: /request roadside help/i })).toBeInTheDocument();
+  });
+
+  it('lets customers manage saved vehicles from the account page', async () => {
+    const user = userEvent.setup();
+    render(<AccountPage />);
+
+    expect(screen.getByRole('heading', { name: /my vehicles/i })).toBeInTheDocument();
+    expect(screen.getByText(/2021 toyota camry/i)).toBeInTheDocument();
+    expect(screen.getByText(/2023 ford f-150/i)).toBeInTheDocument();
+    expect(screen.getByText(/2020 honda accord/i)).toBeInTheDocument();
+    expect(screen.getByText(/default/i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /add vehicle/i }));
+    expect(screen.getByRole('dialog', { name: /add vehicle/i })).toBeInTheDocument();
+    await user.type(screen.getByLabelText(/vehicle nickname/i), 'Rental');
+    await user.type(screen.getByLabelText(/^make$/i), 'Nissan');
+    await user.type(screen.getByLabelText(/^model$/i), 'Altima');
+    await user.type(screen.getByLabelText(/^year$/i), '2022');
+    await user.type(screen.getByLabelText(/^color$/i), 'Silver');
+    await user.type(screen.getByLabelText(/license plate/i), 'RENT22');
+    await user.click(screen.getByRole('button', { name: /save vehicle/i }));
+
+    expect(screen.getByText(/2022 nissan altima/i)).toBeInTheDocument();
+
+    await user.click(screen.getAllByRole('button', { name: /set default/i })[0]);
+    const firstCard = screen.getAllByLabelText(/saved vehicle card/i)[0];
+    expect(within(firstCard).getByText(/default/i)).toBeInTheDocument();
+  });
+
+  it('uses saved vehicles or another manual vehicle during request without forcing a save', async () => {
+    useDemoAuthStore.getState().signInDemo();
+    const user = userEvent.setup();
+    render(<RequestTowPage />);
+
+    const flow = screen.getByLabelText(/request flow sheet area/i);
+    await user.type(within(flow).getByPlaceholderText(/tow destination/i), 'Terminal 4');
+    await user.click(within(flow).getByRole('button', { name: /terminal 4/i }));
+
+    expect(await screen.findByRole('heading', { name: /vehicle details/i })).toBeInTheDocument();
+    expect(within(flow).getByRole('button', { name: /use saved vehicle/i })).toBeInTheDocument();
+    expect(within(flow).getByText(/2021 toyota camry/i)).toBeInTheDocument();
+
+    await user.click(within(flow).getByText(/2023 ford f-150/i));
+    await user.click(within(flow).getByRole('button', { name: /get instant quote/i }));
+
+    expect(useRequestFlowStore.getState().data.vehicleId).toMatch(/ford/i);
+    expect(useRequestFlowStore.getState().data.vehicleSnapshot).toMatchObject({ make: 'Ford', model: 'F-150', vehicleType: 'Pickup truck' });
+    expect(screen.getByRole('heading', { name: /live quote/i })).toBeInTheDocument();
+    expect(screen.getByText(/heavy vehicle fee/i)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /back/i }));
+    await user.click(within(flow).getByRole('button', { name: /service for another vehicle/i }));
+    await user.clear(within(flow).getByLabelText(/^make$/i));
+    await user.type(within(flow).getByLabelText(/^make$/i), 'Honda');
+    await user.clear(within(flow).getByLabelText(/^model$/i));
+    await user.type(within(flow).getByLabelText(/^model$/i), 'Civic');
+    await user.clear(within(flow).getByLabelText(/^year$/i));
+    await user.type(within(flow).getByLabelText(/^year$/i), '2018');
+    await user.clear(within(flow).getByLabelText(/^color$/i));
+    await user.type(within(flow).getByLabelText(/^color$/i), 'Blue');
+    await user.click(within(flow).getByRole('button', { name: /get instant quote/i }));
+
+    expect(useRequestFlowStore.getState().data.vehicleId).toBeNull();
+    expect(useRequestFlowStore.getState().data.vehicleSnapshot).toMatchObject({ make: 'Honda', model: 'Civic', color: 'Blue' });
   });
 
   it('uses separate pages for every bottom navigation tab and keeps the bar fixed on each page', () => {

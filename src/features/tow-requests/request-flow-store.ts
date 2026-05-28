@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import type { VehicleSnapshot } from "@/features/vehicles/types";
 import type { ServiceTypeId } from "./types";
 
 export type RequestFlowData = {
@@ -14,6 +15,12 @@ export type RequestFlowData = {
   vehicleColor: string;
   licensePlate: string;
   vehicleType: string;
+  vehicleId: string | null;
+  vehicleNickname: string;
+  vehicleVin: string;
+  vehiclePhotoUrl: string;
+  vehicleSnapshot: VehicleSnapshot | null;
+  saveVehicleToProfile: boolean;
   notes: string;
   rush: boolean;
   photoAttached: boolean;
@@ -35,7 +42,13 @@ export const initialRequestFlowData: RequestFlowData = {
   vehicleYear: "",
   vehicleColor: "",
   licensePlate: "",
-  vehicleType: "Sedan / small SUV",
+  vehicleType: "Sedan",
+  vehicleId: null,
+  vehicleNickname: "",
+  vehicleVin: "",
+  vehiclePhotoUrl: "",
+  vehicleSnapshot: null,
+  saveVehicleToProfile: false,
   notes: "",
   rush: false,
   photoAttached: false,

@@ -2,11 +2,14 @@ import { demoDrivers } from "@/features/demo/drivers";
 import { demoJobStatuses } from "@/features/demo/job-statuses";
 import { createDemoPaymentIntent, type DemoPaymentIntent } from "@/features/payments/payment-simulator";
 import { calculateQuote } from "@/features/pricing/pricing-engine";
+import { manualVehicleToSnapshot } from "@/features/vehicles/types";
 import { estimateRoute } from "@/lib/mapbox/mapbox-service";
 import type { AvailableDriver, ServiceTypeId, TowRequestPayload, TowTrip } from "./types";
 
 export type DemoTowRecord = TowTrip & {
   customer: { name: string; phone: string };
+  vehicleId: string | null;
+  vehicleSnapshot: NonNullable<TowRequestPayload["vehicleSnapshot"]>;
   vehicle: { make: string; model: string; year?: string; color?: string };
   pickup: TowTrip["pickup"] & { address: string };
   dropoff?: TowTrip["dropoff"] & { address: string };
@@ -22,6 +25,7 @@ export async function createDemoTowRequest(payload: TowRequestPayload): Promise<
     serviceType: payload.serviceType,
     distanceMiles: routeEstimate.distanceMiles,
     heavyVehicle: payload.heavyVehicle,
+    vehicleType: payload.vehicleType ?? payload.vehicleSnapshot?.vehicleType,
     rush: payload.rush,
   });
   const driver = findClosestDemoDrivers(payload.serviceType)[0] ?? demoDrivers[0];
@@ -49,14 +53,25 @@ export async function createDemoTowRequest(payload: TowRequestPayload): Promise<
     timeline,
   };
   const payment = createDemoPaymentIntent(trip);
+  const vehicleSnapshot = structuredClone(payload.vehicleSnapshot ?? manualVehicleToSnapshot({
+    vehicleId: payload.vehicleId ?? null,
+    make: payload.vehicleMake,
+    model: payload.vehicleModel,
+    year: payload.vehicleYear ?? "",
+    color: payload.vehicleColor ?? "",
+    licensePlate: payload.licensePlate ?? "",
+    vehicleType: payload.vehicleType ?? "Sedan",
+  }));
   const record: DemoTowRecord = {
     ...trip,
     customer: { name: payload.customerName, phone: payload.phone },
+    vehicleId: payload.vehicleId ?? null,
+    vehicleSnapshot,
     vehicle: {
-      make: payload.vehicleMake,
-      model: payload.vehicleModel,
-      year: payload.vehicleYear,
-      color: payload.vehicleColor,
+      make: vehicleSnapshot.make,
+      model: vehicleSnapshot.model,
+      year: vehicleSnapshot.year,
+      color: vehicleSnapshot.color,
     },
     pickup: { ...routeEstimate.pickup, address: payload.pickupAddress },
     dropoff: { ...routeEstimate.dropoff, address: payload.dropoffAddress ?? "Service location only" },

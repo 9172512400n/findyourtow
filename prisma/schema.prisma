@@ -109,8 +109,32 @@ model Customer {
   updatedAt   DateTime     @updatedAt
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   towRequests TowRequest[]
+  vehicles    Vehicle[]
 
   @@map("customers")
+}
+
+model Vehicle {
+  id           String       @id @default(cuid())
+  customerId   String       @map("customer_id")
+  nickname     String
+  make         String
+  model        String
+  year         String
+  color        String
+  licensePlate String       @map("license_plate")
+  vin          String?
+  vehicleType  String       @map("vehicle_type")
+  photoUrl     String?      @map("photo_url")
+  isDefault    Boolean      @default(false) @map("is_default")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+  customer     Customer     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  towRequests  TowRequest[]
+
+  @@index([customerId])
+  @@index([customerId, isDefault])
+  @@map("vehicles")
 }
 
 model Driver {
@@ -200,6 +224,7 @@ model TowRequest {
   id              String            @id @default(cuid())
   customerId      String
   driverId        String?
+  vehicleId       String?           @map("vehicle_id")
   serviceTypeId   String
   status          TowStatus         @default(QUOTE_CREATED)
   pickupAddress   String
@@ -215,6 +240,7 @@ model TowRequest {
   vehicleYear     String?
   vehicleColor    String?
   vehiclePhotoUrl String?
+  vehicleSnapshot Json              @default("{}") @map("vehicle_snapshot")
   notes           String?
   quoteCents      Int
   totalCents      Int
@@ -224,6 +250,7 @@ model TowRequest {
   updatedAt       DateTime          @updatedAt
   customer        Customer          @relation(fields: [customerId], references: [id])
   driver          Driver?           @relation(fields: [driverId], references: [id])
+  vehicle         Vehicle?          @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
   serviceType     ServiceType       @relation(fields: [serviceTypeId], references: [id])
   statusUpdates   TowStatusUpdate[]
   payment         Payment?

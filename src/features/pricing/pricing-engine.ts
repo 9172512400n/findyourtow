@@ -1,3 +1,4 @@
+import { isHeavyVehicleType } from "@/features/vehicles/types";
 import type { QuoteLineItem, QuoteRequest, QuoteResponse, ServiceTypeId } from "../tow-requests/types";
 
 type PricingRule = {
@@ -51,7 +52,7 @@ export function calculateQuote(request: QuoteRequest): QuoteResponse {
     lineItems.push({ code: "after_hours_fee", label: "After-hours fee", amountCents: 35 * DOLLARS });
   }
 
-  if (request.heavyVehicle) {
+  if (request.heavyVehicle || isHeavyVehicleType(request.vehicleType)) {
     lineItems.push({ code: "heavy_vehicle_fee", label: "Heavy vehicle fee", amountCents: 50 * DOLLARS });
   }
 

@@ -39,4 +39,16 @@ describe("calculateQuote", () => {
     expect(quote.totalCents).toBe(9350);
     expect(quote.lineItems.map((item) => item.code)).not.toContain("minimum_adjustment");
   });
+
+  it("derives heavy vehicle fees from supported vehicle types", () => {
+    for (const vehicleType of ["Pickup truck", "Van", "Box truck", "Heavy-duty vehicle"]) {
+      const quote = calculateQuote({ serviceType: "standard_tow", distanceMiles: 4, vehicleType });
+      expect(quote.lineItems.map((item) => item.code), vehicleType).toContain("heavy_vehicle_fee");
+    }
+
+    for (const vehicleType of ["Sedan", "SUV", "Motorcycle"]) {
+      const quote = calculateQuote({ serviceType: "standard_tow", distanceMiles: 4, vehicleType });
+      expect(quote.lineItems.map((item) => item.code), vehicleType).not.toContain("heavy_vehicle_fee");
+    }
+  });
 });

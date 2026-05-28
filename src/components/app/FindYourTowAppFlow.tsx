@@ -8,15 +8,16 @@ import { MapExperience } from "@/components/platform/MapExperience";
 import { StatusTimeline } from "@/components/platform/StatusTimeline";
 import { Button } from "@/components/ui/button";
 import { Card, SectionLabel } from "@/components/ui/card";
+import { VehicleRequestStep } from "@/components/app/VehicleRequestStep";
 import { calculateQuote, formatMoney } from "@/features/pricing/pricing-engine";
 import { useDemoAuthStore } from "@/features/auth/demo-auth-store";
 import { useRequestFlowStore } from "@/features/tow-requests/request-flow-store";
 import { availableDrivers, serviceOptions } from "@/features/tow-requests/mock-data";
+import { getCurrentPositionAddress, searchUsAddresses, type AddressSuggestion } from "@/lib/addresses/address-service";
 import type { AvailableDriver, ServiceTypeId, TowTrip } from "@/features/tow-requests/types";
 
 const towServiceIds: ServiceTypeId[] = ["standard_tow", "flatbed_tow", "winch_out", "accident_tow", "motorcycle_tow", "vehicle_transport"];
 const compactServiceIds: ServiceTypeId[] = ["standard_tow", "flatbed_tow", "jump_start", "flat_tire", "lockout", "fuel_delivery", "winch_out", "battery_help"];
-const heavyVehicleTypes = new Set(["Large SUV", "Pickup truck", "Van", "Commercial vehicle"]);
 
 type FlowStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
@@ -41,7 +42,6 @@ const savedPlaces = [
 ];
 
 const recentAddresses = ["Current location · 5th Ave & W 34th St", "JFK Terminal 4 pickup zone", "Atlantic Ave · Brooklyn", "Northern Blvd · Queens"];
-const predictiveAddresses = ["Trusted repair shop · Long Island City", "Pep Boys · Queens Blvd", "Home · 142-20 84th Drive, Queens", "Work · 5th Ave & W 34th St", "JFK Terminal 4 pickup zone", "Atlantic Ave · Brooklyn"];
 const ridePlannerPlaces = [
   { name: "Terminal 4", address: "John F. Kennedy International Airport (JFK), New York", distance: "6.8 mi" },
   { name: "29 Piermont Ave", address: "Hewlett, NY", distance: "1.0 mi" },
@@ -65,13 +65,12 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
   const isTowService = towServiceIds.includes(data.serviceType);
   const distanceMiles = useMemo(() => estimateDistance(data.pickupAddress, data.dropoffAddress, isTowService), [data.pickupAddress, data.dropoffAddress, isTowService]);
   const quote = useMemo(
-    () => calculateQuote({ serviceType: data.serviceType, distanceMiles, rush: data.rush, heavyVehicle: heavyVehicleTypes.has(data.vehicleType) }),
+    () => calculateQuote({ serviceType: data.serviceType, distanceMiles, rush: data.rush, vehicleType: data.vehicleType }),
     [data.serviceType, distanceMiles, data.rush, data.vehicleType],
   );
   const providers = useMemo(() => availableDrivers.filter((driver) => driver.services.includes(data.serviceType)).slice(0, 3), [data.serviceType]);
   const provider = providers[0] ?? availableDrivers[0];
   const trip = useMemo(() => buildAppTrip(data, provider, quote, distanceMiles), [data, provider, quote, distanceMiles]);
-  const canContinueFromVehicle = Boolean(data.vehicleMake.trim() && data.vehicleModel.trim() && data.vehicleYear.trim() && data.vehicleColor.trim());
 
   useEffect(() => {
     if (step !== 7) return;
@@ -96,6 +95,12 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
       setSelectingService(null);
       setStep(1);
     }, 260);
+  }
+
+  async function useCurrentLocation() {
+    patch({ pickupAddress: "Finding current phone location…" });
+    const result = await getCurrentPositionAddress();
+    patch({ pickupAddress: result.ok ? result.suggestion.address : "Current location · 5th Ave & W 34th St" });
   }
 
   function startFlow() {
@@ -143,7 +148,7 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
               <h1 className="text-balance text-6xl font-black leading-[0.88] tracking-[-0.075em] sm:text-7xl">Roadside help in minutes.</h1>
               <p className="max-w-sm text-base font-semibold leading-7 text-white/58">Towing, lockouts, jump starts, tire help, fuel delivery, and more.</p>
             </div>
-            <HelpInputCard pickupAddress={data.pickupAddress} selectedService={selectedService} onPickupChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={() => patch({ pickupAddress: "Current location · 5th Ave & W 34th St" })} onStart={startFlow} />
+            <HelpInputCard pickupAddress={data.pickupAddress} selectedService={selectedService} onPickupChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={useCurrentLocation} onStart={startFlow} />
             <CompactServices selectedService={data.serviceType} selectingService={selectingService} onSelect={selectService} />
           </div>
         </div>
@@ -165,9 +170,9 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
             <div className="min-h-0 flex-1 overflow-y-auto pb-1">
               {!user && <LoginGate onSignIn={signInDemo} />}
               {user && step === 1 && <RidePlannerStep pickupAddress={data.pickupAddress || "Home"} dropoffAddress={data.dropoffAddress} selectedService={selectedService} isTowService={isTowService} onPickupChange={(pickupAddress) => patch({ pickupAddress })} onDestinationChange={(dropoffAddress) => patch({ dropoffAddress })} onChooseDestination={chooseDestination} />}
-              {user && step === 2 && <LocationStep pickupAddress={data.pickupAddress} onChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={() => patch({ pickupAddress: "Current location · 5th Ave & W 34th St" })} onNext={nextAfterLocation} />}
+              {user && step === 2 && <LocationStep pickupAddress={data.pickupAddress} onChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={useCurrentLocation} onNext={nextAfterLocation} />}
               {user && step === 3 && isTowService && <DestinationStep dropoffAddress={data.dropoffAddress} quote={quote} distanceMiles={distanceMiles} onChange={(dropoffAddress) => patch({ dropoffAddress })} onNext={() => setStep(4)} />}
-              {user && step === 4 && <VehicleStep data={data} onChange={patch} onNext={() => setStep(5)} canContinue={canContinueFromVehicle} />}
+              {user && step === 4 && <VehicleRequestStep data={data} onChange={patch} onNext={() => setStep(5)} />}
               {user && step === 5 && <QuoteStep quote={quote} distanceMiles={distanceMiles} selectedService={selectedService} rush={data.rush} vehicleType={data.vehicleType} onRushChange={(rush) => patch({ rush })} onNext={() => setStep(6)} />}
               {user && step === 6 && <PaymentStep quote={quote} onNext={startMatching} />}
               {user && step === 7 && <MatchingStep progress={matchingProgress} providers={providers} quote={quote} />}
@@ -330,17 +335,23 @@ function DestinationStep({ dropoffAddress, quote, distanceMiles, onChange, onNex
 }
 
 function AddressInputPanel({ label, value, onChange, onUseCurrent, includeCurrent = false }: { label: string; value: string; onChange: (value: string) => void; onUseCurrent?: () => void; includeCurrent?: boolean }) {
-  const suggestions = predictiveAddresses.filter((address) => !value || address.toLowerCase().includes(value.toLowerCase()) || value.length < 3).slice(0, 4);
-  return <div className="rounded-[1.6rem] border border-white/10 bg-black/24 p-3"><label className="px-1 text-xs font-black uppercase tracking-[0.2em] text-white/40">{label}</label><div className="mt-2 flex gap-2">{includeCurrent && <button type="button" onClick={onUseCurrent} className="rounded-full bg-white px-3 py-2 text-xs font-black text-black">Use current</button>}<input value={value} onChange={(event) => onChange(event.target.value)} placeholder="Search address or landmark" className="min-w-0 flex-1 rounded-full border border-white/10 bg-black/35 px-4 py-3 text-sm font-bold outline-none focus:border-blue-300" /></div><SuggestionGroup title="Suggestions" items={suggestions} onPick={onChange} /><SuggestionGroup title="Saved places" items={savedPlaces.map((place) => `${place.label} · ${place.address.split(" · ").pop()}`)} onPick={(item) => onChange(savedPlaces.find((place) => item.startsWith(place.label))?.address ?? item)} /><SuggestionGroup title="Recent" items={recentAddresses.slice(0, 3)} onPick={onChange} /></div>;
+  const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    searchUsAddresses(value).then((items) => {
+      if (!cancelled) setSuggestions(items);
+    });
+    return () => { cancelled = true; };
+  }, [value]);
+  return <div className="rounded-[1.6rem] border border-white/10 bg-black/24 p-3"><label className="px-1 text-xs font-black uppercase tracking-[0.2em] text-white/40">{label}</label><div className="mt-2 flex gap-2">{includeCurrent && <button type="button" onClick={onUseCurrent} className="rounded-full bg-white px-3 py-2 text-xs font-black text-black">Use current</button>}<input value={value} onChange={(event) => onChange(event.target.value)} placeholder="Search exact USA address or landmark" className="min-w-0 flex-1 rounded-full border border-white/10 bg-black/35 px-4 py-3 text-sm font-bold outline-none focus:border-blue-300" /></div><AddressSuggestionGroup title="Exact US address matches" items={suggestions} onPick={(item) => onChange(item.address)} /><SuggestionGroup title="Saved places" items={savedPlaces.map((place) => `${place.label} · ${place.address.split(" · ").pop()}`)} onPick={(item) => onChange(savedPlaces.find((place) => item.startsWith(place.label))?.address ?? item)} /><SuggestionGroup title="Recent" items={recentAddresses.slice(0, 3)} onPick={onChange} /></div>;
+}
+
+function AddressSuggestionGroup({ title, items, onPick }: { title: string; items: AddressSuggestion[]; onPick: (value: AddressSuggestion) => void }) {
+  return <div className="mt-3"><p className="px-1 text-[0.62rem] font-black uppercase tracking-[0.2em] text-blue-100/42">{title}</p><div className="mt-2 flex flex-wrap gap-2">{items.map((item) => <button key={`${title}-${item.id}`} type="button" onClick={() => onPick(item)} className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 text-xs font-black text-white/70">{item.label}</button>)}</div></div>;
 }
 
 function SuggestionGroup({ title, items, onPick }: { title: string; items: string[]; onPick: (value: string) => void }) {
   return <div className="mt-3"><p className="px-1 text-[0.62rem] font-black uppercase tracking-[0.2em] text-blue-100/42">{title}</p><div className="mt-2 flex flex-wrap gap-2">{items.map((item) => <button key={`${title}-${item}`} type="button" onClick={() => onPick(item)} className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 text-xs font-black text-white/70">{item}</button>)}</div></div>;
-}
-
-function VehicleStep({ data, onChange, onNext, canContinue }: { data: ReturnType<typeof useRequestFlowStore.getState>["data"]; onChange: (next: Partial<ReturnType<typeof useRequestFlowStore.getState>["data"]>) => void; onNext: () => void; canContinue: boolean }) {
-  const fields: Array<[keyof typeof data, string]> = [["vehicleMake", "Make"], ["vehicleModel", "Model"], ["vehicleYear", "Year"], ["vehicleColor", "Color"], ["licensePlate", "Plate"]];
-  return <div className="space-y-4"><StepTitle title="Vehicle details" copy="Just enough for the provider to identify your vehicle quickly." /><div className="grid gap-3 sm:grid-cols-2">{fields.map(([key, placeholder]) => <input key={key} value={String(data[key] ?? "")} onChange={(event) => onChange({ [key]: event.target.value })} placeholder={placeholder} className="rounded-[1.25rem] border border-white/10 bg-black/35 px-4 py-4 font-bold outline-none focus:border-blue-300" />)}</div><select value={data.vehicleType} onChange={(event) => onChange({ vehicleType: event.target.value })} className="w-full rounded-[1.25rem] border border-white/10 bg-black/35 px-4 py-4 font-bold outline-none focus:border-blue-300">{["Sedan / small SUV", "Large SUV", "Pickup truck", "Van", "Motorcycle", "Commercial vehicle"].map((type) => <option key={type}>{type}</option>)}</select><textarea value={data.notes} onChange={(event) => onChange({ notes: event.target.value })} placeholder="Optional notes" className="min-h-20 w-full rounded-[1.25rem] border border-white/10 bg-black/35 px-4 py-4 font-bold outline-none focus:border-blue-300" /><button type="button" onClick={() => onChange({ photoAttached: true })} className="w-full rounded-[1.3rem] border border-dashed border-white/18 bg-white/[0.045] px-5 py-4 text-left font-black text-white/72">{data.photoAttached ? "Photo attached" : "Upload vehicle photo"}</button><Button className="w-full" disabled={!canContinue} onClick={onNext}>Get instant quote</Button></div>;
 }
 
 function QuoteStep({ quote, selectedService, distanceMiles, rush, vehicleType, onRushChange, onNext }: { quote: ReturnType<typeof calculateQuote>; selectedService: { label: string }; distanceMiles: number; rush: boolean; vehicleType: string; onRushChange: (value: boolean) => void; onNext: () => void }) {

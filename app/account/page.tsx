@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { AppTabPageShell } from "@/components/app/AppTabPageShell";
+import { VehicleProfileManager } from "@/components/app/VehicleProfileManager";
 
 const accountItems = [
-  { label: "Saved vehicles", value: "2", copy: "BMW X5, Toyota Camry" },
+  { label: "Saved vehicles", value: "3", copy: "Toyota Camry, Ford F-150, Honda Accord" },
   { label: "Payment methods", value: "1", copy: "Visa ending 4242" },
   { label: "Trip history", value: "6", copy: "Past roadside jobs" },
 ];
@@ -35,6 +36,7 @@ export default function AccountPage() {
             </div>
           ))}
         </section>
+        <div className="lg:col-span-2"><VehicleProfileManager /></div>
       </div>
     </AppTabPageShell>
   );

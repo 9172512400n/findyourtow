@@ -1,3 +1,5 @@
+import type { VehicleSnapshot, VehicleType } from "@/features/vehicles/types";
+
 export const serviceTypeIds = [
   "standard_tow",
   "flatbed_tow",
@@ -53,6 +55,7 @@ export type QuoteRequest = {
   distanceMiles: number;
   afterHours?: boolean;
   heavyVehicle?: boolean;
+  vehicleType?: VehicleType | string;
   rush?: boolean;
 };
 
@@ -100,10 +103,14 @@ export type TowRequestPayload = {
   serviceType: ServiceTypeId;
   pickupAddress: string;
   dropoffAddress?: string;
+  vehicleId?: string | null;
+  vehicleSnapshot?: VehicleSnapshot;
   vehicleMake: string;
   vehicleModel: string;
   vehicleYear?: string;
   vehicleColor?: string;
+  licensePlate?: string;
+  vehicleType?: VehicleType | string;
   notes?: string;
   heavyVehicle?: boolean;
   rush?: boolean;
