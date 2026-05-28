@@ -159,9 +159,9 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
 
       {step > 0 && (
         <div aria-label="Request flow sheet area" className="fixed inset-0 z-50 flex items-end justify-center bg-black/52 px-0 pt-0 pb-[calc(5.75rem+env(safe-area-inset-bottom))] backdrop-blur-sm sm:px-5 sm:pt-5 sm:pb-28 lg:p-5">
-          <div className={`flex max-h-[calc(100dvh-5.75rem-env(safe-area-inset-bottom))] w-full max-w-[560px] flex-col overflow-hidden rounded-t-[2.2rem] border p-5 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:max-h-[88vh] sm:rounded-[2.4rem] ${isRidePlannerStep ? "border-black/5 bg-[#f7f7f5] text-black" : "border-white/10 bg-[#080b11]/95 text-white"}`}>
-            <div className={`mx-auto mb-3 h-1.5 w-12 shrink-0 rounded-full ${isRidePlannerStep ? "bg-black/10" : "bg-white/18"}`} />
-            <FlowHeader step={step} light={isRidePlannerStep} onBack={step > 1 ? () => setStep(previousStep(step, isTowService)) : undefined} onClose={() => setStep(0)} firstStepHref={activeTab === "Request" ? "/" : undefined} />
+          <div className={`flex max-h-[calc(100dvh-5.75rem-env(safe-area-inset-bottom))] w-full max-w-[560px] flex-col overflow-hidden rounded-t-[2.2rem] border p-5 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:max-h-[88vh] sm:rounded-[2.4rem] ${isRidePlannerStep ? "border-blue-400/20 bg-[#07111d]/95 text-white" : "border-white/10 bg-[#080b11]/95 text-white"}`}>
+            <div className={`mx-auto mb-3 h-1.5 w-12 shrink-0 rounded-full ${isRidePlannerStep ? "bg-blue-200/24" : "bg-white/18"}`} />
+            <FlowHeader step={step} onBack={step > 1 ? () => setStep(previousStep(step, isTowService)) : undefined} onClose={() => setStep(0)} firstStepHref={activeTab === "Request" ? "/" : undefined} />
             <div className="min-h-0 flex-1 overflow-y-auto pb-1">
               {!user && <LoginGate onSignIn={signInDemo} />}
               {user && step === 1 && <RidePlannerStep pickupAddress={data.pickupAddress || "Home"} dropoffAddress={data.dropoffAddress} selectedService={selectedService} isTowService={isTowService} onPickupChange={(pickupAddress) => patch({ pickupAddress })} onDestinationChange={(dropoffAddress) => patch({ dropoffAddress })} onChooseDestination={chooseDestination} />}
@@ -246,16 +246,14 @@ function CompactServices({ selectedService, selectingService, onSelect }: { sele
   return <div id="services" aria-label="Quick service selector" className="mt-6 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">{services.map((service) => <ServiceCard key={service.id} compact service={service} active={selectedService === service.id} selecting={selectingService === service.id} onClick={() => onSelect(service.id)} />)}</div>;
 }
 
-function FlowHeader({ step, light = false, onBack, onClose, firstStepHref }: { step: FlowStep; light?: boolean; onBack?: () => void; onClose: () => void; firstStepHref?: string }) {
+function FlowHeader({ step, onBack, onClose, firstStepHref }: { step: FlowStep; onBack?: () => void; onClose: () => void; firstStepHref?: string }) {
   const labels: Record<FlowStep, string> = { 0: "", 1: "Plan", 2: "Pickup", 3: "Destination", 4: "Vehicle", 5: "Quote", 6: "Payment", 7: "Matching", 8: "Provider", 9: "Confirm", 10: "Track" };
-  const backClass = light ? "grid h-10 w-10 place-items-center rounded-full text-2xl font-bold text-black hover:bg-black/5" : "rounded-full bg-white px-4 py-2 text-xs font-black text-black";
-  const closeClass = light ? "rounded-full bg-black/5 px-4 py-2 text-xs font-black text-black/55" : "rounded-full bg-white/10 px-4 py-2 text-xs font-black text-white/70";
-  const backLabel = light ? "←" : "Back";
+  const backClass = "rounded-full bg-white px-4 py-2 text-xs font-black text-black";
+  const closeClass = "rounded-full bg-white/10 px-4 py-2 text-xs font-black text-white/70";
   return (
-    <div aria-label="Request step controls" className={`sticky top-0 z-20 -mx-5 mb-3 flex items-center justify-between gap-3 px-5 pb-3 pt-1 backdrop-blur-2xl ${light ? "bg-[#f7f7f5]/95" : "border-b border-white/10 bg-[#080b11]/95"}`}>
-      <div className="flex min-w-16 items-center gap-2">{onBack ? <button type="button" onClick={onBack} aria-label="Back" className={backClass}>{backLabel}</button> : firstStepHref ? <Link href={firstStepHref} aria-label="Back" className={backClass}>{backLabel}</Link> : null}{!light && <p className="text-xs font-black uppercase tracking-[0.24em] text-blue-100/62">{labels[step]}</p>}</div>
-      {light && <h2 className="text-xl font-black tracking-[-0.03em] text-black">Plan your ride</h2>}
-      <div className="flex min-w-16 justify-end">{!light && (firstStepHref ? <Link href={firstStepHref} className={closeClass}>Close</Link> : <button type="button" onClick={onClose} className={closeClass}>Close</button>)}</div>
+    <div aria-label="Request step controls" className="sticky top-0 z-20 -mx-5 mb-3 flex items-center justify-between gap-3 border-b border-white/10 bg-[#080b11]/95 px-5 pb-3 pt-1 backdrop-blur-2xl">
+      <div className="flex min-w-16 items-center gap-2">{onBack ? <button type="button" onClick={onBack} aria-label="Back" className={backClass}>Back</button> : firstStepHref ? <Link href={firstStepHref} aria-label="Back" className={backClass}>Back</Link> : null}<p className="text-xs font-black uppercase tracking-[0.24em] text-blue-100/62">{labels[step]}</p></div>
+      <div className="flex min-w-16 justify-end">{firstStepHref ? <Link href={firstStepHref} className={closeClass}>Close</Link> : <button type="button" onClick={onClose} className={closeClass}>Close</button>}</div>
     </div>
   );
 }
@@ -275,36 +273,45 @@ function RidePlannerStep({ pickupAddress, dropoffAddress, selectedService, isTow
     if (isTowService) onDestinationChange(value);
     onChooseDestination(value);
   }
-  const placeholder = isTowService ? "Where to?" : "Where are you?";
+  const placeholder = isTowService ? "Tow destination" : "Where are you?";
   return (
-    <div className="space-y-4 pb-2 text-black">
-      <div className="flex gap-2">
-        <button type="button" className="rounded-full bg-black/[0.055] px-4 py-3 text-sm font-black">◷ Pickup now⌄</button>
-        <button type="button" className="rounded-full bg-black/[0.055] px-4 py-3 text-sm font-black">♙ For me⌄</button>
+    <div className="space-y-4 pb-2 text-white">
+      <div className="space-y-2">
+        <p className="text-[0.68rem] font-black uppercase tracking-[0.26em] text-blue-100/45">Tow details</p>
+        <h2 className="text-3xl font-black tracking-[-0.05em]">Request roadside help</h2>
+        <p className="text-sm font-bold leading-6 text-white/54">Set the service location, review the price, authorize payment, then we match a verified nearby provider.</p>
       </div>
 
-      {!isTowService && <div className="rounded-2xl bg-black/[0.055] px-4 py-3 text-sm font-black text-black/68">{selectedService.label}: add your location, get the price, authorize payment, then we find the closest provider.</div>}
+      <div className="flex flex-wrap gap-2">
+        <span className="rounded-full border border-blue-300/20 bg-blue-400/12 px-4 py-2 text-xs font-black text-blue-50">{selectedService.label}</span>
+        <span className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-xs font-black text-white/62">Provider matched after payment</span>
+      </div>
 
-      <div className="flex items-center gap-3">
-        <div className="flex-1 rounded-[1.05rem] border-2 border-black bg-white px-4 py-3 shadow-sm">
-          <div className="grid grid-cols-[1.6rem_1fr] items-center gap-2">
-            <span className="grid h-5 w-5 place-items-center rounded-full border-4 border-black" />
-            <input value={pickupAddress} onChange={(event) => onPickupChange(event.target.value)} aria-label="Pickup" className="min-w-0 border-b border-black/10 py-1 text-base font-black outline-none" />
-            <span className="grid h-5 w-5 place-items-center rounded-[0.2rem] bg-black text-[0.55rem] text-white">■</span>
-            <input autoFocus value={query} onChange={(event) => { setQuery(event.target.value); if (isTowService) onDestinationChange(event.target.value); }} placeholder={placeholder} className="min-w-0 py-1 text-base font-semibold outline-none placeholder:text-black/45" />
-          </div>
+      {!isTowService && <div className="rounded-[1.25rem] border border-emerald-300/18 bg-emerald-400/10 px-4 py-3 text-sm font-black text-emerald-50/82">{selectedService.label}: add your location, get the price, authorize payment, then we find the closest provider.</div>}
+
+      <div className="rounded-[1.55rem] border border-blue-200/18 bg-black/28 p-4 shadow-[0_22px_70px_rgba(14,116,144,.24)]">
+        <div className="grid grid-cols-[2rem_1fr] items-center gap-x-3 gap-y-3">
+          <span className="grid h-8 w-8 place-items-center rounded-2xl bg-emerald-300 text-xs font-black text-emerald-950">PIN</span>
+          <label className="min-w-0">
+            <span className="block text-[0.62rem] font-black uppercase tracking-[0.2em] text-white/36">Service location</span>
+            <input value={pickupAddress} onChange={(event) => onPickupChange(event.target.value)} aria-label="Pickup" className="mt-1 w-full min-w-0 border-b border-white/10 bg-transparent py-1 text-base font-black text-white outline-none focus:border-blue-300" />
+          </label>
+          <span className="grid h-8 w-8 place-items-center rounded-2xl bg-blue-400 text-xs font-black text-blue-950">TOW</span>
+          <label className="min-w-0">
+            <span className="block text-[0.62rem] font-black uppercase tracking-[0.2em] text-white/36">{isTowService ? "Drop-off" : "Roadside service"}</span>
+            <input autoFocus value={query} onChange={(event) => { setQuery(event.target.value); if (isTowService) onDestinationChange(event.target.value); }} placeholder={placeholder} className="mt-1 w-full min-w-0 bg-transparent py-1 text-base font-semibold text-white outline-none placeholder:text-white/38" />
+          </label>
         </div>
-        {isTowService && <button type="button" aria-label="Add stop" className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-black/[0.06] text-2xl">+</button>}
       </div>
 
-      <div className="divide-y divide-black/8 rounded-[1.2rem] bg-white/60">
+      <div className="overflow-hidden rounded-[1.4rem] border border-white/10 bg-white/[0.055]">
         {visiblePlaces.slice(0, 7).map((place) => (
-          <button key={`${place.name}-${place.address}`} type="button" onClick={() => choose(isTowService ? place.name : place.address)} className="grid w-full grid-cols-[2.8rem_1fr] items-center gap-2 px-2 py-3 text-left active:bg-black/[0.04]">
-            <div className="text-center text-[0.72rem] font-bold leading-tight text-black/64"><div className="mx-auto mb-1 grid h-7 w-7 place-items-center rounded-full bg-black/[0.055] text-base text-black">◷</div>{place.distance}</div>
-            <div className="min-w-0"><p className="truncate text-base font-black">{place.name}</p><p className="truncate text-sm font-semibold text-black/58">{place.address}</p></div>
+          <button key={`${place.name}-${place.address}`} type="button" onClick={() => choose(isTowService ? place.name : place.address)} className="grid w-full grid-cols-[3rem_1fr] items-center gap-2 border-b border-white/8 px-3 py-3 text-left last:border-b-0 active:bg-blue-400/10">
+            <div className="text-center text-[0.72rem] font-bold leading-tight text-white/50"><div className="mx-auto mb-1 grid h-8 w-8 place-items-center rounded-2xl bg-blue-400/14 text-base text-blue-100">⌖</div>{place.distance}</div>
+            <div className="min-w-0"><p className="truncate text-base font-black text-white">{place.name}</p><p className="truncate text-sm font-semibold text-white/52">{place.address}</p></div>
           </button>
         ))}
-        {visiblePlaces.length === 0 && (dropoffAddress.trim() || query.trim()) && <button type="button" onClick={() => choose(dropoffAddress || query)} className="w-full px-4 py-4 text-left font-black">Use “{dropoffAddress || query}”</button>}
+        {visiblePlaces.length === 0 && (dropoffAddress.trim() || query.trim()) && <button type="button" onClick={() => choose(dropoffAddress || query)} className="w-full px-4 py-4 text-left font-black text-white">Use “{dropoffAddress || query}”</button>}
       </div>
     </div>
   );

@@ -75,20 +75,23 @@ describe('FindYourTow premium mobile homepage', () => {
 
     await user.click(screen.getByRole('button', { name: /continue as demo customer/i }));
 
-    expect(screen.getByRole('heading', { name: /plan your ride/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /request roadside help/i })).toBeInTheDocument();
   });
 
-  it('opens the request tab as an Uber-style destination-first ride planner after login', () => {
+  it('opens the request tab as a FindYourTow-branded roadside planner after login', () => {
     useDemoAuthStore.getState().signInDemo();
     render(<RequestTowPage />);
 
     const flow = screen.getByLabelText(/request flow sheet area/i);
     expect(flow).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /plan your ride/i })).toBeInTheDocument();
-    expect(within(flow).getByRole('button', { name: /pickup now/i })).toBeInTheDocument();
-    expect(within(flow).getByRole('button', { name: /for me/i })).toBeInTheDocument();
+    expect(flow.firstElementChild).toHaveClass('bg-[#07111d]/95', 'text-white');
+    expect(screen.getByRole('heading', { name: /request roadside help/i })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /plan your ride/i })).not.toBeInTheDocument();
+    expect(within(flow).queryByRole('button', { name: /pickup now/i })).not.toBeInTheDocument();
+    expect(within(flow).queryByRole('button', { name: /for me/i })).not.toBeInTheDocument();
+    expect(within(flow).getByText(/tow details/i)).toBeInTheDocument();
     expect(within(flow).getByDisplayValue(/home/i)).toBeInTheDocument();
-    expect(within(flow).getByPlaceholderText(/where to/i)).toBeInTheDocument();
+    expect(within(flow).getByPlaceholderText(/tow destination/i)).toBeInTheDocument();
     expect(within(flow).getByText(/terminal 4/i)).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: /choose service/i })).not.toBeInTheDocument();
     const bottomNav = screen.getByRole('navigation', { name: /main app navigation/i });
@@ -114,9 +117,9 @@ describe('FindYourTow premium mobile homepage', () => {
 
     const flow = screen.getByLabelText(/request flow sheet area/i);
     expect(flow.firstElementChild).toHaveClass('overflow-hidden');
-    expect(screen.getByRole('heading', { name: /plan your ride/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /request roadside help/i })).toBeInTheDocument();
 
-    await user.type(within(flow).getByPlaceholderText(/where to/i), 'Terminal 4');
+    await user.type(within(flow).getByPlaceholderText(/tow destination/i), 'Terminal 4');
     await user.click(within(flow).getByRole('button', { name: /terminal 4/i }));
 
     expect(await screen.findByRole('heading', { name: /vehicle details/i })).toBeInTheDocument();
@@ -127,7 +130,7 @@ describe('FindYourTow premium mobile homepage', () => {
 
     await user.click(within(flowHeader).getByRole('button', { name: /back/i }));
 
-    expect(screen.getByRole('heading', { name: /plan your ride/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /request roadside help/i })).toBeInTheDocument();
   });
 
   it('uses separate pages for every bottom navigation tab and keeps the bar fixed on each page', () => {
