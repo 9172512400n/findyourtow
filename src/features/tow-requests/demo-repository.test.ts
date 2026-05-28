@@ -4,11 +4,11 @@ import { createDemoTowRequest, findClosestDemoDrivers, getDemoTowRequest } from 
 describe("demo tow request repository", () => {
   it("saves vehicle, locations, price, payment status, and timeline in safe demo memory", async () => {
     const trip = await createDemoTowRequest({
-      customerName: "Nir",
-      phone: "+19172512400",
+      customerName: "Demo Customer",
+      phone: "+1000010100",
       serviceType: "flatbed_tow",
-      pickupAddress: "4827 Cedar Loop, Meadowbrook, NY",
-      dropoffAddress: "20 W 34th St, New York, NY",
+      pickupAddress: "7148 Pixel Pkwy, Demo Springs",
+      dropoffAddress: "2200 Mockingbird Ct, Demo Springs",
       vehicleMake: "BMW",
       vehicleModel: "X5",
       vehicleYear: "2024",
@@ -32,8 +32,8 @@ describe("demo tow request repository", () => {
     expect(saved?.vehicleId).toBe("veh_saved_bmw");
     expect(saved?.vehicleSnapshot).toMatchObject({ make: "BMW", model: "X5", vehicleType: "SUV" });
     expect(saved?.vehicle.make).toBe("BMW");
-    expect(saved?.pickup.address).toContain("4827 Cedar Loop");
-    expect(saved?.dropoff?.address).toContain("20 W 34th");
+    expect(saved?.pickup.address).toContain("7148 Pixel Pkwy");
+    expect(saved?.dropoff?.address).toContain("2200 Mockingbird Ct");
     expect(saved?.quote.totalCents).toBeGreaterThan(0);
     expect(saved?.payment.status).toBe("demo_authorized");
     expect(saved?.timeline.map((item) => item.status)).toContain("awaiting_payment");
@@ -50,11 +50,11 @@ describe("demo tow request repository", () => {
     };
 
     const trip = await createDemoTowRequest({
-      customerName: "Nir",
-      phone: "+19172512400",
+      customerName: "Demo Customer",
+      phone: "+1000010100",
       serviceType: "standard_tow",
-      pickupAddress: "Sample Auto Center",
-      dropoffAddress: "Queens Blvd",
+      pickupAddress: "Random Auto Center",
+      dropoffAddress: "Placeholder Blvd",
       vehicleMake: "Honda",
       vehicleModel: "Civic",
       vehicleYear: "2018",

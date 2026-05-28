@@ -36,7 +36,7 @@ type RequestFlowStore = {
 export const initialRequestFlowData: RequestFlowData = {
   serviceType: "standard_tow",
   pickupAddress: "",
-  dropoffAddress: "Trusted repair shop · 2400 Harbor Point Dr",
+  dropoffAddress: "Trusted repair shop · 2200 Mockingbird Ct",
   vehicleMake: "",
   vehicleModel: "",
   vehicleYear: "",

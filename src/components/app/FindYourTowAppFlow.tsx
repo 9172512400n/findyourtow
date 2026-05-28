@@ -42,20 +42,20 @@ const serviceShortNames: Record<ServiceTypeId, string> = {
 };
 
 const savedPlaces = [
-  { label: "Home", address: "Home · 4827 Cedar Loop, Meadowbrook", distance: 4.2 },
-  { label: "Work", address: "Work · 1180 Blue Ridge Ave", distance: 6.3 },
-  { label: "Repair Shop", address: "Trusted repair shop · 2400 Harbor Point Dr", distance: 7.8 },
+  { label: "Home", address: "Home · 7148 Pixel Pkwy, Demo Springs", distance: 4.2 },
+  { label: "Work", address: "Work · 3321 Placeholder Ave", distance: 6.3 },
+  { label: "Repair Shop", address: "Trusted repair shop · 2200 Mockingbird Ct", distance: 7.8 },
 ];
 
-const recentAddresses = ["Current location · 1180 Blue Ridge Ave", "Maple Ridge shopping plaza", "Cedar Loop service lane", "Harbor Point frontage road"];
+const recentAddresses = ["Current location · 3321 Placeholder Ave", "Mockingbird shopping plaza", "Pixel Pkwy service lane", "Example frontage road"];
 const ridePlannerPlaces = [
-  { name: "Sample Auto Center", address: "2400 Harbor Point Dr, Meadowbrook", distance: "2.2 mi" },
-  { name: "4827 Cedar Loop", address: "Meadowbrook, NY", distance: "1.0 mi" },
-  { name: "1180 Blue Ridge Ave", address: "Riverton, NY", distance: "3.4 mi" },
-  { name: "77 Maple Ridge Plaza", address: "Brookfield, NY", distance: "4.1 mi" },
-  { name: "910 Willow Creek Rd", address: "Stonebridge, NY", distance: "5.6 mi" },
-  { name: "315 Harbor Point Dr", address: "Meadowbrook, NY", distance: "2.9 mi" },
-  { name: "640 Summit Auto Lane", address: "Riverton, NY", distance: "6.3 mi" },
+  { name: "Random Auto Center", address: "2200 Mockingbird Ct, Demo Springs", distance: "2.2 mi" },
+  { name: "7148 Pixel Pkwy", address: "Demo Springs", distance: "1.0 mi" },
+  { name: "3321 Placeholder Ave", address: "Fiction Falls", distance: "3.4 mi" },
+  { name: "8891 Sandbox Plaza", address: "Sampleton", distance: "4.1 mi" },
+  { name: "5074 Widget Road", address: "Mockville", distance: "5.6 mi" },
+  { name: "4312 Example Drive", address: "Demo Springs", distance: "2.9 mi" },
+  { name: "7600 Test Auto Lane", address: "Fiction Falls", distance: "6.3 mi" },
 ];
 
 export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { activeTab?: AppTabLabel; initialStep?: FlowStep } = {}) {
@@ -80,7 +80,7 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
 
   useEffect(() => {
     if (activeTab !== "Request" || initialStep !== 1) return;
-    patch({ serviceType: "standard_tow", dropoffAddress: data.dropoffAddress || "Trusted repair shop · 2400 Harbor Point Dr" });
+    patch({ serviceType: "standard_tow", dropoffAddress: data.dropoffAddress || "Trusted repair shop · 2200 Mockingbird Ct" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -101,7 +101,7 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
 
   function updateService(serviceType: ServiceTypeId) {
     const tow = towServiceIds.includes(serviceType);
-    patch({ serviceType, dropoffAddress: tow ? data.dropoffAddress || "Trusted repair shop · 2400 Harbor Point Dr" : "" });
+    patch({ serviceType, dropoffAddress: tow ? data.dropoffAddress || "Trusted repair shop · 2200 Mockingbird Ct" : "" });
   }
 
   function selectService(serviceType: ServiceTypeId) {
@@ -116,11 +116,11 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
   async function useCurrentLocation() {
     patch({ pickupAddress: "Finding current phone location…" });
     const result = await getCurrentPositionAddress();
-    patch({ pickupAddress: result.ok ? result.suggestion.address : "Current location · 1180 Blue Ridge Ave" });
+    patch({ pickupAddress: result.ok ? result.suggestion.address : "Current location · 3321 Placeholder Ave" });
   }
 
   function startFlow() {
-    if (!data.pickupAddress.trim()) patch({ pickupAddress: "Current location · 1180 Blue Ridge Ave" });
+    if (!data.pickupAddress.trim()) patch({ pickupAddress: "Current location · 3321 Placeholder Ave" });
     setStep(1);
   }
 
@@ -138,7 +138,7 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
       });
     } else {
       patch({
-        pickupAddress: destination || data.pickupAddress || "Current location · 1180 Blue Ridge Ave",
+        pickupAddress: destination || data.pickupAddress || "Current location · 3321 Placeholder Ave",
         dropoffAddress: "",
       });
     }

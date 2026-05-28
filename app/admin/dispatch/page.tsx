@@ -7,13 +7,13 @@ import { formatMoney } from "@/features/pricing/pricing-engine";
 import { availableDrivers, buildMockTrip, serviceOptions } from "@/features/tow-requests/mock-data";
 
 const activeRequests = [
-  { id: "FYT-9021", customer: "Maya R.", service: "Flatbed tow", area: "Midtown", status: "Paid · matching", total: 22440 },
-  { id: "FYT-9018", customer: "Oren K.", service: "Jump start", area: "Brooklyn", status: "Driver en route", total: 9350 },
-  { id: "FYT-9011", customer: "Danielle S.", service: "Lockout", area: "Queens", status: "Arrived", total: 8800 },
+  { id: "FYT-9021", customer: "Demo Rider A", service: "Flatbed tow", area: "Central Demo Zone", status: "Paid · matching", total: 22440 },
+  { id: "FYT-9018", customer: "Demo Rider B", service: "Jump start", area: "West Demo Zone", status: "Driver en route", total: 9350 },
+  { id: "FYT-9011", customer: "Demo Rider C", service: "Lockout", area: "East Demo Zone", status: "Arrived", total: 8800 },
 ];
 const approvalQueue = ["North Shore Towing", "Elite Flatbed NYC", "Metro Recovery 24/7"];
-const serviceAreas = ["Manhattan · 12 active", "Queens · 5 active", "Brooklyn · 7 active", "Long Island · 3 active"];
-const demoTrip = buildMockTrip({ customerName: "Maya", phone: "+1", serviceType: "flatbed_tow", pickupAddress: "FDR Drive", dropoffAddress: "LIC Repair", vehicleMake: "BMW", vehicleModel: "X5", rush: true });
+const serviceAreas = ["Central Demo Zone · 12 active", "East Demo Zone · 5 active", "West Demo Zone · 7 active", "South Demo Zone · 3 active"];
+const demoTrip = buildMockTrip({ customerName: "Demo Rider A", phone: "+1", serviceType: "flatbed_tow", pickupAddress: "7148 Pixel Pkwy", dropoffAddress: "Sample Repair Center", vehicleMake: "BMW", vehicleModel: "X5", rush: true });
 
 export default function DispatchPage() {
   return (

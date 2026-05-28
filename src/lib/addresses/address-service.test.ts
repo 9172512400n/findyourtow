@@ -22,14 +22,14 @@ describe("address service", () => {
     const fetcher = vi.fn(async () => ({
       ok: true,
       json: async () => ({
-        features: [{ id: "addr.1", place_name: "4827 Cedar Loop, Meadowbrook, NY 11700, United States", center: [-73.6318, 40.7132] }],
+        features: [{ id: "addr.1", place_name: "7148 Pixel Pkwy, Demo Springs, CA 90000, United States", center: [-73.6318, 40.7132] }],
       }),
     })) as unknown as typeof fetch;
 
-    const results = await searchUsAddresses("4827 Cedar Loop", { token: "pk.test", fetcher });
+    const results = await searchUsAddresses("7148 Pixel Pkwy", { token: "pk.test", fetcher });
 
     expect(String(fetcher.mock.calls[0][0])).toContain("country=US");
-    expect(results[0]).toMatchObject({ source: "mapbox", address: "4827 Cedar Loop, Meadowbrook, NY 11700, United States" });
+    expect(results[0]).toMatchObject({ source: "mapbox", address: "7148 Pixel Pkwy, Demo Springs, CA 90000, United States" });
   });
 
   it("reports unavailable current phone location without throwing", async () => {

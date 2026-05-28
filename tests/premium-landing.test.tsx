@@ -94,7 +94,7 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(within(flow).getByText(/tow details/i)).toBeInTheDocument();
     expect(within(flow).getByDisplayValue(/home/i)).toBeInTheDocument();
     expect(within(flow).getByPlaceholderText(/tow destination/i)).toBeInTheDocument();
-    expect(within(flow).getByText(/sample auto center/i)).toBeInTheDocument();
+    expect(within(flow).getByText(/random auto center/i)).toBeInTheDocument();
     expect(within(flow).queryByText(/piermont|hewlett|oceanside|reina|lincoln|healy|waverly|far rockaway/i)).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: /choose service/i })).not.toBeInTheDocument();
     const bottomNav = screen.getByRole('navigation', { name: /main app navigation/i });
@@ -130,8 +130,8 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(flow.firstElementChild).toHaveClass('overflow-hidden');
     expect(screen.getByRole('heading', { name: /request roadside help/i })).toBeInTheDocument();
 
-    await user.type(within(flow).getByPlaceholderText(/tow destination/i), 'Sample Auto Center');
-    await user.click(within(flow).getByRole('button', { name: /sample auto center/i }));
+    await user.type(within(flow).getByPlaceholderText(/tow destination/i), 'Random Auto Center');
+    await user.click(within(flow).getByRole('button', { name: /random auto center/i }));
 
     expect(await screen.findByRole('heading', { name: /vehicle details/i })).toBeInTheDocument();
     const flowHeader = screen.getByLabelText(/request step controls/i);
@@ -177,8 +177,8 @@ describe('FindYourTow premium mobile homepage', () => {
     render(<RequestTowPage />);
 
     const flow = screen.getByLabelText(/request flow sheet area/i);
-    await user.type(within(flow).getByPlaceholderText(/tow destination/i), 'Sample Auto Center');
-    await user.click(within(flow).getByRole('button', { name: /sample auto center/i }));
+    await user.type(within(flow).getByPlaceholderText(/tow destination/i), 'Random Auto Center');
+    await user.click(within(flow).getByRole('button', { name: /random auto center/i }));
 
     expect(await screen.findByRole('heading', { name: /vehicle details/i })).toBeInTheDocument();
     expect(within(flow).getByRole('button', { name: /use saved vehicle/i })).toBeInTheDocument();

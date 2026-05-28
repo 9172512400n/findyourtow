@@ -11,10 +11,10 @@ import { buildMockTrip } from "@/features/tow-requests/mock-data";
 
 const activeTrip = buildMockTrip({
   customerName: "FindYourTow customer",
-  phone: "+1 555 0100",
+  phone: "+1 000 0100",
   serviceType: "standard_tow",
-  pickupAddress: "Current GPS location · 1180 Blue Ridge Ave",
-  dropoffAddress: "Certified repair shop · 2400 Harbor Point Dr",
+  pickupAddress: "Current GPS location · 7148 Pixel Pkwy",
+  dropoffAddress: "Certified repair shop · 2200 Mockingbird Ct",
   vehicleMake: "Mercedes-Benz",
   vehicleModel: "GLE",
   vehicleColor: "Black",

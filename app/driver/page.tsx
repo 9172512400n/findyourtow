@@ -9,9 +9,9 @@ import { formatMoney } from "@/features/pricing/pricing-engine";
 import { availableDrivers } from "@/features/tow-requests/mock-data";
 
 const completedJobs = [
-  { id: "FYT-2041", service: "Jump start", area: "Chelsea", payout: 6200 },
-  { id: "FYT-2038", service: "Flatbed tow", area: "Harbor Point", payout: 14800 },
-  { id: "FYT-2032", service: "Lockout", area: "Upper West Side", payout: 7400 },
+  { id: "FYT-2041", service: "Jump start", area: "Demo District", payout: 6200 },
+  { id: "FYT-2038", service: "Flatbed tow", area: "South Demo Zone", payout: 14800 },
+  { id: "FYT-2032", service: "Lockout", area: "North Sample Zone", payout: 7400 },
 ];
 
 export default function DriverPage() {
@@ -48,7 +48,7 @@ export default function DriverPage() {
           <DriverLiveConsole driverId={driver.id} />
           <Card className="premium-card">
             <SectionLabel>New paid job offer</SectionLabel>
-            <div className="mt-4 flex flex-wrap items-start justify-between gap-4"><div><h3 className="text-3xl font-black">Flatbed tow · 1.4 miles away</h3><p className="mt-2 text-white/62">Pickup: FDR Drive, Exit 10 · Customer authorized · ETA target 6 minutes.</p></div><div className="rounded-2xl bg-blue-500/16 px-4 py-3 text-right"><p className="text-xs font-black text-white/42">Estimated payout</p><p className="text-2xl font-black">$148</p></div></div>
+            <div className="mt-4 flex flex-wrap items-start justify-between gap-4"><div><h3 className="text-3xl font-black">Flatbed tow · 1.4 miles away</h3><p className="mt-2 text-white/62">Pickup: 7148 Pixel Pkwy · Customer authorized · ETA target 6 minutes.</p></div><div className="rounded-2xl bg-blue-500/16 px-4 py-3 text-right"><p className="text-xs font-black text-white/42">Estimated payout</p><p className="text-2xl font-black">$148</p></div></div>
             <div className="mt-5 grid grid-cols-2 gap-3"><Button>Accept job</Button><Button variant="secondary">Decline</Button></div>
           </Card>
           <MapExperience drivers={[driver]} focus="driver" title="Active job route" progress={44} />
