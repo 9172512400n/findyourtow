@@ -24,7 +24,7 @@ const iconMap: Partial<Record<ServiceTypeId, typeof Truck>> = {
 
 export default function ServicesPage() {
   return (
-    <AppTabPageShell activeTab="Services" eyebrow="Roadside menu" title="Services" copy="Choose exactly what you need before requesting help. Every service is ready for demo dispatch and future real backend wiring.">
+    <AppTabPageShell activeTab="Services" eyebrow="Roadside menu" title="Services" copy="Choose exactly what you need before requesting help. Every service is connected to quote, checkout, and dispatch flows.">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {serviceOptions.map((service) => {
           const Icon = iconMap[service.id] ?? LifeBuoy;

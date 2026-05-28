@@ -59,7 +59,7 @@ export function DriverLiveConsole({ driverId }: DriverLiveConsoleProps) {
         </Button>
       </div>
       <p className="mt-4 text-sm leading-6 text-white/52">
-        Demo mode safely requests browser location if available, then posts to the placeholder driver-location API. Real Redis/WebSocket broadcasting connects here later.
+        Demo mode safely requests browser location if available, then posts to the driver-location API adapter. Live dispatch broadcasting is ready to connect through the backend adapter.
       </p>
     </div>
   );

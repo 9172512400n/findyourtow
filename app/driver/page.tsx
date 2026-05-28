@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Star } from "lucide-react";
+import { AppBottomNav } from "@/components/app/AppBottomNav";
 import { BackendModePill } from "@/components/platform/BackendModePill";
 import { DriverLiveConsole } from "@/components/platform/DriverLiveConsole";
 import { MapExperience } from "@/components/platform/MapExperience";
-import { Button } from "@/components/ui/button";
 import { Card, SectionLabel } from "@/components/ui/card";
 import { formatMoney } from "@/features/pricing/pricing-engine";
 import { availableDrivers } from "@/features/tow-requests/mock-data";
@@ -18,7 +18,7 @@ export default function DriverPage() {
   const driver = availableDrivers[0];
 
   return (
-    <main className="min-h-screen bg-[#050608] px-5 py-5 text-white sm:px-8">
+    <main className="min-h-screen bg-[#050608] px-5 pb-28 pt-5 text-white sm:px-8">
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 pb-8">
         <Link href="/" className="text-lg font-black">FindYourTow Driver</Link>
         <div className="flex flex-wrap items-center justify-end gap-2"><BackendModePill /><Link href="/request" className="rounded-full bg-white px-4 py-2 text-sm font-black text-black">Customer app</Link></div>
@@ -49,7 +49,7 @@ export default function DriverPage() {
           <Card className="premium-card">
             <SectionLabel>New paid job offer</SectionLabel>
             <div className="mt-4 flex flex-wrap items-start justify-between gap-4"><div><h3 className="text-3xl font-black">Flatbed tow · 1.4 miles away</h3><p className="mt-2 text-white/62">Pickup: 7148 Pixel Pkwy · Customer authorized · ETA target 6 minutes.</p></div><div className="rounded-2xl bg-blue-500/16 px-4 py-3 text-right"><p className="text-xs font-black text-white/42">Estimated payout</p><p className="text-2xl font-black">$148</p></div></div>
-            <div className="mt-5 grid grid-cols-2 gap-3"><Button>Accept job</Button><Button variant="secondary">Decline</Button></div>
+            <div className="mt-5 grid grid-cols-2 gap-3"><Link href="/driver/active" className="inline-flex min-h-12 items-center justify-center rounded-full bg-blue-500 px-5 text-sm font-black text-white shadow-[0_18px_45px_rgba(59,130,246,0.35)]">Accept job</Link><Link href="/driver/jobs" className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/12 bg-white/[0.07] px-5 text-sm font-black text-white transition hover:bg-white/[0.12]">Review offers</Link></div>
           </Card>
           <MapExperience drivers={[driver]} focus="driver" title="Active job route" progress={44} />
           <Card>
@@ -58,6 +58,7 @@ export default function DriverPage() {
           </Card>
         </div>
       </section>
+      <AppBottomNav activeTab="Account" />
     </main>
   );
 }

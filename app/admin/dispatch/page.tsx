@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AppBottomNav } from "@/components/app/AppBottomNav";
 import { BackendModePill } from "@/components/platform/BackendModePill";
 import { MapExperience } from "@/components/platform/MapExperience";
 import { StatusTimeline } from "@/components/platform/StatusTimeline";
@@ -17,7 +18,7 @@ const demoTrip = buildMockTrip({ customerName: "Demo Rider A", phone: "+1", serv
 
 export default function DispatchPage() {
   return (
-    <main className="min-h-screen bg-[#050608] px-5 py-5 text-white sm:px-8">
+    <main className="min-h-screen bg-[#050608] px-5 pb-28 pt-5 text-white sm:px-8">
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 pb-5">
         <Link href="/" className="text-lg font-black">FindYourTow Dispatch</Link>
         <div className="flex flex-wrap items-center justify-end gap-2"><BackendModePill /><Link href="/request" className="rounded-full bg-white px-4 py-2 text-sm font-black text-black">Create request</Link></div>
@@ -43,7 +44,7 @@ export default function DispatchPage() {
           </Card>
           <Card>
             <SectionLabel>Driver assignment panel</SectionLabel>
-            <div className="mt-4 space-y-3">{availableDrivers.map((driver, index) => <div key={driver.id} className="flex items-center justify-between rounded-2xl bg-white/[0.055] p-4"><div><p className="font-black">{driver.name}</p><p className="text-sm font-bold text-white/48">{driver.truckType} · {driver.distanceMiles} mi · match {98 - index * 4}%</p></div><button className="rounded-full bg-blue-500 px-4 py-2 text-sm font-black">Assign</button></div>)}</div>
+            <div className="mt-4 space-y-3">{availableDrivers.map((driver, index) => <div key={driver.id} className="flex items-center justify-between rounded-2xl bg-white/[0.055] p-4"><div><p className="font-black">{driver.name}</p><p className="text-sm font-bold text-white/48">{driver.truckType} · {driver.distanceMiles} mi · match {98 - index * 4}%</p></div><Link href="/admin/jobs" className="rounded-full bg-blue-500 px-4 py-2 text-sm font-black">Assign {driver.name}</Link></div>)}</div>
           </Card>
           <Card>
             <SectionLabel>Service areas</SectionLabel>
@@ -59,6 +60,7 @@ export default function DispatchPage() {
           </Card>
         </div>
       </section>
+      <AppBottomNav activeTab="Account" />
     </main>
   );
 }

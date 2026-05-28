@@ -1,9 +1,9 @@
 import Link from "next/link";
+import { AppBottomNav } from "@/components/app/AppBottomNav";
 import { BackendModePill } from "@/components/platform/BackendModePill";
 import { DriverCard } from "@/components/platform/DriverCard";
 import { MapExperience } from "@/components/platform/MapExperience";
 import { StatusTimeline } from "@/components/platform/StatusTimeline";
-import { Button } from "@/components/ui/button";
 import { Card, SectionLabel } from "@/components/ui/card";
 import { demoRequestHistory } from "@/features/demo/requests";
 import { formatMoney } from "@/features/pricing/pricing-engine";
@@ -25,7 +25,7 @@ const pastRequests = demoRequestHistory;
 
 export default function CustomerDashboardPage() {
   return (
-    <main className="min-h-screen bg-[#050608] px-5 py-5 text-white sm:px-8">
+    <main className="min-h-screen bg-[#050608] px-5 pb-28 pt-5 text-white sm:px-8">
       <nav className="mx-auto flex max-w-7xl items-center justify-between pb-5">
         <Link href="/" className="text-lg font-black tracking-tight">FindYourTow</Link>
         <div className="flex flex-wrap items-center justify-end gap-2">
@@ -54,7 +54,7 @@ export default function CustomerDashboardPage() {
             </div>
             <div className="mt-5 flex flex-wrap gap-3">
               <Link href={`/customer/trip/${activeTrip.id}`} className="inline-flex min-h-12 items-center justify-center rounded-full bg-blue-500 px-5 text-sm font-black text-white shadow-[0_18px_45px_rgba(59,130,246,0.35)]">Open live tracking</Link>
-              <Button variant="secondary">Cancel request</Button>
+              <Link href="/help" className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/12 bg-white/[0.07] px-5 text-sm font-black text-white transition hover:bg-white/[0.12]">Get support</Link>
             </div>
           </Card>
 
@@ -86,6 +86,7 @@ export default function CustomerDashboardPage() {
           </Card>
         </div>
       </section>
+      <AppBottomNav activeTab="Track" />
     </main>
   );
 }
