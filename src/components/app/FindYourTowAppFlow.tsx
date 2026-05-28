@@ -129,18 +129,20 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
 
       {step > 0 && (
         <div aria-label="Request flow sheet area" className="fixed inset-0 z-50 flex items-end justify-center bg-black/52 px-0 pt-0 pb-[calc(5.75rem+env(safe-area-inset-bottom))] backdrop-blur-sm sm:px-5 sm:pt-5 sm:pb-28 lg:p-5">
-          <div className="max-h-[88vh] w-full max-w-[560px] overflow-y-auto rounded-t-[2.2rem] border border-white/10 bg-[#080b11]/95 p-5 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:rounded-[2.4rem]">
-            <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-white/18" />
+          <div className="flex max-h-[calc(100dvh-5.75rem-env(safe-area-inset-bottom))] w-full max-w-[560px] flex-col overflow-hidden rounded-t-[2.2rem] border border-white/10 bg-[#080b11]/95 p-5 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:max-h-[88vh] sm:rounded-[2.4rem]">
+            <div className="mx-auto mb-3 h-1.5 w-12 shrink-0 rounded-full bg-white/18" />
             <FlowHeader step={step} onBack={step > 1 ? () => setStep(previousStep(step, isTowService)) : undefined} onClose={() => setStep(0)} firstStepHref={activeTab === "Request" ? "/" : undefined} />
-            {step === 1 && <ServiceStep selectedService={data.serviceType} selectingService={selectingService} onSelect={selectService} />}
-            {step === 2 && <LocationStep pickupAddress={data.pickupAddress} onChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={() => patch({ pickupAddress: "Current location · 5th Ave & W 34th St" })} onNext={nextAfterLocation} />}
-            {step === 3 && isTowService && <DestinationStep dropoffAddress={data.dropoffAddress} quote={quote} distanceMiles={distanceMiles} onChange={(dropoffAddress) => patch({ dropoffAddress })} onNext={() => setStep(4)} />}
-            {step === 4 && <VehicleStep data={data} onChange={patch} onNext={() => setStep(5)} canContinue={canContinueFromVehicle} />}
-            {step === 5 && <QuoteStep quote={quote} distanceMiles={distanceMiles} selectedService={selectedService} rush={data.rush} vehicleType={data.vehicleType} onRushChange={(rush) => patch({ rush })} onNext={startMatching} />}
-            {step === 6 && <MatchingStep progress={matchingProgress} providers={providers} quote={quote} />}
-            {step === 7 && <ProviderStep provider={provider} quote={quote} onNext={() => setStep(8)} />}
-            {step === 8 && <ConfirmStep data={data} provider={provider} quote={quote} onNext={() => setStep(9)} />}
-            {step === 9 && <TrackStep trip={trip} />}
+            <div className="min-h-0 flex-1 overflow-y-auto pb-1">
+              {step === 1 && <ServiceStep selectedService={data.serviceType} selectingService={selectingService} onSelect={selectService} onContinue={() => selectService(data.serviceType)} />}
+              {step === 2 && <LocationStep pickupAddress={data.pickupAddress} onChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={() => patch({ pickupAddress: "Current location · 5th Ave & W 34th St" })} onNext={nextAfterLocation} />}
+              {step === 3 && isTowService && <DestinationStep dropoffAddress={data.dropoffAddress} quote={quote} distanceMiles={distanceMiles} onChange={(dropoffAddress) => patch({ dropoffAddress })} onNext={() => setStep(4)} />}
+              {step === 4 && <VehicleStep data={data} onChange={patch} onNext={() => setStep(5)} canContinue={canContinueFromVehicle} />}
+              {step === 5 && <QuoteStep quote={quote} distanceMiles={distanceMiles} selectedService={selectedService} rush={data.rush} vehicleType={data.vehicleType} onRushChange={(rush) => patch({ rush })} onNext={startMatching} />}
+              {step === 6 && <MatchingStep progress={matchingProgress} providers={providers} quote={quote} />}
+              {step === 7 && <ProviderStep provider={provider} quote={quote} onNext={() => setStep(8)} />}
+              {step === 8 && <ConfirmStep data={data} provider={provider} quote={quote} onNext={() => setStep(9)} />}
+              {step === 9 && <TrackStep trip={trip} />}
+            </div>
           </div>
         </div>
       )}
@@ -223,8 +225,9 @@ function FlowHeader({ step, onBack, onClose, firstStepHref }: { step: FlowStep; 
   );
 }
 
-function ServiceStep({ selectedService, selectingService, onSelect }: { selectedService: ServiceTypeId; selectingService: ServiceTypeId | null; onSelect: (serviceType: ServiceTypeId) => void }) {
-  return <div className="space-y-4"><StepTitle title="Choose service" copy="Tap a service and we’ll move you forward automatically." /><div className="grid grid-cols-2 gap-3">{serviceOptions.slice(0, 10).map((service) => <ServiceCard key={service.id} service={service} active={selectedService === service.id} selecting={selectingService === service.id} onClick={() => onSelect(service.id)} />)}</div></div>;
+function ServiceStep({ selectedService, selectingService, onSelect, onContinue }: { selectedService: ServiceTypeId; selectingService: ServiceTypeId | null; onSelect: (serviceType: ServiceTypeId) => void; onContinue: () => void }) {
+  const selectedLabel = serviceOptions.find((service) => service.id === selectedService)?.label ?? "selected service";
+  return <div className="space-y-4"><StepTitle title="Choose service" copy="Tap a service and we’ll move you forward automatically." /><div className="grid grid-cols-2 gap-3">{serviceOptions.slice(0, 10).map((service) => <ServiceCard key={service.id} service={service} active={selectedService === service.id} selecting={selectingService === service.id} onClick={() => onSelect(service.id)} />)}</div><div className="sticky bottom-0 -mx-1 bg-gradient-to-t from-[#080b11] via-[#080b11]/95 to-transparent pb-1 pt-6"><Button className="w-full" onClick={onContinue}>Continue with {selectedLabel}</Button></div></div>;
 }
 
 function ServiceCard({ service, active, selecting, onClick, compact = false }: { service: (typeof serviceOptions)[number]; active: boolean; selecting: boolean; onClick: () => void; compact?: boolean }) {

@@ -79,6 +79,9 @@ describe('FindYourTow premium mobile homepage', () => {
     render(<RequestTowPage />);
 
     const flow = screen.getByLabelText(/request flow sheet area/i);
+    expect(flow.firstElementChild).toHaveClass('overflow-hidden');
+    expect(within(flow).getByRole('button', { name: /continue with tow truck/i })).toBeInTheDocument();
+
     await user.click(within(flow).getByRole('button', { name: /flatbed tow/i }));
     await screen.findByRole('heading', { name: /set pickup/i });
     await user.click(within(screen.getByLabelText(/request flow sheet area/i)).getByRole('button', { name: /use current/i }));
