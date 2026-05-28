@@ -137,7 +137,7 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
         <div aria-label="Request flow sheet area" className="fixed inset-0 z-50 flex items-end justify-center bg-black/52 px-0 pt-0 pb-[calc(5.75rem+env(safe-area-inset-bottom))] backdrop-blur-sm sm:px-5 sm:pt-5 sm:pb-28 lg:p-5">
           <div className="max-h-[88vh] w-full max-w-[560px] overflow-y-auto rounded-t-[2.2rem] border border-white/10 bg-[#080b11]/95 p-5 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:rounded-[2.4rem]">
             <div className="mx-auto mb-5 h-1.5 w-12 rounded-full bg-white/18" />
-            <FlowHeader step={step} onClose={() => setStep(0)} />
+            <FlowHeader step={step} onBack={step > 1 ? () => setStep(step - 1) : undefined} onClose={() => setStep(0)} />
             {step === 1 && <DestinationStep dropoffAddress={data.dropoffAddress} serviceLabel={selectedService.label} onChange={(dropoffAddress) => patch({ dropoffAddress })} onNext={() => setStep(2)} />}
             {step === 2 && <VehicleStep data={data} onChange={patch} onNext={() => setStep(3)} canContinue={canContinueFromVehicle} />}
             {step === 3 && <QuoteStep quote={quote} selectedService={selectedService} providers={providers} rush={data.rush} onRushChange={(rush) => patch({ rush })} onNext={() => setStep(4)} />}
@@ -233,9 +233,17 @@ function CompactServices({ selectedService, onSelect }: { selectedService: Servi
   );
 }
 
-function FlowHeader({ step, onClose }: { step: number; onClose: () => void }) {
+function FlowHeader({ step, onBack, onClose }: { step: number; onBack?: () => void; onClose: () => void }) {
   const labels = ["", "Destination", "Vehicle", "Quote", "Payment", "Provider", "Confirm", "Track"];
-  return <div className="mb-5 flex items-center justify-between gap-3"><p className="text-xs font-black uppercase tracking-[0.24em] text-blue-100/62">{labels[step]}</p><button type="button" onClick={onClose} className="rounded-full bg-white/10 px-4 py-2 text-xs font-black text-white/70">Close</button></div>;
+  return (
+    <div aria-label="Request step controls" className="sticky top-0 z-20 -mx-5 mb-5 flex items-center justify-between gap-3 border-b border-white/10 bg-[#080b11]/95 px-5 pb-4 pt-1 backdrop-blur-2xl">
+      <div className="flex items-center gap-2">
+        {onBack ? <button type="button" onClick={onBack} className="rounded-full bg-white px-4 py-2 text-xs font-black text-black">Back</button> : null}
+        <p className="text-xs font-black uppercase tracking-[0.24em] text-blue-100/62">{labels[step]}</p>
+      </div>
+      <button type="button" onClick={onClose} className="rounded-full bg-white/10 px-4 py-2 text-xs font-black text-white/70">Close</button>
+    </div>
+  );
 }
 
 function DestinationStep({ serviceLabel, dropoffAddress, onChange, onNext }: { serviceLabel: string; dropoffAddress: string; onChange: (value: string) => void; onNext: () => void }) {

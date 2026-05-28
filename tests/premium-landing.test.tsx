@@ -69,6 +69,23 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(within(bottomNav).getByRole('link', { name: /home/i })).not.toHaveAttribute('aria-current');
   });
 
+  it('keeps a sticky back control inside the request flow so users cannot get trapped', async () => {
+    const user = userEvent.setup();
+    render(<RequestTowPage />);
+
+    await user.click(within(screen.getByLabelText(/request flow sheet area/i)).getByRole('button', { name: /^continue$/i }));
+
+    expect(screen.getByRole('heading', { name: /vehicle details/i })).toBeInTheDocument();
+    const flowHeader = screen.getByLabelText(/request step controls/i);
+    expect(flowHeader).toHaveClass('sticky', 'top-0', 'z-20');
+    expect(within(flowHeader).getByRole('button', { name: /back/i })).toBeInTheDocument();
+    expect(within(flowHeader).getByRole('button', { name: /close/i })).toBeInTheDocument();
+
+    await user.click(within(flowHeader).getByRole('button', { name: /back/i }));
+
+    expect(screen.getByRole('heading', { name: /add destination/i })).toBeInTheDocument();
+  });
+
   it('uses separate pages for every bottom navigation tab and keeps the bar fixed on each page', () => {
     const pages = [
       { component: <Home />, active: /home/i, heading: /roadside help in minutes/i },
