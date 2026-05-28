@@ -70,8 +70,8 @@ const initialData: FlowData = {
 
 type AppTabLabel = (typeof appTabs)[number]["label"];
 
-export function FindYourTowAppFlow({ activeTab = "Home" }: { activeTab?: AppTabLabel } = {}) {
-  const [step, setStep] = useState(0);
+export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { activeTab?: AppTabLabel; initialStep?: number } = {}) {
+  const [step, setStep] = useState(initialStep);
   const [data, setData] = useState<FlowData>(initialData);
   const selectedService = useMemo(() => serviceOptions.find((service) => service.id === data.serviceType) ?? serviceOptions[0], [data.serviceType]);
   const isTowService = towServiceIds.includes(data.serviceType);

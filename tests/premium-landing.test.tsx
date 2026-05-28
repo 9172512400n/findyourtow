@@ -5,6 +5,7 @@ import { cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it } from 'vitest';
 import Home from '../app/(marketing)/page';
+import RequestTowPage from '../app/request/page';
 
 afterEach(cleanup);
 
@@ -54,5 +55,14 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(within(bottomNav).getByRole('link', { name: /account/i })).toHaveAttribute('href', '/customer');
 
     expect(screen.getByLabelText(/request flow sheet area/i)).toHaveClass('pb-[calc(5.75rem+env(safe-area-inset-bottom))]');
+  });
+
+  it('opens the request tab directly into the request flow instead of duplicating the home screen', () => {
+    render(<RequestTowPage />);
+
+    expect(screen.getByLabelText(/request flow sheet area/i)).toBeInTheDocument();
+    const bottomNav = screen.getByRole('navigation', { name: /main app navigation/i });
+    expect(within(bottomNav).getByRole('link', { name: /request/i })).toHaveAttribute('aria-current', 'page');
+    expect(within(bottomNav).getByRole('link', { name: /home/i })).not.toHaveAttribute('aria-current');
   });
 });
