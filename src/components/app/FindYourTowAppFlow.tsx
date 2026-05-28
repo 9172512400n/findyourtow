@@ -19,7 +19,7 @@ import { getCurrentPositionAddress, searchUsAddresses, type AddressSuggestion } 
 import type { AvailableDriver, ServiceTypeId, TowTrip } from "@/features/tow-requests/types";
 
 const towServiceIds: ServiceTypeId[] = ["standard_tow", "flatbed_tow", "winch_out", "accident_tow", "motorcycle_tow", "vehicle_transport", "heavy_duty_tow", "box_truck_tow", "private_property_tow"];
-const compactServiceIds: ServiceTypeId[] = ["standard_tow", "flatbed_tow", "jump_start", "flat_tire", "lockout", "fuel_delivery", "winch_out", "battery_help"]; 
+const compactServiceIds: ServiceTypeId[] = ["standard_tow", "jump_start", "flat_tire", "lockout", "fuel_delivery", "winch_out", "battery_help"]; 
 
 type FlowStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
@@ -164,8 +164,8 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
               <h1 className="text-balance text-6xl font-black leading-[0.88] tracking-[-0.075em] sm:text-7xl">Roadside help in minutes.</h1>
               <p className="max-w-sm text-base font-semibold leading-7 text-white/58">Towing, lockouts, jump starts, tire help, fuel delivery, and more.</p>
             </div>
-            <HelpInputCard pickupAddress={data.pickupAddress} selectedService={selectedService} onPickupChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={useCurrentLocation} onStart={startFlow} />
             <CompactServices selectedService={data.serviceType} selectingService={selectingService} onSelect={selectService} />
+            <HelpInputCard pickupAddress={data.pickupAddress} selectedService={selectedService} onPickupChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={useCurrentLocation} onStart={startFlow} />
           </div>
         </div>
 
@@ -247,7 +247,7 @@ function PremiumMapVisual({ selectedService, quoteEta, large = false }: { select
 
 function HelpInputCard({ pickupAddress, selectedService, onPickupChange, onUseCurrent, onStart }: { pickupAddress: string; selectedService: { label: string }; onPickupChange: (value: string) => void; onUseCurrent: () => void; onStart: () => void }) {
   return (
-    <div aria-label="Where do you need help" className="mt-8 rounded-[2rem] border border-white/10 bg-white/[0.07] p-4 shadow-2xl shadow-black/25 backdrop-blur-2xl">
+    <div aria-label="Where do you need help" className="mt-4 rounded-[2rem] border border-white/10 bg-white/[0.07] p-4 shadow-2xl shadow-black/25 backdrop-blur-2xl">
       <p className="px-1 text-lg font-black tracking-[-0.02em]">Where do you need help?</p>
       <div className="mt-4 flex items-center gap-2 rounded-[1.35rem] bg-black/32 p-2">
         <button type="button" onClick={onUseCurrent} className="shrink-0 rounded-full bg-white px-4 py-3 text-xs font-black text-black">Use current location</button>

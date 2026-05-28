@@ -36,15 +36,17 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(screen.getAllByRole('link', { name: /account/i }).some((link) => link.getAttribute('href') === '/account')).toBe(true);
     expect(screen.queryByRole('link', { name: /^start$/i })).not.toBeInTheDocument();
 
+    const services = screen.getByLabelText(/quick service selector/i);
     const helpCard = screen.getByLabelText(/where do you need help/i);
+    expect(Boolean(services.compareDocumentPosition(helpCard) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
+    for (const service of ['Tow', 'Jump', 'Flat Tire', 'Lockout', 'Fuel', 'Winch', 'Battery']) {
+      expect(within(services).getByRole('button', { name: new RegExp(service, 'i') })).toBeInTheDocument();
+    }
+    expect(within(services).queryByRole('button', { name: /flatbed/i })).not.toBeInTheDocument();
+
     expect(within(helpCard).getByRole('button', { name: /use current location/i })).toBeInTheDocument();
     expect(within(helpCard).getByPlaceholderText(/enter address or landmark/i)).toBeInTheDocument();
     expect(within(helpCard).getByRole('button', { name: /service tow/i })).toBeInTheDocument();
-
-    const services = screen.getByLabelText(/quick service selector/i);
-    for (const service of ['Tow', 'Flatbed', 'Jump', 'Flat Tire', 'Lockout', 'Fuel', 'Winch', 'Battery']) {
-      expect(within(services).getByRole('button', { name: new RegExp(service, 'i') })).toBeInTheDocument();
-    }
 
     expect(screen.queryByText(/choose the roadside rescue you need/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/fast local towing for cars and small suvs/i)).not.toBeInTheDocument();
@@ -111,6 +113,7 @@ describe('FindYourTow premium mobile homepage', () => {
     const flow = screen.getByLabelText(/request flow sheet area/i);
     const serviceSelect = within(flow).getByRole('combobox', { name: /roadside service needed/i });
     expect(serviceSelect).toHaveValue('standard_tow');
+    expect(within(serviceSelect).getByRole('option', { name: /flatbed tow/i })).toBeInTheDocument();
     expect(within(flow).getByPlaceholderText(/tow destination/i)).toBeInTheDocument();
 
     await user.selectOptions(serviceSelect, 'fuel_delivery');

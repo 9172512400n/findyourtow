@@ -55,6 +55,22 @@ export const initialRequestFlowData: RequestFlowData = {
   paymentStatus: "authorized",
 };
 
+const forbiddenDemoSamplePattern = /new york|\bny\b|queens|brooklyn|manhattan|nassau|long island|piermont|hewlett|oceanside|reina|lincoln|healy|waverly|far rockaway|cedar loop|harbor point|blue ridge|maple ridge|willow creek|meadowbrook|riverton|brookfield|stonebridge|jfk|airport|fdr|chelsea|upper west|midtown|atlantic ave|northern blvd|5th ave|350 5th|142-20|84th drive/i;
+
+function sanitizePersistedAddress(value: unknown, replacement: string) {
+  if (typeof value !== "string") return replacement;
+  if (!value.trim()) return value;
+  return forbiddenDemoSamplePattern.test(value) ? replacement : value;
+}
+
+function sanitizeRequestFlowData(data: RequestFlowData): RequestFlowData {
+  return {
+    ...data,
+    pickupAddress: sanitizePersistedAddress(data.pickupAddress, "Current location · Demo Springs"),
+    dropoffAddress: sanitizePersistedAddress(data.dropoffAddress, initialRequestFlowData.dropoffAddress),
+  };
+}
+
 const memoryStorage = (() => {
   const values = new Map<string, string>();
   return {
@@ -84,6 +100,14 @@ export const useRequestFlowStore = create<RequestFlowStore>()(
     {
       name: "findyourtow-request-flow-v1",
       storage: createJSONStorage(safeStorage),
+      merge: (persistedState, currentState) => {
+        const persisted = persistedState as Partial<RequestFlowStore> | undefined;
+        return {
+          ...currentState,
+          ...persisted,
+          data: sanitizeRequestFlowData({ ...currentState.data, ...persisted?.data }),
+        };
+      },
     },
   ),
 );
