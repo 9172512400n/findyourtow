@@ -79,6 +79,12 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
   const trip = useMemo(() => buildAppTrip(data, provider, quote, distanceMiles), [data, provider, quote, distanceMiles]);
 
   useEffect(() => {
+    if (activeTab !== "Request" || initialStep !== 1) return;
+    patch({ serviceType: "standard_tow", dropoffAddress: data.dropoffAddress || "Trusted repair shop · Long Island City" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (step !== 7) return;
     const ticks = [24, 48, 72, 100];
     const timers = ticks.map((value, index) => window.setTimeout(() => setMatchingProgress(value), 280 * (index + 1)));
@@ -93,9 +99,13 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
     setStep(isTowService ? 3 : 4);
   }
 
-  function selectService(serviceType: ServiceTypeId) {
+  function updateService(serviceType: ServiceTypeId) {
     const tow = towServiceIds.includes(serviceType);
     patch({ serviceType, dropoffAddress: tow ? data.dropoffAddress || "Trusted repair shop · Long Island City" : "" });
+  }
+
+  function selectService(serviceType: ServiceTypeId) {
+    updateService(serviceType);
     setSelectingService(serviceType);
     window.setTimeout(() => {
       setSelectingService(null);
@@ -175,7 +185,7 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
             <FlowHeader step={step} onBack={step > 1 ? () => setStep(previousStep(step, isTowService)) : undefined} onClose={() => setStep(0)} firstStepHref={activeTab === "Request" ? "/" : undefined} />
             <div className="min-h-0 flex-1 overflow-y-auto pb-1">
               {!user && <LoginGate onSignIn={signInDemo} />}
-              {user && step === 1 && <RidePlannerStep pickupAddress={data.pickupAddress || "Home"} dropoffAddress={data.dropoffAddress} selectedService={selectedService} isTowService={isTowService} onPickupChange={(pickupAddress) => patch({ pickupAddress })} onDestinationChange={(dropoffAddress) => patch({ dropoffAddress })} onChooseDestination={chooseDestination} />}
+              {user && step === 1 && <RidePlannerStep pickupAddress={data.pickupAddress || "Home"} dropoffAddress={data.dropoffAddress} serviceType={data.serviceType} selectedService={selectedService} isTowService={isTowService} onServiceChange={updateService} onPickupChange={(pickupAddress) => patch({ pickupAddress })} onDestinationChange={(dropoffAddress) => patch({ dropoffAddress })} onChooseDestination={chooseDestination} />}
               {user && step === 2 && <LocationStep pickupAddress={data.pickupAddress} onChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={useCurrentLocation} onNext={nextAfterLocation} />}
               {user && step === 3 && isTowService && <DestinationStep dropoffAddress={data.dropoffAddress} quote={quote} distanceMiles={distanceMiles} onChange={(dropoffAddress) => patch({ dropoffAddress })} onNext={() => setStep(4)} />}
               {user && step === 4 && <VehicleRequestStep data={data} onChange={patch} onNext={() => setStep(5)} />}
@@ -273,7 +283,7 @@ function LoginGate({ onSignIn }: { onSignIn: () => void }) {
   return <div className="space-y-4 rounded-[1.6rem] bg-white p-5 text-black"><h2 className="text-3xl font-black tracking-[-0.04em]">Sign in to request service</h2><p className="text-sm font-semibold leading-6 text-black/58">For safety, payment, saved vehicles, and live trip tracking, every service request must start from a logged-in account.</p><Button className="w-full" onClick={onSignIn}>Continue as demo customer</Button><Link href="/account" className="block text-center text-sm font-black text-black/52">Manage account</Link></div>;
 }
 
-function RidePlannerStep({ pickupAddress, dropoffAddress, selectedService, isTowService, onPickupChange, onDestinationChange, onChooseDestination }: { pickupAddress: string; dropoffAddress: string; selectedService: { label: string }; isTowService: boolean; onPickupChange: (value: string) => void; onDestinationChange: (value: string) => void; onChooseDestination: (value: string) => void }) {
+function RidePlannerStep({ pickupAddress, dropoffAddress, serviceType, selectedService, isTowService, onServiceChange, onPickupChange, onDestinationChange, onChooseDestination }: { pickupAddress: string; dropoffAddress: string; serviceType: ServiceTypeId; selectedService: { label: string }; isTowService: boolean; onServiceChange: (value: ServiceTypeId) => void; onPickupChange: (value: string) => void; onDestinationChange: (value: string) => void; onChooseDestination: (value: string) => void }) {
   const [query, setQuery] = useState("");
   const visiblePlaces = ridePlannerPlaces.filter((place) => {
     const haystack = `${place.name} ${place.address}`.toLowerCase();
@@ -293,6 +303,14 @@ function RidePlannerStep({ pickupAddress, dropoffAddress, selectedService, isTow
         <p className="text-sm font-bold leading-6 text-white/54">Set the service location, review the price, authorize payment, then we match a verified nearby provider.</p>
       </div>
 
+      <div className="grid gap-2 rounded-[1.25rem] border border-blue-300/16 bg-blue-400/10 p-3">
+        <label htmlFor="request-service-needed" className="text-[0.62rem] font-black uppercase tracking-[0.22em] text-blue-100/54">Roadside service needed</label>
+        <select id="request-service-needed" aria-label="Roadside service needed" value={serviceType} onChange={(event) => { setQuery(""); onServiceChange(event.target.value as ServiceTypeId); }} className="min-h-12 w-full rounded-2xl border border-white/10 bg-[#0b1522] px-4 text-base font-black text-white outline-none focus:border-blue-300">
+          {serviceOptions.map((service) => <option key={service.id} value={service.id}>{service.label}</option>)}
+        </select>
+        <p className="text-xs font-bold leading-5 text-white/50">Towing is the default. Change this before continuing if the customer needs fuel, jump start, tire help, lockout, winch-out, or another service.</p>
+      </div>
+
       <div className="flex flex-wrap gap-2">
         <span className="rounded-full border border-blue-300/20 bg-blue-400/12 px-4 py-2 text-xs font-black text-blue-50">{selectedService.label}</span>
         <span className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-xs font-black text-white/62">Provider matched after payment</span>
@@ -307,7 +325,7 @@ function RidePlannerStep({ pickupAddress, dropoffAddress, selectedService, isTow
             <span className="block text-[0.62rem] font-black uppercase tracking-[0.2em] text-white/36">Service location</span>
             <input value={pickupAddress} onChange={(event) => onPickupChange(event.target.value)} aria-label="Pickup" className="mt-1 w-full min-w-0 border-b border-white/10 bg-transparent py-1 text-base font-black text-white outline-none focus:border-blue-300" />
           </label>
-          <span className="grid h-8 w-8 place-items-center rounded-2xl bg-blue-400 text-xs font-black text-blue-950">TOW</span>
+          <span className="grid h-8 w-8 place-items-center rounded-2xl bg-blue-400 text-xs font-black text-blue-950">SVC</span>
           <label className="min-w-0">
             <span className="block text-[0.62rem] font-black uppercase tracking-[0.2em] text-white/36">{isTowService ? "Drop-off" : "Roadside service"}</span>
             <input autoFocus value={query} onChange={(event) => { setQuery(event.target.value); if (isTowService) onDestinationChange(event.target.value); }} placeholder={placeholder} className="mt-1 w-full min-w-0 bg-transparent py-1 text-base font-semibold text-white outline-none placeholder:text-white/38" />

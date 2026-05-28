@@ -101,14 +101,22 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(within(bottomNav).getByRole('link', { name: /home/i })).not.toHaveAttribute('aria-current');
   });
 
-  it('uses location-only pricing for non-tow roadside services before matching a provider', () => {
+  it('defaults request page to towing and lets customers change the needed service from a dropdown', async () => {
     useDemoAuthStore.getState().signInDemo();
-    useRequestFlowStore.getState().patch({ serviceType: 'lockout', dropoffAddress: '' });
+    useRequestFlowStore.getState().patch({ serviceType: 'fuel_delivery', dropoffAddress: '' });
+    const user = userEvent.setup();
     render(<RequestTowPage />);
 
     const flow = screen.getByLabelText(/request flow sheet area/i);
+    const serviceSelect = within(flow).getByRole('combobox', { name: /roadside service needed/i });
+    expect(serviceSelect).toHaveValue('standard_tow');
+    expect(within(flow).getByPlaceholderText(/tow destination/i)).toBeInTheDocument();
+
+    await user.selectOptions(serviceSelect, 'fuel_delivery');
+
+    expect(serviceSelect).toHaveValue('fuel_delivery');
     expect(within(flow).getByPlaceholderText(/where are you/i)).toBeInTheDocument();
-    expect(within(flow).getByText(/add your location, get the price, authorize payment/i)).toBeInTheDocument();
+    expect(within(flow).getByText(/fuel delivery: add your location, get the price, authorize payment/i)).toBeInTheDocument();
     expect(within(flow).queryByRole('button', { name: /add stop/i })).not.toBeInTheDocument();
   });
 
