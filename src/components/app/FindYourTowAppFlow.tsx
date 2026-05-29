@@ -244,7 +244,7 @@ function MinimalTopBar() {
     <nav className="flex items-center justify-between py-2">
       <Link href="/" aria-label="FindYourTow home" className="flex items-center gap-2.5">
         <span className="grid h-12 w-12 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.055] shadow-[0_0_28px_rgba(56,189,248,0.18)] backdrop-blur-xl">
-          <img src="/brand/findyourtow-logo-transparent.png" alt="FindYourTow logo mark" className="h-full w-full scale-[1.55] object-cover drop-shadow-[0_0_18px_rgba(56,189,248,0.42)]" />
+          <img src="/brand/findyourtow-logo-mark.png" alt="FindYourTow logo mark" className="h-full w-full scale-[1.55] object-cover drop-shadow-[0_0_18px_rgba(56,189,248,0.42)]" />
         </span>
         <span className="text-lg font-black tracking-[-0.045em] text-white drop-shadow-[0_0_18px_rgba(255,255,255,0.16)]">FindYourTow</span>
       </Link>

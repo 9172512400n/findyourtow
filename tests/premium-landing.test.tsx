@@ -28,7 +28,7 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(screen.getByText(/towing, lockouts, jump starts, tire help, fuel delivery, and more/i)).toBeInTheDocument();
     expect(screen.getByRole('img', { name: /findyourtow logo mark/i })).toHaveAttribute(
       'src',
-      '/brand/findyourtow-logo-transparent.png',
+      '/brand/findyourtow-logo-mark.png',
     );
     expect(screen.getByText('FindYourTow')).toBeInTheDocument();
 
