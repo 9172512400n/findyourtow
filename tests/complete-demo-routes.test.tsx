@@ -7,6 +7,7 @@ import LoginPage from '../app/login/page';
 import RegisterPage from '../app/register/page';
 import AccountSetupPage from '../app/account/setup/page';
 import AccountVehiclesPage from '../app/account/vehicles/page';
+import AccountVehicleAddPage from '../app/account/vehicles/add/page';
 import AccountPaymentsPage from '../app/account/payments/page';
 import ApplePayPage from '../app/account/payments/apple-pay/page';
 import DriverJobsPage from '../app/driver/jobs/page';
@@ -64,6 +65,16 @@ describe('complete FindYourTow demo routes', () => {
     expect(screen.getByText(/Visa ending in 4242/i)).toBeInTheDocument();
     expect(screen.getByText(/Apple Pay enabled/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /start roadside request/i })).toHaveAttribute('href', '/request');
+  });
+
+  it('makes the add-vehicle route use the real saved-vehicle manager', () => {
+    render(<AccountVehicleAddPage />);
+
+    expect(screen.getAllByRole('heading', { name: /my vehicles/i }).length).toBeGreaterThan(0);
+    expect(screen.getByRole('button', { name: /add vehicle/i })).toBeInTheDocument();
+    expect(screen.getByText(/daily driver/i)).toBeInTheDocument();
+    expect(screen.getByText(/2021 Toyota Camry/i)).toBeInTheDocument();
+    expect(screen.getAllByLabelText(/saved vehicle card/i).length).toBeGreaterThan(0);
   });
 
   it('renders provider and admin pages with actionable demo controls', () => {

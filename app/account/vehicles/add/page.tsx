@@ -1,8 +1,17 @@
 import Link from 'next/link';
-import { DemoAppShell, DemoSection } from '@/components/app/DemoAppShell';
-
-const fields = ['Vehicle nickname','Make','Model','Year','Color','Plate number','Vehicle type','VIN optional','Photo optional'];
+import { ArrowLeft } from 'lucide-react';
+import { DemoAppShell } from '@/components/app/DemoAppShell';
+import { VehicleProfileManager } from '@/components/app/VehicleProfileManager';
 
 export default function AddVehiclePage() {
-  return <DemoAppShell activeTab="Account" eyebrow="Garage" title="Add vehicle" copy="Add-vehicle form with request-ready profile fields and optional photo details."><div className="mx-auto max-w-2xl"><DemoSection title="Vehicle details"><div className="grid gap-3 sm:grid-cols-2">{fields.map((field) => <label key={field} className="block text-sm font-black text-white/70">{field}<input placeholder={field} className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-4 outline-none focus:border-blue-300" /></label>)}</div><label className="mt-4 flex items-center gap-3 rounded-2xl bg-black/24 p-4 font-black"><input type="checkbox" defaultChecked /> Set as default vehicle</label><Link href="/account/vehicles" className="mt-5 flex min-h-13 items-center justify-center rounded-full bg-blue-500 px-5 font-black text-white">Save vehicle</Link></DemoSection></div></DemoAppShell>;
+  return (
+    <DemoAppShell activeTab="Account" eyebrow="Garage" title="Add vehicle" copy="Create, edit, default, and reuse saved vehicle profiles for faster roadside requests.">
+      <div className="mx-auto max-w-3xl space-y-4">
+        <Link href="/account/vehicles" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 text-sm font-black text-white/72">
+          <ArrowLeft size={16} /> Back to vehicles
+        </Link>
+        <VehicleProfileManager />
+      </div>
+    </DemoAppShell>
+  );
 }
