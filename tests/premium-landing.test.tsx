@@ -20,15 +20,15 @@ afterEach(() => {
   cleanup();
 });
 
-describe('FindYourTow premium mobile homepage', () => {
+describe('RoadAssistNow premium mobile homepage', () => {
   it('opens with a calm consumer app homepage instead of stacked pricing cards', () => {
     render(<Home />);
 
     expect(screen.getByRole('heading', { name: /roadside help in minutes/i })).toBeInTheDocument();
     expect(screen.getByText(/towing, lockouts, jump starts, tire help, fuel delivery, and more/i)).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: /findyourtow brand lockup/i })).toHaveAttribute(
+    expect(screen.getByRole('img', { name: /roadassistnow brand lockup/i })).toHaveAttribute(
       'src',
-      '/brand/findyourtow-header-lockup.png',
+      '/brand/roadassistnow-header-lockup.png',
     );
 
     expect(screen.getByRole('button', { name: /open menu/i })).toBeInTheDocument();
@@ -78,7 +78,7 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(screen.queryByRole('heading', { name: /sign in to request service/i })).not.toBeInTheDocument();
   });
 
-  it('opens the request tab as a FindYourTow-branded roadside planner after login', () => {
+  it('opens the request tab as a RoadAssistNow-branded roadside planner after login', () => {
     useDemoAuthStore.getState().signInDemo();
     render(<RequestTowPage />);
 

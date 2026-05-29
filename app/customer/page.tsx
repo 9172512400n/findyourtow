@@ -10,7 +10,7 @@ import { formatMoney } from "@/features/pricing/pricing-engine";
 import { buildMockTrip } from "@/features/tow-requests/mock-data";
 
 const activeTrip = buildMockTrip({
-  customerName: "FindYourTow customer",
+  customerName: "RoadAssistNow customer",
   phone: "+1 000 0100",
   serviceType: "standard_tow",
   pickupAddress: "Current GPS location · 7148 Pixel Pkwy",
@@ -27,7 +27,7 @@ export default function CustomerDashboardPage() {
   return (
     <main className="min-h-screen bg-[#050608] px-5 pb-28 pt-5 text-white sm:px-8">
       <nav className="mx-auto flex max-w-7xl items-center justify-between pb-5">
-        <Link href="/" className="text-lg font-black tracking-tight">FindYourTow</Link>
+        <Link href="/" className="text-lg font-black tracking-tight">RoadAssistNow</Link>
         <div className="flex flex-wrap items-center justify-end gap-2">
           <BackendModePill />
           <Link href="/request" className="rounded-full bg-white px-4 py-2 text-sm font-black text-black">Request tow</Link>

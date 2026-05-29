@@ -1,6 +1,6 @@
 {
-  "name": "FindYourTow",
-  "short_name": "FindYourTow",
+  "name": "RoadAssistNow",
+  "short_name": "RoadAssistNow",
   "description": "Mobile-first roadside rescue app with instant quote, demo payment, provider matching, and live tracking.",
   "start_url": "/",
   "display": "standalone",
@@ -9,13 +9,13 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icons/findyourtow-192.png",
+      "src": "/icons/roadassistnow-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/findyourtow-512.png",
+      "src": "/icons/roadassistnow-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

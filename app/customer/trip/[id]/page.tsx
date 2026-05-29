@@ -10,7 +10,7 @@ import { buildMockTrip } from "@/features/tow-requests/mock-data";
 export default async function TripPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const trip = buildMockTrip({
-    customerName: "FindYourTow customer",
+    customerName: "RoadAssistNow customer",
     phone: "+1 000 0100",
     serviceType: "flatbed_tow",
     pickupAddress: "Current location · 7148 Pixel Pkwy",

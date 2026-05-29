@@ -31,7 +31,7 @@ import { demoAdapters } from '../src/lib/demo/adapters';
 
 afterEach(() => cleanup());
 
-describe('complete FindYourTow demo routes', () => {
+describe('complete RoadAssistNow demo routes', () => {
   it('renders customer account and payment pages as finished demo screens', () => {
     const pages = [
       { component: <LoginPage />, heading: /welcome back/i },
@@ -46,7 +46,7 @@ describe('complete FindYourTow demo routes', () => {
     for (const page of pages) {
       const { unmount } = render(page.component);
       expect(screen.getAllByRole('heading', { name: page.heading }).length).toBeGreaterThan(0);
-      expect(screen.getAllByText(/FindYourTow/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/RoadAssistNow/i).length).toBeGreaterThan(0);
       unmount();
     }
   });

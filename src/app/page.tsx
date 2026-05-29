@@ -41,10 +41,10 @@ export default function Home() {
 
         <nav className="relative z-10 w-full border-b border-white/10 bg-black/80 px-5 py-4 shadow-2xl shadow-black/30 backdrop-blur-2xl sm:px-8 lg:px-12">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
-          <Link href="/" className="flex shrink-0 items-center" aria-label="FindYourTow home">
+          <Link href="/" className="flex shrink-0 items-center" aria-label="RoadAssistNow home">
             <img
-              src="/brand/findyourtow-header-lockup.png"
-              alt="FindYourTow brand lockup"
+              src="/brand/roadassistnow-header-lockup.png"
+              alt="RoadAssistNow brand lockup"
               className="h-16 w-auto object-contain drop-shadow-[0_0_28px_rgba(56,189,248,0.3)] sm:h-20"
             />
           </Link>
@@ -79,7 +79,7 @@ export default function Home() {
               Premium tow dispatch in minutes.
             </h1>
             <p className="mt-7 max-w-2xl text-pretty text-lg leading-8 text-white/76 sm:text-xl">
-              FindYourTow gives customers instant help, drivers better jobs, and operators a command center that feels fast, calm, and premium.
+              RoadAssistNow gives customers instant help, drivers better jobs, and operators a command center that feels fast, calm, and premium.
             </p>
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
