@@ -20,7 +20,7 @@ export default function DispatchPage() {
   return (
     <main className="min-h-screen bg-[#050608] px-5 pb-28 pt-5 text-white sm:px-8">
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 pb-5">
-        <Link href="/" className="text-lg font-black">RoadAssistNow Dispatch</Link>
+        <Link href="/" className="text-lg font-black">FindYourTow Dispatch</Link>
         <div className="flex flex-wrap items-center justify-end gap-2"><BackendModePill /><Link href="/admin/users" className="rounded-full bg-white/10 px-4 py-2 text-sm font-black text-white">Users</Link><Link href="/request" className="rounded-full bg-white px-4 py-2 text-sm font-black text-black">Create request</Link></div>
       </nav>
       <section className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[1.15fr_0.85fr]">

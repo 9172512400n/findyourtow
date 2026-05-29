@@ -8,7 +8,7 @@ export default function AdminUsersPage() {
       activeTab="Account"
       eyebrow="Admin support"
       title="Users & passwords"
-      copy="A RoadAssistNow-style support panel for free app accounts: view users, inspect roles, and reset passwords when someone is locked out."
+      copy="A FindYourTow-style support panel for free app accounts: view users, inspect roles, and reset passwords when someone is locked out."
       actions={<Link href="/admin/dispatch" className="rounded-full bg-white px-4 py-2 text-sm font-black text-black">Dispatch</Link>}
     >
       <AdminUsersPanel />

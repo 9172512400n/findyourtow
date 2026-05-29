@@ -66,7 +66,7 @@ export function calculateQuote(request: QuoteRequest): QuoteResponse {
 
   const subtotalCents = sumLineItems(lineItems);
   const adminFeeCents = Math.round(subtotalCents * DEFAULT_ADMIN_FEE_RATE);
-  lineItems.push({ code: "admin_service_fee", label: "RoadAssistNow service fee", amountCents: adminFeeCents });
+  lineItems.push({ code: "admin_service_fee", label: "FindYourTow service fee", amountCents: adminFeeCents });
 
   return {
     serviceType: request.serviceType,

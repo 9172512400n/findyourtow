@@ -13,26 +13,26 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RoadAssistNow | Real-Time Roadside Dispatch",
+  title: "FindYourTow | Real-Time Roadside Dispatch",
   description:
     "A smart towing platform for customers, drivers, dispatchers, and admins with instant quotes, secure payments, and live roadside coordination.",
-  applicationName: "RoadAssistNow",
-  metadataBase: new URL("https://roadassistnow.com"),
+  applicationName: "FindYourTow",
+  metadataBase: new URL("https://findyourtow.com"),
   manifest: "/manifest.json",
   icons: {
     icon: [
-      { url: "/icons/roadassistnow-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icons/roadassistnow-512.png", sizes: "512x512", type: "image/png" },
+      { url: "/icons/findyourtow-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/findyourtow-512.png", sizes: "512x512", type: "image/png" },
     ],
-    apple: [{ url: "/icons/roadassistnow-192.png", sizes: "192x192", type: "image/png" }],
+    apple: [{ url: "/icons/findyourtow-192.png", sizes: "192x192", type: "image/png" }],
   },
   appleWebApp: {
     capable: true,
-    title: "RoadAssistNow",
+    title: "FindYourTow",
     statusBarStyle: "black-translucent",
   },
   openGraph: {
-    title: "RoadAssistNow | Real-Time Roadside Dispatch",
+    title: "FindYourTow | Real-Time Roadside Dispatch",
     description: "Request roadside help, pay securely, and track the tow truck live.",
     type: "website",
   },

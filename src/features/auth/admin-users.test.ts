@@ -8,7 +8,7 @@ describe('admin user support helpers', () => {
     expect(getBearerToken(null)).toBeNull();
   });
 
-  it('merges auth users with RoadAssistNow app roles and profile names', () => {
+  it('merges auth users with FindYourTow app roles and profile names', () => {
     const users = mergeAuthUsersWithAppUsers(
       [{ id: 'auth-1', email: 'person@example.com', created_at: '2026-01-01T00:00:00Z', last_sign_in_at: '2026-01-02T00:00:00Z' }],
       [{ id: 'auth-1', email: 'person@example.com', role: 'CUSTOMER', profile: { firstName: 'Road', lastName: 'User' } }],
