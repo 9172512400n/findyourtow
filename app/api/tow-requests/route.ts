@@ -1,8 +1,24 @@
 import { NextResponse } from "next/server";
 import { createDemoTowRequest } from "@/features/tow-requests/demo-repository";
 import { towRequestSchema } from "@/features/tow-requests/schemas";
+import { createSupabaseTowRequest, listRecentSupabaseTowRequests } from "@/features/tow-requests/supabase-repository";
 import { getBackendMode } from "@/lib/runtime/backend-mode";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+
+export async function GET() {
+  const mode = getBackendMode();
+  const supabase = createServerSupabaseClient();
+
+  if (mode.canPersistTowRequests && supabase) {
+    try {
+      return NextResponse.json({ backendProvider: "supabase", requests: await listRecentSupabaseTowRequests(supabase) });
+    } catch (error) {
+      return NextResponse.json({ error: error instanceof Error ? error.message : "Could not list tow requests" }, { status: 500 });
+    }
+  }
+
+  return NextResponse.json({ backendProvider: "demo", requests: [] });
+}
 
 export async function POST(request: Request) {
   const json = await request.json().catch(() => null);
@@ -15,12 +31,12 @@ export async function POST(request: Request) {
   const mode = getBackendMode();
   const supabase = createServerSupabaseClient();
 
-  if (!mode.demoMode && supabase) {
-    // Future real backend path:
-    // - Insert into tow_requests with vehicle/location/service/quote fields.
-    // - Insert initial tow_status_updates rows.
-    // - Return the persisted request + quote + current timeline.
-    // For now, keep the public app safe by falling through to demo behavior until credentials are intentionally connected.
+  if (mode.canPersistTowRequests && supabase) {
+    try {
+      return NextResponse.json(await createSupabaseTowRequest(supabase, parsed.data), { status: 201 });
+    } catch (error) {
+      return NextResponse.json({ error: error instanceof Error ? error.message : "Could not save tow request" }, { status: 500 });
+    }
   }
 
   return NextResponse.json(await createDemoTowRequest(parsed.data), { status: 201 });

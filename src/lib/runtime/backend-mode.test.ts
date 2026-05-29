@@ -25,4 +25,19 @@ describe("getBackendMode", () => {
     expect(mode.demoMode).toBe(false);
     expect(mode.missingServices).toEqual([]);
   });
+
+  it("can enable Supabase persistence before Stripe and Mapbox are connected", () => {
+    const mode = getBackendMode({
+      NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: "anon",
+      SUPABASE_SERVICE_ROLE_KEY: "service",
+      DATABASE_URL: "postgres://example",
+    });
+
+    expect(mode.services.supabase).toBe(true);
+    expect(mode.canPersistTowRequests).toBe(true);
+    expect(mode.demoMode).toBe(true);
+    expect(mode.missingServices).toEqual(["stripe", "mapbox"]);
+  });
+
 });

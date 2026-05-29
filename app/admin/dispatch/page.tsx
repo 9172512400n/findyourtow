@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { AppBottomNav } from "@/components/app/AppBottomNav";
+import { ActiveRequestsPanel } from "@/components/platform/ActiveRequestsPanel";
 import { BackendModePill } from "@/components/platform/BackendModePill";
 import { MapExperience } from "@/components/platform/MapExperience";
 import { StatusTimeline } from "@/components/platform/StatusTimeline";
 import { Card, SectionLabel } from "@/components/ui/card";
-import { formatMoney } from "@/features/pricing/pricing-engine";
 import { availableDrivers, buildMockTrip, serviceOptions } from "@/features/tow-requests/mock-data";
 
-const activeRequests = [
+const demoActiveRequests = [
   { id: "FYT-9021", customer: "Demo Rider A", service: "Flatbed tow", area: "Central Demo Zone", status: "Paid · matching", total: 22440 },
   { id: "FYT-9018", customer: "Demo Rider B", service: "Jump start", area: "West Demo Zone", status: "Driver en route", total: 9350 },
   { id: "FYT-9011", customer: "Demo Rider C", service: "Lockout", area: "East Demo Zone", status: "Arrived", total: 8800 },
@@ -28,7 +28,7 @@ export default function DispatchPage() {
           <MapExperience drivers={availableDrivers} focus="dispatch" title="Command center live map" progress={71} />
           <Card>
             <SectionLabel>Active requests</SectionLabel>
-            <div className="mt-4 overflow-hidden rounded-[1.5rem] border border-white/10"><div className="grid grid-cols-5 bg-white/[0.055] px-4 py-3 text-xs font-black uppercase tracking-[0.2em] text-white/36"><span>Job</span><span>Customer</span><span>Service</span><span>Status</span><span className="text-right">Total</span></div>{activeRequests.map((request) => <div key={request.id} className="grid grid-cols-5 items-center border-t border-white/10 px-4 py-4 text-sm font-bold text-white/72"><span className="text-white">{request.id}</span><span>{request.customer}</span><span>{request.service}</span><span>{request.status}</span><span className="text-right text-emerald-200">{formatMoney(request.total)}</span></div>)}</div>
+            <ActiveRequestsPanel fallbackRequests={demoActiveRequests} />
           </Card>
           <Card>
             <SectionLabel>Job status timeline</SectionLabel>

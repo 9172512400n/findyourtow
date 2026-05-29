@@ -13,6 +13,7 @@ export type BackendEnv = Partial<Record<
 export type BackendMode = {
   demoMode: boolean;
   safeForPublicPrototype: boolean;
+  canPersistTowRequests: boolean;
   missingServices: Array<"supabase" | "stripe" | "mapbox">;
   services: {
     supabase: boolean;
@@ -34,6 +35,7 @@ export function getBackendMode(env: BackendEnv = process.env as BackendEnv): Bac
   return {
     demoMode: missingServices.length > 0,
     safeForPublicPrototype: missingServices.length > 0,
+    canPersistTowRequests: services.supabase,
     missingServices,
     services,
   };

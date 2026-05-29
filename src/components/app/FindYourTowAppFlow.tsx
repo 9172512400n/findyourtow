@@ -11,9 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Card, SectionLabel } from "@/components/ui/card";
 import { VehicleRequestStep } from "@/components/app/VehicleRequestStep";
 import { calculateQuote, formatMoney } from "@/features/pricing/pricing-engine";
-import { useDemoAuthStore } from "@/features/auth/demo-auth-store";
 import { useRequestFlowStore } from "@/features/tow-requests/request-flow-store";
 import { useDemoPaymentStore } from "@/features/payments/demo-payment-store";
+import { createTowRequest } from "@/features/tow-requests/api";
 import { availableDrivers, serviceOptions } from "@/features/tow-requests/mock-data";
 import { getCurrentPositionAddress, searchUsAddresses, type AddressSuggestion } from "@/lib/addresses/address-service";
 import type { AvailableDriver, ServiceTypeId, TowTrip } from "@/features/tow-requests/types";
@@ -62,8 +62,9 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
   const [step, setStep] = useState<FlowStep>(initialStep);
   const [matchingProgress, setMatchingProgress] = useState(0);
   const [selectingService, setSelectingService] = useState<ServiceTypeId | null>(null);
-  const user = useDemoAuthStore((state) => state.user);
-  const signInDemo = useDemoAuthStore((state) => state.signInDemo);
+  const [submittedTrip, setSubmittedTrip] = useState<TowTrip | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submittingRequest, setSubmittingRequest] = useState(false);
   const data = useRequestFlowStore((state) => state.data);
   const patch = useRequestFlowStore((state) => state.patch);
 
@@ -130,6 +131,36 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
     setStep(7);
   }
 
+  async function confirmReservation() {
+    setSubmitError(null);
+    setSubmittingRequest(true);
+    try {
+      const created = await createTowRequest({
+        customerName: data.customerName.trim() || "Guest customer",
+        phone: data.phone.trim() || "+10000000000",
+        serviceType: data.serviceType,
+        pickupAddress: data.pickupAddress.trim() || "Current location",
+        dropoffAddress: data.dropoffAddress.trim() || undefined,
+        vehicleId: data.vehicleId,
+        vehicleSnapshot: data.vehicleSnapshot ?? undefined,
+        vehicleMake: data.vehicleMake || data.vehicleSnapshot?.make || "Vehicle",
+        vehicleModel: data.vehicleModel || data.vehicleSnapshot?.model || "Unknown",
+        vehicleYear: data.vehicleYear || data.vehicleSnapshot?.year,
+        vehicleColor: data.vehicleColor || data.vehicleSnapshot?.color,
+        licensePlate: data.licensePlate || data.vehicleSnapshot?.licensePlate,
+        vehicleType: data.vehicleType,
+        notes: data.notes,
+        rush: data.rush,
+      });
+      setSubmittedTrip(created);
+      setStep(10);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Could not create request");
+    } finally {
+      setSubmittingRequest(false);
+    }
+  }
+
   function chooseDestination(destination: string) {
     if (isTowService) {
       patch({
@@ -145,7 +176,7 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
     setStep(4);
   }
 
-  const isRidePlannerStep = step === 1 && Boolean(user);
+  const isRidePlannerStep = step === 1;
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#050608] text-white">
@@ -184,17 +215,16 @@ export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { ac
             <div className={`mx-auto mb-3 h-1.5 w-12 shrink-0 rounded-full ${isRidePlannerStep ? "bg-blue-200/24" : "bg-white/18"}`} />
             <FlowHeader step={step} onBack={step > 1 ? () => setStep(previousStep(step, isTowService)) : undefined} onClose={() => setStep(0)} firstStepHref={activeTab === "Request" ? "/" : undefined} />
             <div className="min-h-0 flex-1 overflow-y-auto pb-1">
-              {!user && <LoginGate onSignIn={signInDemo} />}
-              {user && step === 1 && <RidePlannerStep pickupAddress={data.pickupAddress || "Home"} dropoffAddress={data.dropoffAddress} serviceType={data.serviceType} selectedService={selectedService} isTowService={isTowService} onServiceChange={updateService} onPickupChange={(pickupAddress) => patch({ pickupAddress })} onDestinationChange={(dropoffAddress) => patch({ dropoffAddress })} onChooseDestination={chooseDestination} />}
-              {user && step === 2 && <LocationStep pickupAddress={data.pickupAddress} onChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={useCurrentLocation} onNext={nextAfterLocation} />}
-              {user && step === 3 && isTowService && <DestinationStep dropoffAddress={data.dropoffAddress} quote={quote} distanceMiles={distanceMiles} onChange={(dropoffAddress) => patch({ dropoffAddress })} onNext={() => setStep(4)} />}
-              {user && step === 4 && <VehicleRequestStep data={data} onChange={patch} onNext={() => setStep(5)} />}
-              {user && step === 5 && <QuoteStep quote={quote} distanceMiles={distanceMiles} selectedService={selectedService} rush={data.rush} vehicleType={data.vehicleType} onRushChange={(rush) => patch({ rush })} onNext={() => setStep(6)} />}
-              {user && step === 6 && <PaymentStep quote={quote} onNext={startMatching} />}
-              {user && step === 7 && <MatchingStep progress={matchingProgress} providers={providers} quote={quote} />}
-              {user && step === 8 && <ProviderStep provider={provider} quote={quote} onNext={() => setStep(9)} />}
-              {user && step === 9 && <ConfirmStep data={data} provider={provider} quote={quote} onNext={() => setStep(10)} />}
-              {user && step === 10 && <TrackStep trip={trip} />}
+              {step === 1 && <RidePlannerStep pickupAddress={data.pickupAddress || "Home"} dropoffAddress={data.dropoffAddress} serviceType={data.serviceType} selectedService={selectedService} isTowService={isTowService} onServiceChange={updateService} onPickupChange={(pickupAddress) => patch({ pickupAddress })} onDestinationChange={(dropoffAddress) => patch({ dropoffAddress })} onChooseDestination={chooseDestination} />}
+              {step === 2 && <LocationStep pickupAddress={data.pickupAddress} onChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={useCurrentLocation} onNext={nextAfterLocation} />}
+              {step === 3 && isTowService && <DestinationStep dropoffAddress={data.dropoffAddress} quote={quote} distanceMiles={distanceMiles} onChange={(dropoffAddress) => patch({ dropoffAddress })} onNext={() => setStep(4)} />}
+              {step === 4 && <VehicleRequestStep data={data} onChange={patch} onNext={() => setStep(5)} />}
+              {step === 5 && <QuoteStep quote={quote} distanceMiles={distanceMiles} selectedService={selectedService} rush={data.rush} vehicleType={data.vehicleType} onRushChange={(rush) => patch({ rush })} onNext={() => setStep(6)} />}
+              {step === 6 && <PaymentStep quote={quote} onNext={startMatching} />}
+              {step === 7 && <MatchingStep progress={matchingProgress} providers={providers} quote={quote} />}
+              {step === 8 && <ProviderStep provider={provider} quote={quote} onNext={() => setStep(9)} />}
+              {step === 9 && <ConfirmStep data={data} provider={provider} quote={quote} submitting={submittingRequest} error={submitError} onChange={patch} onNext={confirmReservation} />}
+              {step === 10 && <TrackStep trip={submittedTrip ?? trip} />}
             </div>
           </div>
         </div>
@@ -316,10 +346,6 @@ function BookingProgressRail({ step }: { step: FlowStep }) {
       </div>
     </div>
   );
-}
-
-function LoginGate({ onSignIn }: { onSignIn: () => void }) {
-  return <div className="space-y-4 rounded-[1.6rem] bg-white p-5 text-black"><h2 className="text-3xl font-black tracking-[-0.04em]">Sign in to request service</h2><p className="text-sm font-semibold leading-6 text-black/58">For safety, payment, saved vehicles, and live trip tracking, every service request must start from a logged-in account.</p><Button className="w-full" onClick={onSignIn}>Continue as demo customer</Button><Link href="/account" className="block text-center text-sm font-black text-black/52">Manage account</Link></div>;
 }
 
 function RidePlannerStep({ pickupAddress, dropoffAddress, serviceType, selectedService, isTowService, onServiceChange, onPickupChange, onDestinationChange, onChooseDestination }: { pickupAddress: string; dropoffAddress: string; serviceType: ServiceTypeId; selectedService: { label: string }; isTowService: boolean; onServiceChange: (value: ServiceTypeId) => void; onPickupChange: (value: string) => void; onDestinationChange: (value: string) => void; onChooseDestination: (value: string) => void }) {
@@ -466,9 +492,9 @@ function ProviderStep({ provider, quote, onNext }: { provider: AvailableDriver; 
   return <div className="space-y-4"><StepTitle title="Provider matched" copy="A verified truck accepted your request." /><ProviderSummary provider={provider} /><MiniMap mode="route" destination="Provider route" distanceMiles={provider.distanceMiles} eta={provider.etaMinutes} /><div className="grid grid-cols-3 gap-3"><Metric label="Rating" value={`${provider.rating}`} /><Metric label="Arrival" value={`${provider.etaMinutes} min`} /><Metric label="Total" value={formatMoney(quote.totalCents)} /></div><Button className="w-full" onClick={onNext}>Review reservation</Button></div>;
 }
 
-function ConfirmStep({ data, provider, quote, onNext }: { data: ReturnType<typeof useRequestFlowStore.getState>["data"]; provider: AvailableDriver; quote: ReturnType<typeof calculateQuote>; onNext: () => void }) {
+function ConfirmStep({ data, provider, quote, submitting, error, onChange, onNext }: { data: ReturnType<typeof useRequestFlowStore.getState>["data"]; provider: AvailableDriver; quote: ReturnType<typeof calculateQuote>; submitting: boolean; error: string | null; onChange: (next: Partial<ReturnType<typeof useRequestFlowStore.getState>["data"]>) => void; onNext: () => void }) {
   const service = serviceOptions.find((option) => option.id === data.serviceType)?.label ?? "Roadside service";
-  return <div className="space-y-4"><StepTitle title="Confirm reservation" copy="Review the order before opening live tracking." /><div className="rounded-[1.6rem] bg-white/[0.065] p-5 text-sm font-bold text-white/70"><p className="text-xl font-black text-white">{service}</p><p className="mt-3">Pickup: {data.pickupAddress || "Current location"}</p>{data.dropoffAddress && <p className="mt-2">Destination: {data.dropoffAddress}</p>}<p className="mt-2">Vehicle: {[data.vehicleYear, data.vehicleColor, data.vehicleMake, data.vehicleModel].filter(Boolean).join(" ") || data.vehicleType}</p><p className="mt-2">Provider: {provider.name} · {provider.truckType}</p><p className="mt-2">Payment status: Authorized · {formatMoney(quote.totalCents)}</p><p className="mt-2">Estimated arrival: {provider.etaMinutes} minutes</p></div><Button className="w-full" onClick={onNext}>Confirm reservation</Button></div>;
+  return <div className="space-y-4"><StepTitle title="Confirm reservation" copy="No account required. Add contact info so dispatch and the provider can reach you." /><div className="grid gap-3 rounded-[1.45rem] border border-blue-300/16 bg-blue-400/10 p-4"><label className="text-xs font-black uppercase tracking-[0.18em] text-blue-100/54">Name<input value={data.customerName} onChange={(event) => onChange({ customerName: event.target.value })} placeholder="Your name" className="mt-2 w-full rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-base font-black text-white outline-none focus:border-blue-300" /></label><label className="text-xs font-black uppercase tracking-[0.18em] text-blue-100/54">Phone<input value={data.phone} onChange={(event) => onChange({ phone: event.target.value })} placeholder="Mobile phone" inputMode="tel" className="mt-2 w-full rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-base font-black text-white outline-none focus:border-blue-300" /></label></div><div className="rounded-[1.6rem] bg-white/[0.065] p-5 text-sm font-bold text-white/70"><p className="text-xl font-black text-white">{service}</p><p className="mt-3">Pickup: {data.pickupAddress || "Current location"}</p>{data.dropoffAddress && <p className="mt-2">Destination: {data.dropoffAddress}</p>}<p className="mt-2">Vehicle: {[data.vehicleYear, data.vehicleColor, data.vehicleMake, data.vehicleModel].filter(Boolean).join(" ") || data.vehicleType}</p><p className="mt-2">Provider search: {provider.name} · {provider.truckType} is the closest current match</p><p className="mt-2">Payment status: Authorized · {formatMoney(quote.totalCents)}</p><p className="mt-2">Estimated arrival: {provider.etaMinutes} minutes</p></div>{error && <div className="rounded-[1.25rem] border border-red-300/20 bg-red-500/10 px-4 py-3 text-sm font-black text-red-100">{error}</div>}<Button className="w-full" onClick={onNext} disabled={submitting}>{submitting ? "Saving request…" : "Confirm reservation"}</Button></div>;
 }
 
 function TrackStep({ trip }: { trip: TowTrip }) {

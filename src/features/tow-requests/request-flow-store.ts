@@ -7,6 +7,8 @@ import type { ServiceTypeId } from "./types";
 
 export type RequestFlowData = {
   serviceType: ServiceTypeId;
+  customerName: string;
+  phone: string;
   pickupAddress: string;
   dropoffAddress: string;
   vehicleMake: string;
@@ -35,6 +37,8 @@ type RequestFlowStore = {
 
 export const initialRequestFlowData: RequestFlowData = {
   serviceType: "standard_tow",
+  customerName: "",
+  phone: "",
   pickupAddress: "",
   dropoffAddress: "Trusted repair shop · 2200 Mockingbird Ct",
   vehicleMake: "",

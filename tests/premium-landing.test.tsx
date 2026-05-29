@@ -72,16 +72,11 @@ describe('FindYourTow premium mobile homepage', () => {
     expect(screen.getByLabelText(/request flow sheet area/i)).toHaveClass('pb-[calc(5.75rem+env(safe-area-inset-bottom))]');
   });
 
-  it('requires login before a customer can request service', async () => {
-    const user = userEvent.setup();
+  it('allows guest customers to request service without login', () => {
     render(<RequestTowPage />);
 
-    expect(screen.getByRole('heading', { name: /sign in to request service/i })).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: /plan your ride/i })).not.toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: /continue as demo customer/i }));
-
     expect(screen.getByRole('heading', { name: /request roadside help/i })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /sign in to request service/i })).not.toBeInTheDocument();
   });
 
   it('opens the request tab as a FindYourTow-branded roadside planner after login', () => {
@@ -262,7 +257,7 @@ describe('FindYourTow premium mobile homepage', () => {
   it('uses separate pages for every bottom navigation tab and keeps the bar fixed on each page', () => {
     const pages = [
       { component: <Home />, active: /home/i, heading: /roadside help in minutes/i },
-      { component: <RequestTowPage />, active: /request/i, heading: /sign in to request service/i },
+      { component: <RequestTowPage />, active: /request/i, heading: /request roadside help/i },
       { component: <TrackPage />, active: /track/i, heading: /track your tow/i },
       { component: <ServicesPage />, active: /services/i, heading: /services/i },
       { component: <AccountPage />, active: /account/i, heading: /account/i },

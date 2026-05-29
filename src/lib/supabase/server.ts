@@ -5,7 +5,7 @@ import { getBackendMode } from "@/lib/runtime/backend-mode";
 // driver_locations, and audit_logs. Demo mode returns null by design.
 export function createServerSupabaseClient() {
   const mode = getBackendMode();
-  if (mode.demoMode || !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  if (!mode.services.supabase || !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return null;
   }
 
