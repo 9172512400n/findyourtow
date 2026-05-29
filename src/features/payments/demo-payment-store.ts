@@ -62,6 +62,6 @@ export const useDemoPaymentStore = create<DemoPaymentStore>()(
       },
       resetDemoPayments: () => set({ methods: demoPaymentMethods, selectedPaymentMethodId: demoPaymentMethods[0].id, applePayReady: true }),
     }),
-    { name: 'findyourtow-demo-payments-v1', storage: createJSONStorage(safeStorage) },
+    { name: 'roadassistnow-demo-payments-v1', storage: createJSONStorage(safeStorage) },
   ),
 );

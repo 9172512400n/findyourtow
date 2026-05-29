@@ -19,7 +19,7 @@ type DemoAuthStore = {
 const demoUser: DemoUser = {
   initials: "DC",
   name: "Demo Customer",
-  email: "demo@findyourtow.app",
+  email: "demo@roadassistnow.app",
 };
 
 const memoryStorage = (() => {
@@ -50,7 +50,7 @@ export const useDemoAuthStore = create<DemoAuthStore>()(
       reset: () => set({ user: null }),
     }),
     {
-      name: "findyourtow-demo-auth-v1",
+      name: "roadassistnow-demo-auth-v1",
       storage: createJSONStorage(safeStorage),
     },
   ),

@@ -1,4 +1,4 @@
--- Supabase RLS policy scaffold for FindYourTow.
+-- Supabase RLS policy scaffold for RoadAssistNow.
 -- Apply only when real Supabase Auth is intentionally connected.
 
 alter table users enable row level security;

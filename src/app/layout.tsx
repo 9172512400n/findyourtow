@@ -13,13 +13,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FindYourTow | Premium Tow Dispatch",
+  title: "RoadAssistNow | Premium Tow Dispatch",
   description:
     "Premium tow dispatch for customers, drivers, and operators. Request roadside help, track drivers live, and manage towing from one modern platform.",
-  applicationName: "FindYourTow",
-  metadataBase: new URL("https://findyourtow.com"),
+  applicationName: "RoadAssistNow",
+  metadataBase: new URL("https://roadassistnow.com"),
   openGraph: {
-    title: "FindYourTow | Premium Tow Dispatch",
+    title: "RoadAssistNow | Premium Tow Dispatch",
     description: "The real-time roadside dispatch platform for fast, transparent tow coordination.",
     type: "website",
   },

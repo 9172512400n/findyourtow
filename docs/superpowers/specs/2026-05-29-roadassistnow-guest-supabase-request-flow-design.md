@@ -1,7 +1,7 @@
-# FindYourTow Guest Supabase Request Flow Design
+# RoadAssistNow Guest Supabase Request Flow Design
 
 ## Goal
-Turn FindYourTow’s tow-request submission from demo-only behavior into a real Supabase-backed flow while preserving the emergency-friendly guest experience. Customers should be able to request help with only name, phone, pickup/dropoff, service, and vehicle details. Login remains optional.
+Turn RoadAssistNow’s tow-request submission from demo-only behavior into a real Supabase-backed flow while preserving the emergency-friendly guest experience. Customers should be able to request help with only name, phone, pickup/dropoff, service, and vehicle details. Login remains optional.
 
 ## UX Decision
 Use a guest-first flow. Requiring login before emergency towing creates friction at the worst moment. The app will accept name + phone, create or reuse a guest customer profile server-side, save the tow request, create an initial timeline/status record, and return the same response shape the UI already expects.

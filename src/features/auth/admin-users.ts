@@ -44,7 +44,7 @@ export function mergeAuthUsersWithAppUsers(authUsers: AuthUserSummary[], appUser
     const appUser = appById.get(authUser.id);
     const firstName = appUser?.profile?.firstName?.trim() ?? '';
     const lastName = appUser?.profile?.lastName?.trim() ?? '';
-    const name = [firstName, lastName].filter(Boolean).join(' ') || 'FindYourTow user';
+    const name = [firstName, lastName].filter(Boolean).join(' ') || 'RoadAssistNow user';
 
     return {
       id: authUser.id,

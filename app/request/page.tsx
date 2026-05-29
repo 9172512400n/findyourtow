@@ -1,5 +1,5 @@
-import { FindYourTowAppFlow } from "@/components/app/FindYourTowAppFlow";
+import { RoadAssistNowAppFlow } from "@/components/app/RoadAssistNowAppFlow";
 
 export default function RequestTowPage() {
-  return <FindYourTowAppFlow activeTab="Request" initialStep={1} />;
+  return <RoadAssistNowAppFlow activeTab="Request" initialStep={1} />;
 }

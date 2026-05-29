@@ -1,5 +1,5 @@
-import { FindYourTowAppFlow } from "@/components/app/FindYourTowAppFlow";
+import { RoadAssistNowAppFlow } from "@/components/app/RoadAssistNowAppFlow";
 
 export default function Home() {
-  return <FindYourTowAppFlow />;
+  return <RoadAssistNowAppFlow />;
 }

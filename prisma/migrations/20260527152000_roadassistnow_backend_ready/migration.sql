@@ -1,4 +1,4 @@
--- FindYourTow backend-ready PostgreSQL migration.
+-- RoadAssistNow backend-ready PostgreSQL migration.
 -- Generated for future Supabase/Prisma connection. The public prototype remains in demo mode until env keys are added.
 
 create extension if not exists "pgcrypto";

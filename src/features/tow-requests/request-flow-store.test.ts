@@ -51,7 +51,7 @@ describe("request flow store persistence privacy scrub", () => {
 
   it("scrubs old real-world persisted pickup and dropoff samples during hydration", async () => {
     window.localStorage.setItem(
-      "findyourtow-request-flow-v1",
+      "roadassistnow-request-flow-v1",
       legacyStoragePayload("Current location · New York, NY, United States"),
     );
 

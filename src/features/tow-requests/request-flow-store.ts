@@ -102,7 +102,7 @@ export const useRequestFlowStore = create<RequestFlowStore>()(
       reset: () => set({ data: initialRequestFlowData }),
     }),
     {
-      name: "findyourtow-request-flow-v1",
+      name: "roadassistnow-request-flow-v1",
       storage: createJSONStorage(safeStorage),
       merge: (persistedState, currentState) => {
         const persisted = persistedState as Partial<RequestFlowStore> | undefined;

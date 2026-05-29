@@ -1,4 +1,4 @@
--- Seed extended FindYourTow services after enum labels exist.
+-- Seed extended RoadAssistNow services after enum labels exist.
 INSERT INTO public.service_types (id, code, name, description, active)
 VALUES
   ('svc_motorcycle_tow', 'MOTORCYCLE_TOW'::"ServiceTypeCode", 'Motorcycle Tow', 'Motorcycle-safe towing and transport.', true),

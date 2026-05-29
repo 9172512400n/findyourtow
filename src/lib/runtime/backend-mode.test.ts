@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { getBackendMode } from "./backend-mode";
 
 describe("getBackendMode", () => {
-  it("keeps FindYourTow in demo mode when production keys are missing", () => {
+  it("keeps RoadAssistNow in demo mode when production keys are missing", () => {
     const mode = getBackendMode({});
 
     expect(mode.demoMode).toBe(true);

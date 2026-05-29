@@ -1,6 +1,6 @@
-# FindYourTow
+# RoadAssistNow
 
-FindYourTow is a premium real-time roadside dispatch platform for customers, drivers, dispatchers, admins, and super admins.
+RoadAssistNow is a premium real-time roadside dispatch platform for customers, drivers, dispatchers, admins, and super admins.
 
 ## Production Slice Built
 

@@ -1,4 +1,4 @@
--- Baseline service catalog and pricing for FindYourTow.
+-- Baseline service catalog and pricing for RoadAssistNow.
 INSERT INTO public.service_types (id, code, name, description, active)
 VALUES
   ('svc_standard_tow', 'STANDARD_TOW'::"ServiceTypeCode", 'Standard Tow', 'Everyday local tow for standard passenger vehicles.', true),

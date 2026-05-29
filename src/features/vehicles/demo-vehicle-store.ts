@@ -151,6 +151,6 @@ export const useDemoVehicleStore = create<DemoVehicleStoreState>()(
       setDefaultVehicle: (id) => set((state) => ({ vehicles: normalizeDefaults(state.vehicles.map((vehicle) => ({ ...vehicle, isDefault: vehicle.id === id }))) })),
       resetDemoVehicles: () => set({ vehicles: demoVehicleSeed.map((vehicle) => ({ ...vehicle })) }),
     }),
-    { name: "findyourtow-demo-vehicles-v1", storage: createJSONStorage(() => safeStorage()) },
+    { name: "roadassistnow-demo-vehicles-v1", storage: createJSONStorage(() => safeStorage()) },
   ),
 );

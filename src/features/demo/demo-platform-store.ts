@@ -58,6 +58,6 @@ export const useDemoPlatformStore = create<DemoPlatformStore>()(
       updateDriverJobStatus: (status) => set({ driverJobStatus: status }),
       resetDemoPlatform: () => set({ activeRequestId: demoRequests[0].id, matchedProviderId: demoProviders[0].id, requestStatus: 'assigned', driverOnline: true, driverJobStatus: 'offered', requests: demoRequests }),
     }),
-    { name: 'findyourtow-demo-platform-v1', storage: createJSONStorage(safeStorage) },
+    { name: 'roadassistnow-demo-platform-v1', storage: createJSONStorage(safeStorage) },
   ),
 );

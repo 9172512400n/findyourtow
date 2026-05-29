@@ -1,8 +1,8 @@
-# FindYourTow Production Platform Implementation Plan
+# RoadAssistNow Production Platform Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build FindYourTow into a scalable smart towing platform with customer request/quote/payment flow, driver operations, admin dispatch, live-tracking architecture, and production-ready data boundaries.
+**Goal:** Build RoadAssistNow into a scalable smart towing platform with customer request/quote/payment flow, driver operations, admin dispatch, live-tracking architecture, and production-ready data boundaries.
 
 **Architecture:** Start as a Next.js app with clean feature modules, API routes that mirror future NestJS controller/service/repository boundaries, and a PostgreSQL/Prisma schema that can be lifted into a dedicated backend. The MVP uses deterministic mock realtime/map data in the UI while preserving typed API contracts for Mapbox, Stripe, Redis/WebSockets, and future NestJS migration.
 

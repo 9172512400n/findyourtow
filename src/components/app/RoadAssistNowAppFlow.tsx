@@ -58,7 +58,7 @@ const ridePlannerPlaces = [
   { name: "7600 Test Auto Lane", address: "Fiction Falls", distance: "6.3 mi" },
 ];
 
-export function FindYourTowAppFlow({ activeTab = "Home", initialStep = 0 }: { activeTab?: AppTabLabel; initialStep?: FlowStep } = {}) {
+export function RoadAssistNowAppFlow({ activeTab = "Home", initialStep = 0 }: { activeTab?: AppTabLabel; initialStep?: FlowStep } = {}) {
   const [step, setStep] = useState<FlowStep>(initialStep);
   const [matchingProgress, setMatchingProgress] = useState(0);
   const [selectingService, setSelectingService] = useState<ServiceTypeId | null>(null);
@@ -242,11 +242,11 @@ function previousStep(step: FlowStep, isTowService: boolean): FlowStep {
 function MinimalTopBar() {
   return (
     <nav className="flex items-center justify-between py-2">
-      <Link href="/" aria-label="FindYourTow home" className="flex items-center gap-2.5">
+      <Link href="/" aria-label="RoadAssistNow home" className="flex items-center gap-2.5">
         <span className="grid h-12 w-12 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.055] shadow-[0_0_28px_rgba(56,189,248,0.18)] backdrop-blur-xl">
-          <img src="/brand/findyourtow-logo-mark.png" alt="FindYourTow logo mark" className="h-full w-full scale-[1.55] object-cover drop-shadow-[0_0_18px_rgba(56,189,248,0.42)]" />
+          <img src="/brand/roadassistnow-logo-mark.png" alt="RoadAssistNow logo mark" className="h-full w-full scale-[1.55] object-cover drop-shadow-[0_0_18px_rgba(56,189,248,0.42)]" />
         </span>
-        <span className="text-lg font-black tracking-[-0.045em] text-white drop-shadow-[0_0_18px_rgba(255,255,255,0.16)]">FindYourTow</span>
+        <span className="text-lg font-black tracking-[-0.045em] text-white drop-shadow-[0_0_18px_rgba(255,255,255,0.16)]">RoadAssistNow</span>
       </Link>
       <div className="flex items-center gap-2">
         <Link href="/account" aria-label="Account" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-white/78 backdrop-blur-xl"><UserRound size={19} /></Link>
@@ -481,7 +481,7 @@ function PaymentStep({ quote, onNext }: { quote: ReturnType<typeof calculateQuot
   const selectedPaymentMethodId = useDemoPaymentStore((state) => state.selectedPaymentMethodId);
   const selectMethod = useDemoPaymentStore((state) => state.selectMethod);
   const selected = methods.find((method) => method.id === selectedPaymentMethodId) ?? methods[0];
-  return <div className="space-y-4"><StepTitle title="Authorize payment" copy="Choose a saved demo method, then authorize before dispatch so providers only receive ready jobs." /><div className="rounded-[1.8rem] bg-white p-5 text-black"><p className="text-sm font-black text-black/45">Amount authorized today</p><p className="mt-1 text-5xl font-black tracking-[-0.06em]">{formatMoney(quote.totalCents)}</p><div className="mt-4 space-y-2">{methods.map((method) => <button key={method.id} type="button" onClick={() => selectMethod(method.id)} className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-bold ${selected.id === method.id ? "bg-blue-100 text-blue-950" : "bg-black/[0.045] text-black/70"}`}><span className="inline-flex items-center gap-2"><CreditCard size={16} />{method.label}</span><span>{method.isDefault ? "Default" : method.type.replace("_", " ")}</span></button>)}</div><p className="mt-3 text-xs font-bold leading-5 text-black/45">Stripe authorization: no demo card is charged. In production this becomes a PaymentIntent hold; the customer is charged only after service is completed.</p></div><div className="rounded-[1.35rem] border border-emerald-300/18 bg-emerald-400/10 px-4 py-3 text-sm font-bold leading-6 text-emerald-50/76">After authorization, FindYourTow dispatches the request to nearby verified providers and opens live tracking when one accepts.</div><div className="grid grid-cols-2 gap-3"><Metric label="Payment" value="Authorized" /><Metric label="Dispatch" value="After auth" /></div><Button className="w-full" onClick={onNext}>Authorize & find provider</Button><Link href="/account/payments" className="block text-center text-sm font-black text-white/52">Manage payment methods</Link></div>;
+  return <div className="space-y-4"><StepTitle title="Authorize payment" copy="Choose a saved demo method, then authorize before dispatch so providers only receive ready jobs." /><div className="rounded-[1.8rem] bg-white p-5 text-black"><p className="text-sm font-black text-black/45">Amount authorized today</p><p className="mt-1 text-5xl font-black tracking-[-0.06em]">{formatMoney(quote.totalCents)}</p><div className="mt-4 space-y-2">{methods.map((method) => <button key={method.id} type="button" onClick={() => selectMethod(method.id)} className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-bold ${selected.id === method.id ? "bg-blue-100 text-blue-950" : "bg-black/[0.045] text-black/70"}`}><span className="inline-flex items-center gap-2"><CreditCard size={16} />{method.label}</span><span>{method.isDefault ? "Default" : method.type.replace("_", " ")}</span></button>)}</div><p className="mt-3 text-xs font-bold leading-5 text-black/45">Stripe authorization: no demo card is charged. In production this becomes a PaymentIntent hold; the customer is charged only after service is completed.</p></div><div className="rounded-[1.35rem] border border-emerald-300/18 bg-emerald-400/10 px-4 py-3 text-sm font-bold leading-6 text-emerald-50/76">After authorization, RoadAssistNow dispatches the request to nearby verified providers and opens live tracking when one accepts.</div><div className="grid grid-cols-2 gap-3"><Metric label="Payment" value="Authorized" /><Metric label="Dispatch" value="After auth" /></div><Button className="w-full" onClick={onNext}>Authorize & find provider</Button><Link href="/account/payments" className="block text-center text-sm font-black text-white/52">Manage payment methods</Link></div>;
 }
 
 function MatchingStep({ progress, providers, quote }: { progress: number; providers: AvailableDriver[]; quote: ReturnType<typeof calculateQuote> }) {

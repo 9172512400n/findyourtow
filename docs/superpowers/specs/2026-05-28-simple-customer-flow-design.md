@@ -1,4 +1,4 @@
-# FindYourTow Simple Customer Flow Design
+# RoadAssistNow Simple Customer Flow Design
 
 Date: 2026-05-28
 Status: Approved by Nir in chat
@@ -65,9 +65,9 @@ Under the hood, keep existing marketplace logic:
 
 ## Implementation Notes
 
-- Reuse existing `FindYourTowAppFlow` architecture and stores.
+- Reuse existing `RoadAssistNowAppFlow` architecture and stores.
 - Keep demo mode and no new required env vars.
-- Avoid public-facing copy that imitates a specific competitor; familiar UX patterns are fine, branding/copy stays FindYourTow-original.
+- Avoid public-facing copy that imitates a specific competitor; familiar UX patterns are fine, branding/copy stays RoadAssistNow-original.
 - Add/update tests around the simplified customer path.
 
 ## Acceptance Criteria

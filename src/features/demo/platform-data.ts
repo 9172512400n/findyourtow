@@ -50,7 +50,7 @@ export const completeServiceCatalog: Array<{ id: ServiceTypeId; label: string; r
 export const demoPaymentMethods: DemoPaymentMethod[] = [
   { id: 'pay_card_4242', type: 'card', label: 'Visa ending 4242', holder: 'Demo Customer', last4: '4242', expiration: '08/29', billingZip: '90000', isDefault: true },
   { id: 'pay_apple_demo', type: 'apple_pay', label: 'Apple Pay demo', holder: 'Demo Customer', last4: '0000', expiration: 'Wallet', billingZip: '90000', isDefault: false },
-  { id: 'pay_business_demo', type: 'business', label: 'Business account demo', holder: 'FindYourTow Fleet', last4: '1188', expiration: 'Net 15', billingZip: '10001', isDefault: false },
+  { id: 'pay_business_demo', type: 'business', label: 'Business account demo', holder: 'RoadAssistNow Fleet', last4: '1188', expiration: 'Net 15', billingZip: '10001', isDefault: false },
 ];
 
 export const demoProviders: AvailableDriver[] = [

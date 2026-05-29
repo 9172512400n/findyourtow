@@ -1,10 +1,10 @@
-# Complete FindYourTow Advanced Demo Implementation Plan
+# Complete RoadAssistNow Advanced Demo Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build a complete mobile-first FindYourTow advanced demo covering customer, provider, payment, vehicle, live tracking, and admin flows without requiring Supabase, Stripe, Mapbox, Apple Pay, Twilio, Resend, Redis, or WebSocket keys.
+**Goal:** Build a complete mobile-first RoadAssistNow advanced demo covering customer, provider, payment, vehicle, live tracking, and admin flows without requiring Supabase, Stripe, Mapbox, Apple Pay, Twilio, Resend, Redis, or WebSocket keys.
 
-**Architecture:** Keep the app in demo mode with Zustand/localStorage and mock API/data. Add reusable page shells and feature data so every route is clickable and polished, while adding adapter seams that document future wiring points for real services. Keep branding as FindYourTow only.
+**Architecture:** Keep the app in demo mode with Zustand/localStorage and mock API/data. Add reusable page shells and feature data so every route is clickable and polished, while adding adapter seams that document future wiring points for real services. Keep branding as RoadAssistNow only.
 
 **Tech Stack:** Next.js App Router, TypeScript, Tailwind CSS, Zustand, Lucide React, Vitest, Testing Library.
 

@@ -1,4 +1,4 @@
-# FindYourTow Guest Supabase Request Flow Implementation Plan
+# RoadAssistNow Guest Supabase Request Flow Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -43,7 +43,7 @@
 ### Task 4: Guest-first UI submit + admin visibility
 **Files:**
 - Modify: `src/features/tow-requests/request-flow-store.ts`
-- Modify: `src/components/app/FindYourTowAppFlow.tsx`
+- Modify: `src/components/app/RoadAssistNowAppFlow.tsx`
 - Modify: `app/admin/dispatch/page.tsx`
 
 - [ ] Add guest name/phone fields to request state.

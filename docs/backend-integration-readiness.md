@@ -1,6 +1,6 @@
 # Backend Integration Readiness
 
-FindYourTow now runs as a complete advanced demo prototype while keeping clean seams for Supabase, Stripe, Mapbox, Redis/WebSockets, and future NestJS services.
+RoadAssistNow now runs as a complete advanced demo prototype while keeping clean seams for Supabase, Stripe, Mapbox, Redis/WebSockets, and future NestJS services.
 
 ## Current Mode
 
@@ -48,16 +48,16 @@ REDIS_URL=
 ## Migrations
 
 - Prisma/Postgres schema: `prisma/schema.prisma`
-- Prisma SQL migration scaffold: `prisma/migrations/20260527152000_findyourtow_backend_ready/migration.sql`
-- Supabase RLS scaffold: `supabase/migrations/20260527152500_findyourtow_rls_policies.sql`
+- Prisma SQL migration scaffold: `prisma/migrations/20260527152000_roadassistnow_backend_ready/migration.sql`
+- Supabase RLS scaffold: `supabase/migrations/20260527152500_roadassistnow_rls_policies.sql`
 
 ## Future Connection Phases
 
 ### Phase 1: Supabase Auth + Database
 
 1. Create Supabase project.
-2. Apply `prisma/migrations/20260527152000_findyourtow_backend_ready/migration.sql` or use Prisma migrations.
-3. Apply `supabase/migrations/20260527152500_findyourtow_rls_policies.sql`.
+2. Apply `prisma/migrations/20260527152000_roadassistnow_backend_ready/migration.sql` or use Prisma migrations.
+3. Apply `supabase/migrations/20260527152500_roadassistnow_rls_policies.sql`.
 4. Add auth role claims for `customer`, `driver`, `dispatcher`, `admin`.
 5. Replace demo repository writes in `app/api/tow-requests/route.ts` with Supabase inserts.
 

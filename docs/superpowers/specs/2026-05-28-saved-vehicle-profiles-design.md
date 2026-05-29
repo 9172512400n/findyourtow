@@ -1,7 +1,7 @@
 # Saved Vehicle Profiles Design
 
 ## Goal
-Add customer-owned saved vehicles to FindYourTow, let customers manage multiple vehicles from Account, and let the request flow use a saved vehicle or a one-off/manual vehicle without forcing saves.
+Add customer-owned saved vehicles to RoadAssistNow, let customers manage multiple vehicles from Account, and let the request flow use a saved vehicle or a one-off/manual vehicle without forcing saves.
 
 ## Chosen approach
 Build a demo-first, production-shaped implementation using the existing Zustand/localStorage demo architecture, Prisma schema, and mobile app UI. The saved vehicle experience ships now in demo mode and mirrors the database model needed for Supabase/Postgres. Address autocomplete/current location will use an address provider abstraction: browser geolocation plus Mapbox geocoding when configured, with safe demo USA suggestions as fallback.

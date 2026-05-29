@@ -25,11 +25,11 @@
 - Modify: `src/features/tow-requests/demo-repository.test.ts` — cover snapshot/id.
 - Modify: `src/features/pricing/pricing-engine.ts` — accept vehicle type and derive heavy fee.
 - Modify: `src/features/pricing/pricing-engine.test.ts` — cover new types.
-- Modify: `src/components/app/FindYourTowAppFlow.tsx` — wire address service and vehicle request step.
+- Modify: `src/components/app/RoadAssistNowAppFlow.tsx` — wire address service and vehicle request step.
 - Modify: `app/account/page.tsx` — render My Vehicles manager.
 - Modify: `prisma/schema.prisma` — add Vehicle model + TowRequest vehicle relation/snapshot.
 - Create: `prisma/migrations/20260528220000_saved_vehicle_profiles/migration.sql` — vehicles table and tow_requests columns.
-- Modify: `supabase/migrations/20260527152500_findyourtow_rls_policies.sql` or create new RLS migration if needed — add vehicle policies.
+- Modify: `supabase/migrations/20260527152500_roadassistnow_rls_policies.sql` or create new RLS migration if needed — add vehicle policies.
 - Modify: `tests/premium-landing.test.tsx` — integration coverage for account/request UI.
 - Modify: `.gitignore` — ignore `.superpowers/` visual companion artifacts.
 
@@ -64,7 +64,7 @@
 ## Task 5: Request-flow vehicle step
 - [ ] Add failing tests for request step showing saved/manual modes, default first, saved card auto-fill, manual no-save path, manual save checkbox path.
 - [ ] Add explicit tests that continuing with a saved vehicle stores a `vehicleSnapshot` and `vehicleId`, while continuing with another/manual vehicle stores `vehicleSnapshot` and leaves `vehicleId` null unless the save checkbox is checked.
-- [ ] Implement `VehicleRequestStep` and replace the inline `VehicleStep` in `FindYourTowAppFlow` with mobile acceptance criteria: segmented saved/manual toggle, large cards, sticky continue CTA, bottom-sheet feeling, and no desktop tables.
+- [ ] Implement `VehicleRequestStep` and replace the inline `VehicleStep` in `RoadAssistNowAppFlow` with mobile acceptance criteria: segmented saved/manual toggle, large cards, sticky continue CTA, bottom-sheet feeling, and no desktop tables.
 - [ ] On continue, build `vehicleSnapshot`; if manual save checkbox is true, add vehicle to profile and use returned id.
 - [ ] Update quote/confirm UI to use snapshot fields.
 - [ ] Run `npx vitest run tests/premium-landing.test.tsx`; expect pass.

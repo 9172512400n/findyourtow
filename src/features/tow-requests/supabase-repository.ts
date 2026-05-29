@@ -87,7 +87,7 @@ export function normalizeGuestPhone(phone: string): string {
 }
 
 export function guestEmailForPhone(phone: string): string {
-  return `guest+${normalizeGuestPhone(phone).replace(/\D/g, "")}@guest.findyourtow.local`;
+  return `guest+${normalizeGuestPhone(phone).replace(/\D/g, "")}@guest.roadassistnow.local`;
 }
 
 export async function createSupabaseTowRequest(supabase: SupabaseClient, payload: TowRequestPayload): Promise<SupabaseTowRecord> {
