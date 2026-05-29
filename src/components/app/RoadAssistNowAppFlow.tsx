@@ -9,6 +9,7 @@ import { MapExperience } from "@/components/platform/MapExperience";
 import { StatusTimeline } from "@/components/platform/StatusTimeline";
 import { Button } from "@/components/ui/button";
 import { Card, SectionLabel } from "@/components/ui/card";
+import { BrandHomeLink } from "@/components/app/BrandHomeLink";
 import { VehicleRequestStep } from "@/components/app/VehicleRequestStep";
 import { calculateQuote, formatMoney } from "@/features/pricing/pricing-engine";
 import { useRequestFlowStore } from "@/features/tow-requests/request-flow-store";
@@ -242,12 +243,7 @@ function previousStep(step: FlowStep, isTowService: boolean): FlowStep {
 function MinimalTopBar() {
   return (
     <nav className="flex items-center justify-between py-2">
-      <Link href="/" aria-label="RoadAssistNow home" className="flex items-center gap-2.5">
-        <span className="grid h-12 w-12 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.055] shadow-[0_0_28px_rgba(56,189,248,0.18)] backdrop-blur-xl">
-          <img src="/brand/roadassistnow-logo-mark.png" alt="RoadAssistNow logo mark" className="h-full w-full scale-[1.55] object-cover drop-shadow-[0_0_18px_rgba(56,189,248,0.42)]" />
-        </span>
-        <span className="text-lg font-black tracking-[-0.045em] text-white drop-shadow-[0_0_18px_rgba(255,255,255,0.16)]">RoadAssistNow</span>
-      </Link>
+      <BrandHomeLink />
       <div className="flex items-center gap-2">
         <Link href="/account" aria-label="Account" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-white/78 backdrop-blur-xl"><UserRound size={19} /></Link>
         <button type="button" aria-label="Open menu" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-white/78 backdrop-blur-xl"><Menu size={21} /></button>

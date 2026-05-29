@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Apple, BriefcaseBusiness, CarFront, CheckCircle2, ChevronRight, CreditCard, Edit3, Plus, ShieldCheck, UserRound, WalletCards } from 'lucide-react';
 import { AppBottomNav } from '@/components/app/AppBottomNav';
+import { BrandHomeLink } from '@/components/app/BrandHomeLink';
 
 const progressSteps = [
   { label: 'Profile', status: 'complete' },
@@ -26,12 +27,7 @@ export default function AccountSetupPage() {
 
       <section className="mx-auto min-h-screen w-full max-w-6xl px-5 pb-10 pt-4 sm:px-8">
         <nav className="flex items-center justify-between gap-3 py-2">
-          <Link href="/" aria-label="RoadAssistNow home" className="flex items-center gap-2.5">
-            <span className="grid h-12 w-12 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.055] shadow-[0_0_28px_rgba(56,189,248,0.18)] backdrop-blur-xl">
-              <img src="/brand/roadassistnow-logo-mark.png" alt="RoadAssistNow logo mark" className="h-full w-full scale-[1.55] object-cover drop-shadow-[0_0_18px_rgba(56,189,248,0.42)]" />
-            </span>
-            <span className="text-lg font-black tracking-[-0.045em] text-white">RoadAssistNow</span>
-          </Link>
+          <BrandHomeLink />
           <Link href="/request" className="rounded-full bg-white px-4 py-2 text-sm font-black text-black">Request help</Link>
         </nav>
 

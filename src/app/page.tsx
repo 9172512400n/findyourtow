@@ -43,8 +43,8 @@ export default function Home() {
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
           <Link href="/" className="flex shrink-0 items-center" aria-label="RoadAssistNow home">
             <img
-              src="/brand/roadassistnow-logo-transparent.png"
-              alt="RoadAssistNow logo"
+              src="/brand/roadassistnow-header-lockup.png"
+              alt="RoadAssistNow brand lockup"
               className="h-16 w-auto object-contain drop-shadow-[0_0_28px_rgba(56,189,248,0.3)] sm:h-20"
             />
           </Link>

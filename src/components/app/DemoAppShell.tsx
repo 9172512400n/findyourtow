@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { AppBottomNav, type AppTabLabel } from '@/components/app/AppBottomNav';
+import { BrandHomeLink } from '@/components/app/BrandHomeLink';
 
 export function DemoAppShell({ activeTab = 'Account', eyebrow, title, copy, children, actions }: { activeTab?: AppTabLabel; eyebrow: string; title: string; copy: string; children: ReactNode; actions?: ReactNode }) {
   return (
@@ -9,12 +10,7 @@ export function DemoAppShell({ activeTab = 'Account', eyebrow, title, copy, chil
       <div className="fixed inset-0 -z-10 opacity-[0.10] [background-image:linear-gradient(rgba(255,255,255,.18)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.18)_1px,transparent_1px)] [background-size:54px_54px]" />
       <section className="mx-auto min-h-screen w-full max-w-6xl px-5 pb-10 pt-4 sm:px-8">
         <nav className="flex items-center justify-between gap-3 py-2">
-          <Link href="/" aria-label="RoadAssistNow home" className="flex items-center gap-2.5">
-            <span className="grid h-12 w-12 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.055] shadow-[0_0_28px_rgba(56,189,248,0.18)] backdrop-blur-xl">
-              <img src="/brand/roadassistnow-logo-mark.png" alt="RoadAssistNow logo mark" className="h-full w-full scale-[1.55] object-cover drop-shadow-[0_0_18px_rgba(56,189,248,0.42)]" />
-            </span>
-            <span className="text-lg font-black tracking-[-0.045em] text-white">RoadAssistNow</span>
-          </Link>
+          <BrandHomeLink />
           {actions ?? <Link href="/request" className="rounded-full bg-white px-4 py-2 text-sm font-black text-black">Request help</Link>}
         </nav>
         <header className="pt-10 sm:pt-14">
