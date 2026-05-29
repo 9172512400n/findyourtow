@@ -20,35 +20,35 @@ as $$
 $$;
 
 create policy "customers read own record" on customers
-  for select using (user_id = auth.uid()::text or public.current_user_role() in ('DISPATCHER','ADMIN','SUPER_ADMIN'));
+  for select using ("userId" = auth.uid()::text or public.current_user_role() in ('DISPATCHER','ADMIN','SUPER_ADMIN'));
 
 create policy "drivers read own record" on drivers
-  for select using (user_id = auth.uid()::text or public.current_user_role() in ('DISPATCHER','ADMIN','SUPER_ADMIN'));
+  for select using ("userId" = auth.uid()::text or public.current_user_role() in ('DISPATCHER','ADMIN','SUPER_ADMIN'));
 
 create policy "customers manage own tow requests" on tow_requests
   for all using (
-    customer_id in (select id from customers where user_id = auth.uid()::text)
+    "customerId" in (select id from customers where "userId" = auth.uid()::text)
     or public.current_user_role() in ('DISPATCHER','ADMIN','SUPER_ADMIN')
   );
 
 create policy "drivers read assigned tow requests" on tow_requests
   for select using (
-    driver_id in (select id from drivers where user_id = auth.uid()::text)
+    "driverId" in (select id from drivers where "userId" = auth.uid()::text)
     or public.current_user_role() in ('DISPATCHER','ADMIN','SUPER_ADMIN')
   );
 
 create policy "drivers insert own location" on driver_locations
-  for insert with check (driver_id in (select id from drivers where user_id = auth.uid()::text));
+  for insert with check ("driverId" in (select id from drivers where "userId" = auth.uid()::text));
 
 create policy "dispatchers read live locations" on driver_locations
   for select using (public.current_user_role() in ('DISPATCHER','ADMIN','SUPER_ADMIN'));
 
 create policy "payment records are protected" on payments
   for select using (
-    tow_request_id in (
+    "towRequestId" in (
       select tr.id from tow_requests tr
-      join customers c on c.id = tr.customer_id
-      where c.user_id = auth.uid()::text
+      join customers c on c.id = tr."customerId"
+      where c."userId" = auth.uid()::text
     )
     or public.current_user_role() in ('DISPATCHER','ADMIN','SUPER_ADMIN')
   );
