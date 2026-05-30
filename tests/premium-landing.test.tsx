@@ -36,7 +36,7 @@ describe('RoadAssistNow premium mobile homepage', () => {
     expect(screen.queryByRole('link', { name: /^start$/i })).not.toBeInTheDocument();
 
     const services = screen.getByLabelText(/quick service selector/i);
-    const helpCard = screen.getByLabelText(/where do you need help/i);
+    const helpCard = screen.getByLabelText(/start request/i);
     expect(within(services).getByRole('heading', { name: /choose the service you need/i })).toBeInTheDocument();
     expect(within(services).getByText(/tap what happened/i)).toBeInTheDocument();
     expect(Boolean(services.compareDocumentPosition(helpCard) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
@@ -45,8 +45,10 @@ describe('RoadAssistNow premium mobile homepage', () => {
     }
     expect(within(services).queryByRole('button', { name: /flatbed/i })).not.toBeInTheDocument();
 
-    expect(within(helpCard).getByRole('button', { name: /use current location/i })).toBeInTheDocument();
-    expect(within(helpCard).getByPlaceholderText(/enter address or landmark/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /call roadassistnow/i })).toHaveAttribute('href', expect.stringMatching(/^tel:/));
+    expect(screen.queryByRole('button', { name: /share my location/i })).not.toBeInTheDocument();
+    expect(within(helpCard).queryByRole('button', { name: /use current location/i })).not.toBeInTheDocument();
+    expect(within(helpCard).queryByPlaceholderText(/enter address or landmark/i)).not.toBeInTheDocument();
     expect(within(helpCard).getByRole('button', { name: /service tow/i })).toBeInTheDocument();
 
     expect(screen.queryByText(/choose the roadside rescue you need/i)).not.toBeInTheDocument();
@@ -90,7 +92,9 @@ describe('RoadAssistNow premium mobile homepage', () => {
     expect(within(flow).queryByRole('button', { name: /pickup now/i })).not.toBeInTheDocument();
     expect(within(flow).queryByRole('button', { name: /for me/i })).not.toBeInTheDocument();
     expect(within(flow).getByText(/tow details/i)).toBeInTheDocument();
-    expect(within(flow).getByDisplayValue(/home/i)).toBeInTheDocument();
+    expect(within(flow).getByText(/share your location/i)).toBeInTheDocument();
+    expect(within(flow).getByRole('button', { name: /use current location/i })).toBeInTheDocument();
+    expect(within(flow).getByPlaceholderText(/pickup address or landmark/i)).toBeInTheDocument();
     expect(within(flow).getByPlaceholderText(/tow destination/i)).toBeInTheDocument();
     expect(within(flow).getByText(/random auto center/i)).toBeInTheDocument();
     expect(within(flow).queryByText(/piermont|hewlett|oceanside|reina|lincoln|healy|waverly|far rockaway/i)).not.toBeInTheDocument();

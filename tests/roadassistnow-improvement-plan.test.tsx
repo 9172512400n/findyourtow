@@ -27,8 +27,9 @@ describe('RoadAssistNow improvement plan', () => {
     expect(screen.getByText(/upfront pricing/i)).toBeInTheDocument();
     expect(screen.getByText(/live tracking/i)).toBeInTheDocument();
     expect(screen.getByText(/verified providers/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /call now/i })).toHaveAttribute('href', expect.stringMatching(/^tel:/));
-    expect(screen.getByRole('button', { name: /share my location/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /call roadassistnow/i })).toHaveAttribute('href', expect.stringMatching(/^tel:/));
+    expect(screen.queryByRole('button', { name: /share my location/i })).not.toBeInTheDocument();
+    expect(screen.queryByText(/use current location/i)).not.toBeInTheDocument();
   });
 
   it('makes account a three-card gateway for customer, provider, and tracking access', () => {
@@ -48,7 +49,9 @@ describe('RoadAssistNow improvement plan', () => {
 
     render(<RequestServicePage />);
     expect(screen.getAllByText(/price estimate before confirmation/i).length).toBeGreaterThan(0);
-    expect(screen.getByRole('heading', { name: /roadside assistance in minutes/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /request roadside help/i })).toBeInTheDocument();
+    expect(screen.getByText(/share your location/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /use current location/i })).toBeInTheDocument();
   });
 
   it('adds provider account, application, and dashboard pages', () => {

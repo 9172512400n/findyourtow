@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { BatteryCharging, Car, CreditCard, Fuel, KeyRound, LifeBuoy, LockKeyhole, LocateFixed, Menu, Route, ShieldAlert, Star, Truck, UserRound, Wrench } from "lucide-react";
+import { BatteryCharging, Car, CreditCard, Fuel, KeyRound, LifeBuoy, LockKeyhole, LocateFixed, Menu, Phone, Route, ShieldAlert, Star, Truck, UserRound, Wrench } from "lucide-react";
 import { AppBottomNav, type AppTabLabel } from "@/components/app/AppBottomNav";
 import { DriverCard } from "@/components/platform/DriverCard";
 import { MapExperience } from "@/components/platform/MapExperience";
@@ -122,7 +122,6 @@ export function RoadAssistNowAppFlow({ activeTab = "Home", initialStep = 0 }: { 
   }
 
   function startFlow() {
-    if (!data.pickupAddress.trim()) patch({ pickupAddress: "Current location · 3321 Placeholder Ave" });
     setStep(1);
   }
 
@@ -206,10 +205,10 @@ export function RoadAssistNowAppFlow({ activeTab = "Home", initialStep = 0 }: { 
             </div>
             <div className="mt-4 rounded-[1.5rem] border border-white/10 bg-white/[0.055] p-4">
               <p className="text-sm font-black text-white">Request help in 3 steps</p>
-              <p className="mt-1 text-sm font-bold text-white/50">Choose service, share location, approve your price estimate before confirmation.</p>
+              <p className="mt-1 text-sm font-bold text-white/50">Choose service, open the request flow, and approve your price estimate before confirmation.</p>
             </div>
             <CompactServices selectedService={data.serviceType} selectingService={selectingService} onSelect={selectService} />
-            <HelpInputCard pickupAddress={data.pickupAddress} selectedService={selectedService} onPickupChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={useCurrentLocation} onStart={startFlow} />
+            <HelpInputCard selectedService={selectedService} onStart={startFlow} />
           </div>
         </div>
 
@@ -220,11 +219,6 @@ export function RoadAssistNowAppFlow({ activeTab = "Home", initialStep = 0 }: { 
         </aside>
       </section>
 
-      <div className="fixed bottom-[6.6rem] right-4 z-40 flex flex-col gap-2 sm:right-6">
-        <a href="tel:+15166664941" aria-label="Call now" className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-5 text-sm font-black text-black shadow-2xl shadow-black/30">Call Now</a>
-        <button type="button" aria-label="Share my location" onClick={useCurrentLocation} className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/10 bg-blue-500 px-5 text-sm font-black text-white shadow-2xl shadow-blue-950/40">Share my location</button>
-      </div>
-
       <AppBottomNav activeTab={activeTab} />
 
       {step > 0 && (
@@ -233,7 +227,7 @@ export function RoadAssistNowAppFlow({ activeTab = "Home", initialStep = 0 }: { 
             <div className={`mx-auto mb-3 h-1.5 w-12 shrink-0 rounded-full ${isRidePlannerStep ? "bg-blue-200/24" : "bg-white/18"}`} />
             <FlowHeader step={step} onBack={step > 1 ? () => setStep(previousStep(step, isTowService)) : undefined} onClose={() => setStep(0)} firstStepHref={activeTab === "Request" ? "/" : undefined} />
             <div className="min-h-0 flex-1 overflow-y-auto pb-1">
-              {step === 1 && <RidePlannerStep pickupAddress={data.pickupAddress || "Home"} dropoffAddress={data.dropoffAddress} serviceType={data.serviceType} selectedService={selectedService} isTowService={isTowService} onServiceChange={updateService} onPickupChange={(pickupAddress) => patch({ pickupAddress })} onDestinationChange={(dropoffAddress) => patch({ dropoffAddress })} onChooseDestination={chooseDestination} />}
+              {step === 1 && <RidePlannerStep pickupAddress={data.pickupAddress} dropoffAddress={data.dropoffAddress} serviceType={data.serviceType} selectedService={selectedService} isTowService={isTowService} onServiceChange={updateService} onPickupChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={useCurrentLocation} onDestinationChange={(dropoffAddress) => patch({ dropoffAddress })} onChooseDestination={chooseDestination} />}
               {step === 2 && <LocationStep pickupAddress={data.pickupAddress} onChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={useCurrentLocation} onNext={nextAfterLocation} />}
               {step === 3 && isTowService && <DestinationStep dropoffAddress={data.dropoffAddress} quote={quote} distanceMiles={distanceMiles} onChange={(dropoffAddress) => patch({ dropoffAddress })} onNext={() => setStep(4)} />}
               {step === 4 && <VehicleRequestStep data={data} onChange={patch} onNext={() => setStep(5)} />}
@@ -262,6 +256,7 @@ function MinimalTopBar() {
     <nav className="flex items-center justify-between py-2">
       <BrandHomeLink />
       <div className="flex items-center gap-2">
+        <a href="tel:+15166664941" aria-label="Call RoadAssistNow" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-white/78 backdrop-blur-xl"><Phone size={18} /></a>
         <Link href="/account" aria-label="Account" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-white/78 backdrop-blur-xl"><UserRound size={19} /></Link>
         <button type="button" aria-label="Open menu" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-white/78 backdrop-blur-xl"><Menu size={21} /></button>
       </div>
@@ -288,15 +283,12 @@ function PremiumMapVisual({ selectedService, quoteEta, large = false }: { select
   );
 }
 
-function HelpInputCard({ pickupAddress, selectedService, onPickupChange, onUseCurrent, onStart }: { pickupAddress: string; selectedService: { label: string }; onPickupChange: (value: string) => void; onUseCurrent: () => void; onStart: () => void }) {
+function HelpInputCard({ selectedService, onStart }: { selectedService: { label: string }; onStart: () => void }) {
   return (
-    <div aria-label="Where do you need help" className="mt-4 rounded-[2rem] border border-white/10 bg-white/[0.07] p-4 shadow-2xl shadow-black/25 backdrop-blur-2xl">
-      <p className="px-1 text-lg font-black tracking-[-0.02em]">Where do you need help?</p>
-      <div className="mt-4 flex items-center gap-2 rounded-[1.35rem] bg-black/32 p-2">
-        <button type="button" onClick={onUseCurrent} className="shrink-0 rounded-full bg-white px-4 py-3 text-xs font-black text-black">Use current location</button>
-        <input value={pickupAddress} onChange={(event) => onPickupChange(event.target.value)} placeholder="Enter address or landmark" className="min-w-0 flex-1 bg-transparent px-2 text-sm font-bold text-white outline-none placeholder:text-white/34" />
-      </div>
-      <div className="mt-3 grid grid-cols-[1fr_auto] gap-2"><button type="button" aria-label={`Service ${serviceShortNames[selectedServiceIdFromLabel(selectedService.label)] ?? selectedService.label}`} className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-3 text-left text-sm font-black text-white/78">Service · {selectedService.label}</button><button type="button" onClick={onStart} className="rounded-full bg-blue-500 px-5 py-3 text-sm font-black text-white shadow-[0_18px_45px_rgba(59,130,246,.35)]">Continue</button></div>
+    <div aria-label="Start request" className="mt-4 rounded-[2rem] border border-white/10 bg-white/[0.07] p-4 shadow-2xl shadow-black/25 backdrop-blur-2xl">
+      <p className="px-1 text-lg font-black tracking-[-0.02em]">Ready when you are.</p>
+      <p className="mt-1 px-1 text-sm font-bold text-white/50">Location is requested inside the booking flow, then you review the price before confirmation.</p>
+      <div className="mt-4 grid grid-cols-[1fr_auto] gap-2"><button type="button" aria-label={`Service ${serviceShortNames[selectedServiceIdFromLabel(selectedService.label)] ?? selectedService.label}`} className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-3 text-left text-sm font-black text-white/78">Service · {selectedService.label}</button><button type="button" onClick={onStart} className="rounded-full bg-white px-5 py-3 text-sm font-black text-black">Continue</button></div>
     </div>
   );
 }
@@ -361,7 +353,7 @@ function BookingProgressRail({ step }: { step: FlowStep }) {
   );
 }
 
-function RidePlannerStep({ pickupAddress, dropoffAddress, serviceType, selectedService, isTowService, onServiceChange, onPickupChange, onDestinationChange, onChooseDestination }: { pickupAddress: string; dropoffAddress: string; serviceType: ServiceTypeId; selectedService: { label: string }; isTowService: boolean; onServiceChange: (value: ServiceTypeId) => void; onPickupChange: (value: string) => void; onDestinationChange: (value: string) => void; onChooseDestination: (value: string) => void }) {
+function RidePlannerStep({ pickupAddress, dropoffAddress, serviceType, selectedService, isTowService, onServiceChange, onPickupChange, onUseCurrent, onDestinationChange, onChooseDestination }: { pickupAddress: string; dropoffAddress: string; serviceType: ServiceTypeId; selectedService: { label: string }; isTowService: boolean; onServiceChange: (value: ServiceTypeId) => void; onPickupChange: (value: string) => void; onUseCurrent: () => void; onDestinationChange: (value: string) => void; onChooseDestination: (value: string) => void }) {
   const [query, setQuery] = useState("");
   const visiblePlaces = ridePlannerPlaces.filter((place) => {
     const haystack = `${place.name} ${place.address}`.toLowerCase();
@@ -384,12 +376,23 @@ function RidePlannerStep({ pickupAddress, dropoffAddress, serviceType, selectedS
         <p className="text-sm font-bold leading-6 text-white/54">Set the service location, review the price, authorize payment, then we match a verified nearby provider.</p>
       </div>
 
-      <div className="grid gap-2 rounded-[1.25rem] border border-blue-300/16 bg-blue-400/10 p-3">
-        <label htmlFor="request-service-needed" className="text-[0.62rem] font-black uppercase tracking-[0.22em] text-blue-100/54">Roadside service needed</label>
-        <select id="request-service-needed" aria-label="Roadside service needed" value={serviceType} onChange={(event) => { setQuery(""); onServiceChange(event.target.value as ServiceTypeId); }} className="min-h-12 w-full rounded-2xl border border-white/10 bg-[#0b1522] px-4 text-base font-black text-white outline-none focus:border-blue-300">
+      <div className="grid gap-2 rounded-[1.25rem] border border-white/10 bg-white/[0.055] p-3">
+        <label htmlFor="request-service-needed" className="text-[0.62rem] font-black uppercase tracking-[0.22em] text-white/44">Roadside service needed</label>
+        <select id="request-service-needed" aria-label="Roadside service needed" value={serviceType} onChange={(event) => { setQuery(""); onServiceChange(event.target.value as ServiceTypeId); }} className="min-h-12 w-full rounded-2xl border border-white/10 bg-[#0b0d12] px-4 text-base font-black text-white outline-none focus:border-white/40">
           {serviceOptions.map((service) => <option key={service.id} value={service.id}>{service.label}</option>)}
         </select>
         <p className="text-xs font-bold leading-5 text-white/50">Towing is the default. Change this before continuing if the customer needs fuel, jump start, tire help, lockout, winch-out, or another service.</p>
+      </div>
+
+      <div className="rounded-[1.45rem] border border-white/10 bg-white/[0.055] p-4">
+        <p className="text-[0.62rem] font-black uppercase tracking-[0.22em] text-white/38">Location permission</p>
+        <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-lg font-black tracking-[-0.03em]">Share your location</p>
+            <p className="mt-1 text-sm font-bold leading-5 text-white/50">Use your current location for faster matching, or type the pickup address below.</p>
+          </div>
+          <button type="button" onClick={onUseCurrent} className="min-h-12 shrink-0 rounded-full bg-white px-4 text-sm font-black text-black">Use current location</button>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -404,7 +407,7 @@ function RidePlannerStep({ pickupAddress, dropoffAddress, serviceType, selectedS
           <span className="grid h-8 w-8 place-items-center rounded-2xl bg-emerald-300 text-xs font-black text-emerald-950">PIN</span>
           <label className="min-w-0">
             <span className="block text-[0.62rem] font-black uppercase tracking-[0.2em] text-white/36">Service location</span>
-            <input value={pickupAddress} onChange={(event) => onPickupChange(event.target.value)} aria-label="Pickup" className="mt-1 w-full min-w-0 border-b border-white/10 bg-transparent py-1 text-base font-black text-white outline-none focus:border-blue-300" />
+            <input value={pickupAddress} onChange={(event) => onPickupChange(event.target.value)} aria-label="Pickup" placeholder="Pickup address or landmark" className="mt-1 w-full min-w-0 border-b border-white/10 bg-transparent py-1 text-base font-black text-white outline-none placeholder:text-white/38 focus:border-white/40" />
           </label>
           <span className="grid h-8 w-8 place-items-center rounded-2xl bg-blue-400 text-xs font-black text-blue-950">SVC</span>
           <label className="min-w-0">
