@@ -9,7 +9,7 @@ This spec supersedes earlier guest-first/request-flow specs and implementation p
 The current customer request flow still contains guest-order behavior:
 
 - `/request` can be opened without a real customer session.
-- The confirmation step says "No account required."
+- The confirmation step still used guest-checkout copy.
 - The request API can create guest-style users from name/phone.
 - Payment is shown as authorized in the UI before a real saved payment method gate exists.
 
@@ -121,7 +121,7 @@ Use the uploaded backend as reference and adapt its concepts into the existing s
 - A logged-out user cannot start a real service order.
 - `/request` deep links redirect logged-out users to `/login?next=/request` or equivalent return-path behavior.
 - A logged-in user without a saved/default payment method cannot place a service order and is routed to wallet setup.
-- The UI no longer says "No account required."
+- The UI no longer presents the request as guest checkout.
 - Real request APIs reject unauthenticated requests with `401`.
 - Real request APIs reject authenticated customer requests without a default payment method with `402 PAYMENT_METHOD_REQUIRED` or equivalent.
 - Forged `customerName`, `phone`, `customerId`, or similar body fields cannot create/select another customer.
