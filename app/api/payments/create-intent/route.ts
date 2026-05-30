@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { buildMockTrip } from "@/features/tow-requests/mock-data";
-import { createDemoAuthorizationForStoredTowRequest, createPaymentIntentForTow } from "@/lib/stripe/payment-service";
+import { createDemoPaymentIntent } from "@/features/payments/payment-simulator";
+import { createDemoAuthorizationForStoredTowRequest, createPaymentIntentForStoredTowRequest, createPaymentIntentForTow } from "@/lib/stripe/payment-service";
 import { getBackendMode } from "@/lib/runtime/backend-mode";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
@@ -20,15 +21,18 @@ export async function POST(request: Request) {
 
   const mode = getBackendMode();
   const supabase = createServerSupabaseClient();
-  if (mode.services.supabase && mode.paymentMode === "demo" && supabase) {
+  if (mode.services.supabase && supabase) {
     try {
+      if (mode.paymentMode === "stripe") {
+        return NextResponse.json(await createPaymentIntentForStoredTowRequest(supabase, parsed.data.towRequestId));
+      }
       return NextResponse.json(await createDemoAuthorizationForStoredTowRequest(supabase, parsed.data.towRequestId, parsed.data.amountCents));
     } catch (error) {
-      return NextResponse.json({ error: error instanceof Error ? error.message : "Could not authorize demo payment" }, { status: 500 });
+      return NextResponse.json({ error: error instanceof Error ? error.message : "Could not authorize payment" }, { status: 500 });
     }
   }
 
-  // Local fallback when the real marketplace backend is not configured.
+  // Local prototype fallback when the real marketplace backend is not configured.
   const trip = buildMockTrip({
     customerName: "Demo customer",
     phone: "+10000000000",
@@ -38,6 +42,9 @@ export async function POST(request: Request) {
     vehicleMake: "Demo",
     vehicleModel: "Vehicle",
   });
+  if (mode.paymentMode === "demo") {
+    return NextResponse.json(createDemoPaymentIntent({ ...trip, id: parsed.data.towRequestId }));
+  }
   const intent = await createPaymentIntentForTow({ ...trip, id: parsed.data.towRequestId });
 
   return NextResponse.json(intent);
