@@ -1,7 +1,23 @@
-import Link from 'next/link';
 import { DemoList } from '@/components/app/DemoCards';
 import { DemoAppShell, DemoSection } from '@/components/app/DemoAppShell';
+import { ProviderOnboardingForm } from '@/components/marketplace/ProviderOnboardingForm';
 
 export default function ProviderOnboardingPage() {
-  return <DemoAppShell activeTab="Account" eyebrow="Provider onboarding" title="Provider onboarding" copy="Complete the provider application before admin approval, including business, document, truck, and service-area details."><div className="grid gap-4 lg:grid-cols-2"><DemoSection title="Application steps"><DemoList items={[{title:'Business profile', subtitle:'Company name, contact, operating hours', right:'Ready', tone:'green'}, {title:'Driver license', subtitle:'Upload demo document', right:'Upload'}, {title:'Insurance', subtitle:'Policy and expiration', right:'Review'}, {title:'Truck photos', subtitle:'Exterior, plate, equipment', right:'Upload'}, {title:'Service areas', subtitle:'Zones and capabilities', right:'Set'}]} /></DemoSection><DemoSection title="Submit"><div className="space-y-3">{['Company name','Phone','Service area','Truck type','License number'].map((field) => <input key={field} placeholder={field} className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-4 font-bold" />)}<Link href="/admin/drivers" className="flex min-h-13 items-center justify-center rounded-full bg-blue-500 px-5 font-black text-white">Submit demo application</Link></div></DemoSection></div></DemoAppShell>;
+  return (
+    <DemoAppShell activeTab="Account" eyebrow="Provider onboarding" title="Provider onboarding" copy="Submit a real provider application for admin approval, including company, truck, service-area, and service capability details.">
+      <div className="grid gap-4 lg:grid-cols-[.8fr_1.2fr]">
+        <DemoSection title="Approval path">
+          <DemoList items={[
+            { title: 'Business profile', subtitle: 'Company, contact, dispatch phone/email', right: 'Required', tone: 'blue' },
+            { title: 'Truck capability', subtitle: 'Truck type, plate, service capabilities', right: 'Required', tone: 'blue' },
+            { title: 'Admin approval', subtitle: 'Dispatcher approves before assignment', right: 'Gate', tone: 'green' },
+            { title: 'Manual dispatch', subtitle: 'Approved providers can receive first-market jobs', right: 'Live' },
+          ]} />
+        </DemoSection>
+        <DemoSection title="Real provider application">
+          <ProviderOnboardingForm />
+        </DemoSection>
+      </div>
+    </DemoAppShell>
+  );
 }

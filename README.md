@@ -18,6 +18,7 @@ RoadAssistNow is a premium real-time roadside dispatch platform for customers, d
 - Production architecture notes at `docs/production-architecture.md`
 - Backend integration readiness guide at `docs/backend-integration-readiness.md`
 - Demo-safe Supabase, Stripe, Mapbox, and realtime adapter seams
+- First-market marketplace loop APIs for provider onboarding, admin approval, manual dispatch, and driver job status updates
 
 ## Development
 
