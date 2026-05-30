@@ -22,6 +22,13 @@ export const metadata: Metadata = {
     title: "RoadAssistNow | Premium Tow Dispatch",
     description: "The real-time roadside dispatch platform for fast, transparent tow coordination.",
     type: "website",
+    images: [{ url: "/brand/roadassistnow-header-lockup.png", width: 1200, height: 630, alt: "RoadAssistNow" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "RoadAssistNow | Premium Tow Dispatch",
+    description: "The real-time roadside dispatch platform for fast, transparent tow coordination.",
+    images: ["/brand/roadassistnow-header-lockup.png"],
   },
 };
 

@@ -41,16 +41,16 @@ export const completeServiceCatalog: Array<{ id: ServiceTypeId; label: string; r
   { id: 'winch_out', label: 'Winch out', routeRequired: false, description: 'Recovery from mud, snow, driveway, ditch, or tight spots.', baseCents: 15000 },
   { id: 'battery_help', label: 'Battery help', routeRequired: false, description: 'Battery support, jump assistance, and replacement coordination.', baseCents: 9500 },
   { id: 'motorcycle_tow', label: 'Motorcycle tow', routeRequired: true, description: 'Motorcycle-safe tow with proper equipment.', baseCents: 11000 },
-  { id: 'heavy_duty_tow', label: 'Heavy-duty tow', routeRequired: true, description: 'Heavy vehicle tow demo flow for larger vehicles.', baseCents: 24500 },
-  { id: 'box_truck_tow', label: 'Box truck tow', routeRequired: true, description: 'Commercial box-truck tow demo flow.', baseCents: 26500 },
+  { id: 'heavy_duty_tow', label: 'Heavy-duty tow', routeRequired: true, description: 'Heavy vehicle tow flow for larger vehicles.', baseCents: 24500 },
+  { id: 'box_truck_tow', label: 'Box truck tow', routeRequired: true, description: 'Commercial box-truck tow flow.', baseCents: 26500 },
   { id: 'private_property_tow', label: 'Private property tow', routeRequired: true, description: 'Private property dispatch-ready tow workflow.', baseCents: 15500 },
   { id: 'emergency_roadside', label: 'Emergency roadside help', routeRequired: false, description: 'Fast triage for urgent roadside issues.', baseCents: 9900 },
 ];
 
 export const demoPaymentMethods: DemoPaymentMethod[] = [
-  { id: 'pay_card_4242', type: 'card', label: 'Visa ending 4242', holder: 'Demo Customer', last4: '4242', expiration: '08/29', billingZip: '90000', isDefault: true },
-  { id: 'pay_apple_demo', type: 'apple_pay', label: 'Apple Pay demo', holder: 'Demo Customer', last4: '0000', expiration: 'Wallet', billingZip: '90000', isDefault: false },
-  { id: 'pay_business_demo', type: 'business', label: 'Business account demo', holder: 'RoadAssistNow Fleet', last4: '1188', expiration: 'Net 15', billingZip: '10001', isDefault: false },
+  { id: 'pay_card_4242', type: 'card', label: 'Visa ending 4242', holder: 'Maya Rosen', last4: '4242', expiration: '08/29', billingZip: '90000', isDefault: true },
+  { id: 'pay_apple_demo', type: 'apple_pay', label: 'Apple Pay', holder: 'Maya Rosen', last4: '0000', expiration: 'Wallet', billingZip: '90000', isDefault: false },
+  { id: 'pay_business_demo', type: 'business', label: 'Business account', holder: 'RoadAssistNow Fleet', last4: '1188', expiration: 'Net 15', billingZip: '10001', isDefault: false },
 ];
 
 export const demoProviders: AvailableDriver[] = [
@@ -62,18 +62,18 @@ export const demoProviders: AvailableDriver[] = [
 ];
 
 export const demoRequests: DemoRequestSummary[] = [
-  { id: 'FYT-9284', serviceType: 'flatbed_tow', serviceLabel: 'Flatbed tow', customer: 'Demo Rider A', pickup: 'Pixel Pkwy service lane', dropoff: 'Mockingbird Repair Center', vehicle: '2022 BMW X5', vehicleSnapshot: { make: 'BMW', model: 'X5', year: '2022', color: 'Black', plate: 'NYX502', vehicleType: 'SUV' }, paymentMethodId: 'pay_card_4242', status: 'assigned', providerId: 'drv_marcus', totalCents: 22440, etaMinutes: 6, createdAt: 'Today 1:18 PM' },
-  { id: 'FYT-9271', serviceType: 'jump_start', serviceLabel: 'Jump start', customer: 'Demo Rider B', pickup: 'Sandbox Plaza', vehicle: '2020 Toyota Camry', vehicleSnapshot: { make: 'Toyota', model: 'Camry', year: '2020', color: 'Silver', plate: 'JMP220', vehicleType: 'Sedan' }, paymentMethodId: 'pay_apple_demo', status: 'en_route', providerId: 'drv_elena', totalCents: 9350, etaMinutes: 8, createdAt: 'Today 12:42 PM' },
-  { id: 'FYT-9218', serviceType: 'lockout', serviceLabel: 'Lockout', customer: 'Demo Rider C', pickup: 'Placeholder Ave', vehicle: '2021 Honda Accord', vehicleSnapshot: { make: 'Honda', model: 'Accord', year: '2021', color: 'Gray', plate: 'LCK441', vehicleType: 'Sedan' }, paymentMethodId: 'pay_business_demo', status: 'completed', providerId: 'drv_jules', totalCents: 8800, etaMinutes: 0, createdAt: 'Yesterday' },
-  { id: 'FYT-9202', serviceType: 'winch_out', serviceLabel: 'Winch out', customer: 'Demo Rider D', pickup: 'Widget Road driveway', vehicle: '2023 Ford F-150', vehicleSnapshot: { make: 'Ford', model: 'F-150', year: '2023', color: 'White', plate: 'RCV150', vehicleType: 'Pickup truck' }, paymentMethodId: 'pay_card_4242', status: 'completed', providerId: 'drv_andre', totalCents: 18150, etaMinutes: 0, createdAt: 'May 25' },
-  { id: 'FYT-9180', serviceType: 'fuel_delivery', serviceLabel: 'Fuel delivery', customer: 'Demo Rider E', pickup: 'Test Auto Lane shoulder', vehicle: '2019 Nissan Rogue', vehicleSnapshot: { make: 'Nissan', model: 'Rogue', year: '2019', color: 'Blue', plate: 'FUEL19', vehicleType: 'SUV' }, paymentMethodId: 'pay_apple_demo', status: 'completed', providerId: 'drv_elena', totalCents: 9800, etaMinutes: 0, createdAt: 'May 21' },
+  { id: 'FYT-9284', serviceType: 'flatbed_tow', serviceLabel: 'Flatbed tow', customer: 'Ari Stein', pickup: 'Queens Blvd service lane', dropoff: 'Queens Auto Care', vehicle: '2022 BMW X5', vehicleSnapshot: { make: 'BMW', model: 'X5', year: '2022', color: 'Black', plate: 'NYX502', vehicleType: 'SUV' }, paymentMethodId: 'pay_card_4242', status: 'assigned', providerId: 'drv_marcus', totalCents: 22440, etaMinutes: 6, createdAt: 'Today 1:18 PM' },
+  { id: 'FYT-9271', serviceType: 'jump_start', serviceLabel: 'Jump start', customer: 'Leah Cohen', pickup: 'Northern Blvd Plaza', vehicle: '2020 Toyota Camry', vehicleSnapshot: { make: 'Toyota', model: 'Camry', year: '2020', color: 'Silver', plate: 'JMP220', vehicleType: 'Sedan' }, paymentMethodId: 'pay_apple_demo', status: 'en_route', providerId: 'drv_elena', totalCents: 9350, etaMinutes: 8, createdAt: 'Today 12:42 PM' },
+  { id: 'FYT-9218', serviceType: 'lockout', serviceLabel: 'Lockout', customer: 'Noah Miller', pickup: 'Atlantic Ave', vehicle: '2021 Honda Accord', vehicleSnapshot: { make: 'Honda', model: 'Accord', year: '2021', color: 'Gray', plate: 'LCK441', vehicleType: 'Sedan' }, paymentMethodId: 'pay_business_demo', status: 'completed', providerId: 'drv_jules', totalCents: 8800, etaMinutes: 0, createdAt: 'Yesterday' },
+  { id: 'FYT-9202', serviceType: 'winch_out', serviceLabel: 'Winch out', customer: 'Rachel Green', pickup: 'Garden City driveway', vehicle: '2023 Ford F-150', vehicleSnapshot: { make: 'Ford', model: 'F-150', year: '2023', color: 'White', plate: 'RCV150', vehicleType: 'Pickup truck' }, paymentMethodId: 'pay_card_4242', status: 'completed', providerId: 'drv_andre', totalCents: 18150, etaMinutes: 0, createdAt: 'May 25' },
+  { id: 'FYT-9180', serviceType: 'fuel_delivery', serviceLabel: 'Fuel delivery', customer: 'Sam Patel', pickup: 'Van Wyck shoulder', vehicle: '2019 Nissan Rogue', vehicleSnapshot: { make: 'Nissan', model: 'Rogue', year: '2019', color: 'Blue', plate: 'FUEL19', vehicleType: 'SUV' }, paymentMethodId: 'pay_apple_demo', status: 'completed', providerId: 'drv_elena', totalCents: 9800, etaMinutes: 0, createdAt: 'May 21' },
 ];
 
 export const demoDriverEarnings = [
-  { id: 'earn_1', label: 'Flatbed tow', area: 'South Demo Zone', amountCents: 14800, date: 'Today' },
-  { id: 'earn_2', label: 'Jump start', area: 'West Demo Zone', amountCents: 6200, date: 'Today' },
-  { id: 'earn_3', label: 'Lockout', area: 'Central Demo Zone', amountCents: 7400, date: 'Yesterday' },
-  { id: 'earn_4', label: 'Winch out', area: 'North Demo Zone', amountCents: 13200, date: 'May 25' },
+  { id: 'earn_1', label: 'Flatbed tow', area: 'South Queens Zone', amountCents: 14800, date: 'Today' },
+  { id: 'earn_2', label: 'Jump start', area: 'West Queens Zone', amountCents: 6200, date: 'Today' },
+  { id: 'earn_3', label: 'Lockout', area: 'Central Queens Zone', amountCents: 7400, date: 'Yesterday' },
+  { id: 'earn_4', label: 'Winch out', area: 'North Queens Zone', amountCents: 13200, date: 'May 25' },
 ];
 
-export const demoServiceAreas = ['South Demo Zone', 'West Demo Zone', 'Central Demo Zone', 'North Demo Zone', 'Pixel Parkway Zone'];
+export const demoServiceAreas = ['South Queens Zone', 'West Queens Zone', 'Central Queens Zone', 'North Queens Zone', 'Queens Boulevard Zone'];

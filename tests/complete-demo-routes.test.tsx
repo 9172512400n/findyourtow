@@ -108,7 +108,7 @@ describe('complete RoadAssistNow demo routes', () => {
       { component: <SettingsPage />, heading: /settings/i, expected: /location sharing/i },
       { component: <NotificationsPage />, heading: /notifications/i, expected: /provider assigned/i },
       { component: <PrivacyPage />, heading: /privacy/i, expected: /precise location/i },
-      { component: <TermsPage />, heading: /terms/i, expected: /marketplace/i },
+      { component: <TermsPage />, heading: /terms/i, expected: /refunds and cancellations/i },
     ];
 
     for (const page of pages) {

@@ -57,7 +57,7 @@ describe("request flow store persistence privacy scrub", () => {
 
     const { useRequestFlowStore } = await import("./request-flow-store");
 
-    expect(useRequestFlowStore.getState().data.pickupAddress).toBe("Current location · Demo Springs");
-    expect(useRequestFlowStore.getState().data.dropoffAddress).toBe("Trusted repair shop · 2200 Mockingbird Ct");
+    expect(useRequestFlowStore.getState().data.pickupAddress).toBe("Current location · Queens, NY");
+    expect(useRequestFlowStore.getState().data.dropoffAddress).toBe("Trusted repair shop · Queens Auto Care");
   });
 });

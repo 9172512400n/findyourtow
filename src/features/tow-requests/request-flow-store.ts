@@ -40,7 +40,7 @@ export const initialRequestFlowData: RequestFlowData = {
   customerName: "",
   phone: "",
   pickupAddress: "",
-  dropoffAddress: "Trusted repair shop · 2200 Mockingbird Ct",
+  dropoffAddress: "Trusted repair shop · Queens Auto Care",
   vehicleMake: "",
   vehicleModel: "",
   vehicleYear: "",
@@ -70,7 +70,7 @@ function sanitizePersistedAddress(value: unknown, replacement: string) {
 function sanitizeRequestFlowData(data: RequestFlowData): RequestFlowData {
   return {
     ...data,
-    pickupAddress: sanitizePersistedAddress(data.pickupAddress, "Current location · Demo Springs"),
+    pickupAddress: sanitizePersistedAddress(data.pickupAddress, "Current location · Queens, NY"),
     dropoffAddress: sanitizePersistedAddress(data.dropoffAddress, initialRequestFlowData.dropoffAddress),
   };
 }

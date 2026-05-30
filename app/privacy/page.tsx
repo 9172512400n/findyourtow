@@ -1,5 +1,15 @@
 import { DemoAppShell, DemoSection } from '@/components/app/DemoAppShell';
 
 export default function PrivacyPage() {
-  return <DemoAppShell activeTab="Account" eyebrow="Legal" title="Privacy" copy="Privacy commitments for account data, vehicle details, location sharing, payments, and support."><DemoSection title="Privacy overview"><div className="space-y-4 text-sm font-semibold leading-7 text-white/62"><p>This demo stores temporary local browser state for vehicles, payments, request flow, and preferences. It does not require Supabase, Stripe, Mapbox, or messaging credentials.</p><p>This policy covers account data, vehicle data, precise location, provider location, payment metadata, communications, retention, deletion, and support workflows for the production handoff.</p></div></DemoSection></DemoAppShell>;
+  return (
+    <DemoAppShell activeTab="Account" eyebrow="Legal" title="Privacy" copy="How RoadAssistNow protects account data, vehicle details, precise location, payment metadata, and support communications.">
+      <DemoSection title="Privacy overview">
+        <div className="space-y-4 text-sm font-semibold leading-7 text-white/62">
+          <p>RoadAssistNow collects only the information needed to quote, dispatch, track, support, and complete roadside service requests.</p>
+          <p>Location data is used for pickup accuracy, provider matching, ETA updates, trip safety, and support review. Payment details are handled through secure payment providers; RoadAssistNow stores payment metadata rather than full card numbers.</p>
+          <p>Customers can request account, vehicle, payment-method, and trip-history support through the help center.</p>
+        </div>
+      </DemoSection>
+    </DemoAppShell>
+  );
 }

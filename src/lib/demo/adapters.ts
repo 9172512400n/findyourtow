@@ -54,7 +54,7 @@ export const demoAdapters = {
   geocoding: {
     mode: 'demo' as const,
     async search(query: string): Promise<AdapterResult<{ provider: 'demo-geocoder'; results: string[] }>> {
-      return { mode: 'demo', provider: 'demo-geocoder', results: [`${query} · Demo Springs`, `${query} · Sample County`, `${query} · Example District`] };
+      return { mode: 'demo', provider: 'demo-geocoder', results: [`${query} · Queens, NY`, `${query} · Nassau County, NY`, `${query} · Brooklyn, NY`] };
     },
   },
   dispatch: {

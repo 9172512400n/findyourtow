@@ -35,6 +35,13 @@ export const metadata: Metadata = {
     title: "RoadAssistNow | Real-Time Roadside Dispatch",
     description: "Request roadside help, pay securely, and track the tow truck live.",
     type: "website",
+    images: [{ url: "/brand/roadassistnow-header-lockup.png", width: 1200, height: 630, alt: "RoadAssistNow" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "RoadAssistNow | Real-Time Roadside Dispatch",
+    description: "Request roadside help, pay securely, and track the tow truck live.",
+    images: ["/brand/roadassistnow-header-lockup.png"],
   },
 };
 

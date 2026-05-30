@@ -21,7 +21,7 @@ export default function CustomerAccountPage() {
             ]} />
           </DemoSection>
           <div className="grid gap-3">
-            <ActionCard title="Request help" copy="Choose service, location, vehicle, and approve price." href="/request-service" />
+            <ActionCard title="Request help" copy="Choose service, location, vehicle, and approve price." href="/request" />
             <ActionCard title="Track active request" copy="See ETA, provider name, rating, route, and call button." href="/track" />
             <Link href="/login" className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-5 text-sm font-black text-black">Sign up / login</Link>
           </div>

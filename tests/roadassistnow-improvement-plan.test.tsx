@@ -20,14 +20,14 @@ describe('RoadAssistNow improvement plan', () => {
   it('upgrades the homepage structure without leaving the existing design system', () => {
     render(<HomePage />);
 
-    expect(screen.getByRole('heading', { name: /roadside assistance in minutes/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /get help now/i })).toHaveAttribute('href', '/request-service');
+    expect(screen.getByRole('heading', { name: /roadside help in minutes/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /get help now/i })).toHaveAttribute('href', '/request');
     expect(screen.getByRole('link', { name: /become a provider/i })).toHaveAttribute('href', '/provider/apply');
-    expect(screen.getByText(/24\/7/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/24\/7/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/upfront pricing/i)).toBeInTheDocument();
     expect(screen.getByText(/live tracking/i)).toBeInTheDocument();
     expect(screen.getByText(/verified providers/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /call roadassistnow/i })).toHaveAttribute('href', expect.stringMatching(/^tel:/));
+    expect(screen.getByRole('link', { name: /call \(516\) 666-4941/i })).toHaveAttribute('href', 'tel:+15166664941');
     expect(screen.queryByRole('button', { name: /share my location/i })).not.toBeInTheDocument();
     expect(screen.queryByText(/use current location/i)).not.toBeInTheDocument();
   });
@@ -38,6 +38,10 @@ describe('RoadAssistNow improvement plan', () => {
     expect(screen.getByRole('link', { name: /customer account/i })).toHaveAttribute('href', '/account/customer');
     expect(screen.getByRole('link', { name: /provider account/i })).toHaveAttribute('href', '/account/provider');
     expect(screen.getByRole('link', { name: /track request/i })).toHaveAttribute('href', '/track');
+    expect(screen.getByLabelText(/app tab page content/i)).toHaveClass('pt-16');
+    expect(screen.queryByRole('link', { name: /become a provider/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /^request service$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /my vehicles/i })).not.toBeInTheDocument();
   });
 
   it('adds the customer account and request-service flow pages', () => {

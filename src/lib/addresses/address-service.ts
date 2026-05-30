@@ -21,11 +21,11 @@ type CurrentLocationOptions = {
 };
 
 const demoUsAddresses: AddressSuggestion[] = [
-  { id: "demo-random-auto", label: "Demo/offline · Random Auto Center", address: "2200 Mockingbird Ct, Demo Springs, CA 90000, United States", lat: 40.7214, lng: -73.6242, country: "US", source: "demo-offline" },
-  { id: "demo-pixel-pkwy", label: "Demo/offline · 7148 Pixel Pkwy", address: "7148 Pixel Pkwy, Demo Springs, CA 90000, United States", lat: 40.7132, lng: -73.6318, country: "US", source: "demo-offline" },
-  { id: "demo-placeholder-ave", label: "Demo/offline · 3321 Placeholder Ave", address: "3321 Placeholder Ave, Fiction Falls, CA 90001, United States", lat: 40.7358, lng: -73.642, country: "US", source: "demo-offline" },
-  { id: "demo-sandbox-plaza", label: "Demo/offline · 8891 Sandbox Plaza", address: "8891 Sandbox Plaza, Sampleton, CA 90002, United States", lat: 40.7486, lng: -73.6123, country: "US", source: "demo-offline" },
-  { id: "demo-widget-road", label: "Demo/offline · 5074 Widget Road", address: "5074 Widget Road, Mockville, CA 90003, United States", lat: 40.6991, lng: -73.6551, country: "US", source: "demo-offline" },
+  { id: "offline-queens-auto", label: "Offline match · Queens Auto Care", address: "125-10 Queens Blvd, Queens, NY 11375, United States", lat: 40.7214, lng: -73.6242, country: "US", source: "demo-offline" },
+  { id: "offline-northern-blvd", label: "Offline match · Northern Blvd Tire & Auto", address: "71-08 Northern Blvd, Jackson Heights, NY 11372, United States", lat: 40.7132, lng: -73.6318, country: "US", source: "demo-offline" },
+  { id: "offline-atlantic", label: "Offline match · Brooklyn Tow Yard", address: "1200 Atlantic Ave, Brooklyn, NY 11216, United States", lat: 40.7358, lng: -73.642, country: "US", source: "demo-offline" },
+  { id: "offline-jfk", label: "Offline match · JFK Airport Cell Lot", address: "Lefferts Blvd, Queens, NY 11430, United States", lat: 40.7486, lng: -73.6123, country: "US", source: "demo-offline" },
+  { id: "offline-garden-city", label: "Offline match · Nassau Roadside Center", address: "400 Old Country Rd, Garden City, NY 11530, United States", lat: 40.6991, lng: -73.6551, country: "US", source: "demo-offline" },
 ];
 
 function configuredToken(explicit?: string) {
@@ -71,7 +71,7 @@ export async function reverseGeocodeUs(lat: number, lng: number, options: Search
   const token = configuredToken(options.token);
   const fetcher = options.fetcher ?? globalThis.fetch;
   if (!token || !fetcher) {
-    return { id: "current-demo", label: "Demo/offline · Current demo location", address: "Current location · Demo Springs, CA, United States", lat, lng, country: "US", source: "demo-offline" };
+    return { id: "current-offline", label: "Offline match · Current location", address: "Current location · Queens, NY, United States", lat, lng, country: "US", source: "demo-offline" };
   }
   const url = new URL(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json`);
   url.searchParams.set("access_token", token);

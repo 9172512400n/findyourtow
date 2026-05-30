@@ -15,7 +15,7 @@ export function DriverLiveConsole({ driverId }: DriverLiveConsoleProps) {
     if (!online) return;
     let cancelled = false;
 
-    async function sendDemoLocation(position?: GeolocationPosition) {
+    async function sendDriverLocation(position?: GeolocationPosition) {
       const lat = position?.coords.latitude ?? 40.746;
       const lng = position?.coords.longitude ?? -73.985;
       await fetch("/api/driver/location", {
@@ -28,12 +28,12 @@ export function DriverLiveConsole({ driverId }: DriverLiveConsoleProps) {
 
     function requestAndSend() {
       if (!("geolocation" in navigator)) {
-        void sendDemoLocation();
+        void sendDriverLocation();
         return;
       }
       navigator.geolocation.getCurrentPosition(
-        (position) => void sendDemoLocation(position),
-        () => void sendDemoLocation(),
+        (position) => void sendDriverLocation(position),
+        () => void sendDriverLocation(),
         { enableHighAccuracy: true, maximumAge: 10_000, timeout: 5_000 },
       );
     }
@@ -50,7 +50,7 @@ export function DriverLiveConsole({ driverId }: DriverLiveConsoleProps) {
     <div className="rounded-[1.75rem] border border-white/10 bg-black/24 p-5">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-sm font-semibold text-white/48">Live GPS simulator</p>
+          <p className="text-sm font-semibold text-white/48">Live GPS status</p>
           <p className="mt-1 text-lg font-black">{online ? "Online and broadcasting" : "Offline"}</p>
           <p className="mt-1 text-sm font-bold text-white/50">{locationStatus}</p>
         </div>
@@ -59,7 +59,7 @@ export function DriverLiveConsole({ driverId }: DriverLiveConsoleProps) {
         </Button>
       </div>
       <p className="mt-4 text-sm leading-6 text-white/52">
-        Demo mode safely requests browser location if available, then posts to the driver-location API adapter. Live dispatch broadcasting is ready to connect through the backend adapter.
+        When enabled, RoadAssistNow requests browser location if available, then posts updates to the driver-location adapter for dispatch tracking.
       </p>
     </div>
   );

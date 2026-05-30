@@ -2,13 +2,13 @@ import { describe, expect, it, vi } from "vitest";
 import { searchUsAddresses, getCurrentPositionAddress } from "./address-service";
 
 describe("address service", () => {
-  it("returns clearly labeled demo/offline USA suggestions when Mapbox is unavailable", async () => {
-    const results = await searchUsAddresses("sample");
+  it("returns clearly labeled offline USA suggestions when Mapbox is unavailable", async () => {
+    const results = await searchUsAddresses("queens");
 
     expect(results.length).toBeGreaterThan(0);
     expect(results[0].country).toBe("US");
     expect(results[0].source).toBe("demo-offline");
-    expect(results[0].label).toMatch(/demo/i);
+    expect(results[0].label).toMatch(/offline/i);
   });
 
   it("keeps offline demo suggestions free of the owner's real address samples", async () => {
@@ -22,14 +22,14 @@ describe("address service", () => {
     const fetcher = vi.fn(async () => ({
       ok: true,
       json: async () => ({
-        features: [{ id: "addr.1", place_name: "7148 Pixel Pkwy, Demo Springs, CA 90000, United States", center: [-73.6318, 40.7132] }],
+        features: [{ id: "addr.1", place_name: "125-10 Queens Blvd, Queens, NY 11375, United States", center: [-73.6318, 40.7132] }],
       }),
     })) as unknown as typeof fetch;
 
-    const results = await searchUsAddresses("7148 Pixel Pkwy", { token: "pk.test", fetcher });
+    const results = await searchUsAddresses("125-10 Queens Blvd", { token: "pk.test", fetcher });
 
     expect(String(fetcher.mock.calls[0][0])).toContain("country=US");
-    expect(results[0]).toMatchObject({ source: "mapbox", address: "7148 Pixel Pkwy, Demo Springs, CA 90000, United States" });
+    expect(results[0]).toMatchObject({ source: "mapbox", address: "125-10 Queens Blvd, Queens, NY 11375, United States" });
   });
 
   it("reports unavailable current phone location without throwing", async () => {

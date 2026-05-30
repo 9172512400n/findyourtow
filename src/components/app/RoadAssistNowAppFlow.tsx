@@ -43,20 +43,20 @@ const serviceShortNames: Record<ServiceTypeId, string> = {
 };
 
 const savedPlaces = [
-  { label: "Home", address: "Home · 7148 Pixel Pkwy, Demo Springs", distance: 4.2 },
-  { label: "Work", address: "Work · 3321 Placeholder Ave", distance: 6.3 },
-  { label: "Repair Shop", address: "Trusted repair shop · 2200 Mockingbird Ct", distance: 7.8 },
+  { label: "Home", address: "Home · 125-10 Queens Blvd, Queens, NY", distance: 4.2 },
+  { label: "Work", address: "Work · 28-10 Jackson Ave, Long Island City, NY", distance: 6.3 },
+  { label: "Repair Shop", address: "Trusted repair shop · Queens Auto Care, Queens, NY", distance: 7.8 },
 ];
 
-const recentAddresses = ["Current location · 3321 Placeholder Ave", "Mockingbird shopping plaza", "Pixel Pkwy service lane", "Example frontage road"];
+const recentAddresses = ["Current location · Queens, NY", "Northern Blvd service lane", "BQE shoulder near Exit 33", "Van Wyck Expressway frontage road"];
 const ridePlannerPlaces = [
-  { name: "Random Auto Center", address: "2200 Mockingbird Ct, Demo Springs", distance: "2.2 mi" },
-  { name: "7148 Pixel Pkwy", address: "Demo Springs", distance: "1.0 mi" },
-  { name: "3321 Placeholder Ave", address: "Fiction Falls", distance: "3.4 mi" },
-  { name: "8891 Sandbox Plaza", address: "Sampleton", distance: "4.1 mi" },
-  { name: "5074 Widget Road", address: "Mockville", distance: "5.6 mi" },
-  { name: "4312 Example Drive", address: "Demo Springs", distance: "2.9 mi" },
-  { name: "7600 Test Auto Lane", address: "Fiction Falls", distance: "6.3 mi" },
+  { name: "Queens Auto Care", address: "125-10 Queens Blvd, Queens, NY", distance: "2.2 mi" },
+  { name: "Long Island City Service Center", address: "28-10 Jackson Ave, Long Island City, NY", distance: "3.1 mi" },
+  { name: "Brooklyn Tow Yard", address: "1200 Atlantic Ave, Brooklyn, NY", distance: "5.8 mi" },
+  { name: "JFK Airport Cell Lot", address: "Lefferts Blvd, Queens, NY", distance: "8.7 mi" },
+  { name: "Northern Blvd Tire & Auto", address: "71-08 Northern Blvd, Jackson Heights, NY", distance: "2.9 mi" },
+  { name: "Manhattan Auto Repair", address: "525 W 29th St, New York, NY", distance: "6.4 mi" },
+  { name: "Nassau Roadside Center", address: "400 Old Country Rd, Garden City, NY", distance: "14.2 mi" },
 ];
 
 export function RoadAssistNowAppFlow({ activeTab = "Home", initialStep = 0 }: { activeTab?: AppTabLabel; initialStep?: FlowStep } = {}) {
@@ -82,7 +82,7 @@ export function RoadAssistNowAppFlow({ activeTab = "Home", initialStep = 0 }: { 
 
   useEffect(() => {
     if (activeTab !== "Request" || initialStep !== 1) return;
-    patch({ serviceType: "standard_tow", dropoffAddress: data.dropoffAddress || "Trusted repair shop · 2200 Mockingbird Ct" });
+    patch({ serviceType: "standard_tow", dropoffAddress: data.dropoffAddress || "Trusted repair shop · Queens Auto Care" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -103,7 +103,7 @@ export function RoadAssistNowAppFlow({ activeTab = "Home", initialStep = 0 }: { 
 
   function updateService(serviceType: ServiceTypeId) {
     const tow = towServiceIds.includes(serviceType);
-    patch({ serviceType, dropoffAddress: tow ? data.dropoffAddress || "Trusted repair shop · 2200 Mockingbird Ct" : "" });
+    patch({ serviceType, dropoffAddress: tow ? data.dropoffAddress || "Trusted repair shop · Queens Auto Care" : "" });
   }
 
   function selectService(serviceType: ServiceTypeId) {
@@ -118,7 +118,7 @@ export function RoadAssistNowAppFlow({ activeTab = "Home", initialStep = 0 }: { 
   async function useCurrentLocation() {
     patch({ pickupAddress: "Finding current phone location…" });
     const result = await getCurrentPositionAddress();
-    patch({ pickupAddress: result.ok ? result.suggestion.address : "Current location · 3321 Placeholder Ave" });
+    patch({ pickupAddress: result.ok ? result.suggestion.address : "Current location · Queens, NY" });
   }
 
   function startFlow() {
@@ -169,7 +169,7 @@ export function RoadAssistNowAppFlow({ activeTab = "Home", initialStep = 0 }: { 
       });
     } else {
       patch({
-        pickupAddress: destination || data.pickupAddress || "Current location · 3321 Placeholder Ave",
+        pickupAddress: destination || data.pickupAddress || "Current location · Queens, NY",
         dropoffAddress: "",
       });
     }
@@ -191,13 +191,12 @@ export function RoadAssistNowAppFlow({ activeTab = "Home", initialStep = 0 }: { 
               <PremiumMapVisual selectedService={selectedService} quoteEta={quote.estimatedEtaMinutes} />
             </div>
             <div className="space-y-4">
-              <p className="inline-flex rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.26em] text-white/52">Demo mode · live ETA</p>
-              <h1 className="text-balance text-6xl font-black leading-[0.88] tracking-[-0.075em] sm:text-7xl">Roadside Assistance in Minutes.</h1>
-              <h2 className="sr-only">Roadside help in minutes</h2>
-              <p className="max-w-sm text-base font-semibold leading-7 text-white/58">Towing, lockouts, jump starts, tire help, fuel delivery, and more.</p>
+              <p className="inline-flex rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.26em] text-white/52">24/7 roadside dispatch · upfront quotes</p>
+              <h1 className="text-balance text-6xl font-black leading-[0.88] tracking-[-0.075em] sm:text-7xl">Roadside help in minutes</h1>
+              <p className="max-w-sm text-base font-semibold leading-7 text-white/58">Towing, lockouts, jump starts, tire help, fuel delivery, and clear pricing before confirmation.</p>
             </div>
             <div className="mt-6 grid grid-cols-2 gap-3">
-              <Link href="/request-service" className="inline-flex min-h-13 items-center justify-center rounded-full bg-white px-5 text-sm font-black text-black">Get Help Now</Link>
+              <Link href="/request" className="inline-flex min-h-13 items-center justify-center rounded-full bg-white px-5 text-sm font-black text-black">Get Help Now</Link>
               <Link href="/provider/apply" className="inline-flex min-h-13 items-center justify-center rounded-full border border-white/10 bg-white/[0.07] px-5 text-sm font-black text-white">Become a Provider</Link>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-black uppercase tracking-[0.16em] text-white/54 sm:grid-cols-4">
@@ -209,6 +208,7 @@ export function RoadAssistNowAppFlow({ activeTab = "Home", initialStep = 0 }: { 
             </div>
             <CompactServices selectedService={data.serviceType} selectingService={selectingService} onSelect={selectService} />
             <HelpInputCard selectedService={selectedService} onStart={startFlow} />
+            <LegalFooter />
           </div>
         </div>
 
@@ -256,7 +256,7 @@ function MinimalTopBar() {
     <nav className="flex items-center justify-between py-2">
       <BrandHomeLink />
       <div className="flex items-center gap-2">
-        <a href="tel:+15166664941" aria-label="Call RoadAssistNow" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-white/78 backdrop-blur-xl"><Phone size={18} /></a>
+        <a href="tel:+15166664941" aria-label="Call (516) 666-4941" className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.055] px-3 text-sm font-black text-white/78 backdrop-blur-xl"><Phone size={18} /><span className="hidden sm:inline">(516) 666-4941</span></a>
         <Link href="/account" aria-label="Account" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-white/78 backdrop-blur-xl"><UserRound size={19} /></Link>
         <button type="button" aria-label="Open menu" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] text-white/78 backdrop-blur-xl"><Menu size={21} /></button>
       </div>
@@ -277,9 +277,22 @@ function PremiumMapVisual({ selectedService, quoteEta, large = false }: { select
       <div className="absolute left-[15%] top-[69%] h-8 w-8 rounded-full bg-emerald-300 shadow-[0_0_0_14px_rgba(110,231,183,.12),0_0_70px_rgba(110,231,183,.7)]" />
       <div className="absolute left-[calc(15%+2.2rem)] top-[68%] rounded-full bg-black/55 px-3 py-1.5 text-xs font-black text-white backdrop-blur-xl">Current location</div>
       <div className="truck-marker absolute left-[50%] top-[43%] grid h-14 w-14 place-items-center rounded-2xl border border-white/25 bg-white text-black shadow-[0_25px_80px_rgba(59,130,246,.55)]"><Truck size={25} /></div>
-      <div className="absolute right-[8%] top-[14%] rounded-[1.4rem] border border-white/10 bg-black/58 px-4 py-3 text-right shadow-2xl backdrop-blur-xl"><p className="text-[0.62rem] font-black uppercase tracking-[0.2em] text-white/44">Live ETA</p><p className="mt-1 text-2xl font-black">{quoteEta} min</p></div>
+      <div className="absolute right-[8%] top-[14%] rounded-[1.4rem] border border-white/10 bg-black/58 px-4 py-3 text-right shadow-2xl backdrop-blur-xl"><p className="text-[0.62rem] font-black uppercase tracking-[0.2em] text-white/44">Typical ETA</p><p className="mt-1 text-2xl font-black">{quoteEta} min</p></div>
       <div className="absolute bottom-6 left-6 right-6 rounded-[1.7rem] border border-white/10 bg-black/50 p-4 backdrop-blur-2xl"><p className="text-xs font-black uppercase tracking-[0.2em] text-blue-100/60">Selected service</p><div className="mt-2 flex items-center justify-between gap-3"><p className={`${large ? "text-3xl" : "text-xl"} font-black tracking-[-0.04em]`}>{selectedService.label}</p><span className="rounded-full bg-emerald-300 px-3 py-1 text-xs font-black text-emerald-950">available</span></div></div>
     </div>
+  );
+}
+
+function LegalFooter() {
+  return (
+    <footer className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/[0.045] p-4 text-xs font-bold leading-6 text-white/48">
+      <p className="font-black uppercase tracking-[0.18em] text-white/38">Before you confirm</p>
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+        <Link href="/privacy" className="underline-offset-4 hover:text-white hover:underline">Privacy</Link>
+        <Link href="/terms" className="underline-offset-4 hover:text-white hover:underline">Terms</Link>
+        <Link href="/terms#refunds-cancellations" className="underline-offset-4 hover:text-white hover:underline">Refund and cancellation policy</Link>
+      </div>
+    </footer>
   );
 }
 
@@ -430,7 +443,7 @@ function RidePlannerStep({ pickupAddress, dropoffAddress, serviceType, selectedS
       {pendingDestination && (
         <div className="sticky bottom-0 -mx-1 rounded-[1.6rem] border border-blue-300/20 bg-[#07111d]/95 p-3 shadow-[0_-22px_70px_rgba(2,6,23,.72)] backdrop-blur-2xl">
           <p className="px-1 pb-2 text-xs font-bold text-white/54">Use {pendingDestination} as the {isTowService ? "drop-off" : "service location"}.</p>
-          <button type="button" onClick={() => choose(pendingDestination)} className="min-h-14 w-full rounded-[1.25rem] bg-blue-500 px-5 text-base font-black text-white shadow-[0_18px_45px_rgba(59,130,246,.38)] active:scale-[0.99]">Continue booking demo</button>
+          <button type="button" onClick={() => choose(pendingDestination)} className="min-h-14 w-full rounded-[1.25rem] bg-blue-500 px-5 text-base font-black text-white shadow-[0_18px_45px_rgba(59,130,246,.38)] active:scale-[0.99]">Continue booking</button>
         </div>
       )}
     </div>

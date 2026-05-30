@@ -3,11 +3,18 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('next/font/google', () => ({
+  Geist: () => ({ variable: '--font-geist-sans' }),
+  Geist_Mono: () => ({ variable: '--font-geist-mono' }),
+}));
 import Home from '../app/(marketing)/page';
 import AccountPage from '../app/account/page';
+import AccountVehiclesPage from '../app/account/vehicles/page';
 import RequestTowPage from '../app/request/page';
 import ServicesPage from '../app/services/page';
+import { metadata } from '../app/layout';
 import TrackPage from '../app/track/page';
 import { useDemoAuthStore } from '../src/features/auth/demo-auth-store';
 import { useRequestFlowStore } from '../src/features/tow-requests/request-flow-store';
@@ -24,8 +31,10 @@ describe('RoadAssistNow premium mobile homepage', () => {
   it('opens with a calm consumer app homepage instead of stacked pricing cards', () => {
     render(<Home />);
 
-    expect(screen.getByRole('heading', { name: /roadside help in minutes/i })).toBeInTheDocument();
-    expect(screen.getByText(/towing, lockouts, jump starts, tire help, fuel delivery, and more/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /roadside help in minutes/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+    expect(screen.queryByText(/roadside assistance in minutes/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/towing, lockouts, jump starts, tire help, fuel delivery, and clear pricing before confirmation/i)).toBeInTheDocument();
     expect(screen.getByRole('img', { name: /roadassistnow brand lockup/i })).toHaveAttribute(
       'src',
       '/brand/roadassistnow-header-lockup.png',
@@ -45,7 +54,7 @@ describe('RoadAssistNow premium mobile homepage', () => {
     }
     expect(within(services).queryByRole('button', { name: /flatbed/i })).not.toBeInTheDocument();
 
-    expect(screen.getByRole('link', { name: /call roadassistnow/i })).toHaveAttribute('href', expect.stringMatching(/^tel:/));
+    expect(screen.getByRole('link', { name: /call \(516\) 666-4941/i })).toHaveAttribute('href', 'tel:+15166664941');
     expect(screen.queryByRole('button', { name: /share my location/i })).not.toBeInTheDocument();
     expect(within(helpCard).queryByRole('button', { name: /use current location/i })).not.toBeInTheDocument();
     expect(within(helpCard).queryByPlaceholderText(/enter address or landmark/i)).not.toBeInTheDocument();
@@ -73,6 +82,22 @@ describe('RoadAssistNow premium mobile homepage', () => {
     expect(screen.getByLabelText(/request flow sheet area/i)).toHaveClass('pb-[calc(5.75rem+env(safe-area-inset-bottom))]');
   });
 
+  it('uses production-ready public copy, canonical request links, and legal sharing metadata', () => {
+    render(<Home />);
+
+    const body = document.body.textContent ?? '';
+    for (const banned of ['Demo mode', 'booking demo', 'Random Auto Center', 'Demo Springs', 'Fiction Falls', 'Placeholder Ave', 'Sandbox Plaza', 'Widget Road']) {
+      expect(body).not.toMatch(new RegExp(banned, 'i'));
+    }
+
+    expect(screen.getByRole('link', { name: /get help now/i })).toHaveAttribute('href', '/request');
+    expect(screen.getByRole('link', { name: /privacy/i })).toHaveAttribute('href', '/privacy');
+    expect(screen.getByRole('link', { name: /terms/i })).toHaveAttribute('href', '/terms');
+    expect(screen.getByRole('link', { name: /refund and cancellation policy/i })).toHaveAttribute('href', '/terms#refunds-cancellations');
+    expect(metadata.openGraph).toMatchObject({ images: expect.arrayContaining([expect.objectContaining({ url: '/brand/roadassistnow-header-lockup.png' })]) });
+    expect(metadata.twitter).toMatchObject({ card: 'summary_large_image', images: ['/brand/roadassistnow-header-lockup.png'] });
+  });
+
   it('allows guest customers to request service without login', () => {
     render(<RequestTowPage />);
 
@@ -96,7 +121,7 @@ describe('RoadAssistNow premium mobile homepage', () => {
     expect(within(flow).getByRole('button', { name: /use current location/i })).toBeInTheDocument();
     expect(within(flow).getByPlaceholderText(/pickup address or landmark/i)).toBeInTheDocument();
     expect(within(flow).getByPlaceholderText(/tow destination/i)).toBeInTheDocument();
-    expect(within(flow).getByText(/random auto center/i)).toBeInTheDocument();
+    expect(within(flow).getAllByText(/queens auto care/i).length).toBeGreaterThan(0);
     expect(within(flow).queryByText(/piermont|hewlett|oceanside|reina|lincoln|healy|waverly|far rockaway/i)).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: /choose service/i })).not.toBeInTheDocument();
     const bottomNav = screen.getByRole('navigation', { name: /main app navigation/i });
@@ -133,8 +158,8 @@ describe('RoadAssistNow premium mobile homepage', () => {
     expect(flow.firstElementChild).toHaveClass('overflow-hidden');
     expect(screen.getByRole('heading', { name: /request roadside help/i })).toBeInTheDocument();
 
-    await user.type(within(flow).getByPlaceholderText(/tow destination/i), 'Random Auto Center');
-    await user.click(within(flow).getByRole('button', { name: /random auto center/i }));
+    await user.type(within(flow).getByPlaceholderText(/tow destination/i), 'Queens Auto Care');
+    await user.click(within(flow).getByRole('button', { name: /queens auto care/i }));
 
     expect(await screen.findByRole('heading', { name: /vehicle details/i })).toBeInTheDocument();
     const flowHeader = screen.getByLabelText(/request step controls/i);
@@ -155,10 +180,10 @@ describe('RoadAssistNow premium mobile homepage', () => {
     const flow = screen.getByLabelText(/request flow sheet area/i);
     await user.type(within(flow).getByPlaceholderText(/tow destination/i), 'Exotic');
 
-    expect(within(flow).getByRole('button', { name: /continue booking demo/i })).toBeInTheDocument();
+    expect(within(flow).getByRole('button', { name: /^continue booking$/i })).toBeInTheDocument();
     expect(within(flow).getByText(/use exotic as the drop-off/i)).toBeInTheDocument();
 
-    await user.click(within(flow).getByRole('button', { name: /continue booking demo/i }));
+    await user.click(within(flow).getByRole('button', { name: /^continue booking$/i }));
 
     expect(await screen.findByRole('heading', { name: /vehicle details/i })).toBeInTheDocument();
   });
@@ -177,8 +202,8 @@ describe('RoadAssistNow premium mobile homepage', () => {
     expect(within(progress).getByText(/track/i)).toBeInTheDocument();
     expect(within(progress).getByText(/step 1 of 5/i)).toBeInTheDocument();
 
-    await user.type(within(flow).getByPlaceholderText(/tow destination/i), 'Random Auto Center');
-    await user.click(within(flow).getByRole('button', { name: /random auto center/i }));
+    await user.type(within(flow).getByPlaceholderText(/tow destination/i), 'Queens Auto Care');
+    await user.click(within(flow).getByRole('button', { name: /queens auto care/i }));
     await user.click(await within(flow).findByRole('button', { name: /get instant quote/i }));
 
     expect(screen.getByRole('heading', { name: /live quote/i })).toBeInTheDocument();
@@ -193,15 +218,20 @@ describe('RoadAssistNow premium mobile homepage', () => {
     expect(within(screen.getByLabelText(/booking progress/i)).getByText(/step 4 of 5/i)).toBeInTheDocument();
   });
 
-  it('lets customers manage saved vehicles from the account page', async () => {
+  it('keeps vehicles inside the customer vehicle setup page instead of open on account gateway', async () => {
     const user = userEvent.setup();
     render(<AccountPage />);
 
-    expect(screen.getByRole('heading', { name: /my vehicles/i })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /my vehicles/i })).not.toBeInTheDocument();
+    cleanup();
+
+    render(<AccountVehiclesPage />);
+
+    expect(screen.getAllByRole('heading', { name: /my vehicles/i }).length).toBeGreaterThan(0);
     expect(screen.getByText(/2021 toyota camry/i)).toBeInTheDocument();
     expect(screen.getByText(/2023 ford f-150/i)).toBeInTheDocument();
     expect(screen.getByText(/2020 honda accord/i)).toBeInTheDocument();
-    expect(screen.getByText(/default/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/default/i).length).toBeGreaterThan(0);
 
     await user.click(screen.getByRole('button', { name: /add vehicle/i }));
     expect(screen.getByRole('dialog', { name: /add vehicle/i })).toBeInTheDocument();
@@ -226,8 +256,8 @@ describe('RoadAssistNow premium mobile homepage', () => {
     render(<RequestTowPage />);
 
     const flow = screen.getByLabelText(/request flow sheet area/i);
-    await user.type(within(flow).getByPlaceholderText(/tow destination/i), 'Random Auto Center');
-    await user.click(within(flow).getByRole('button', { name: /random auto center/i }));
+    await user.type(within(flow).getByPlaceholderText(/tow destination/i), 'Queens Auto Care');
+    await user.click(within(flow).getByRole('button', { name: /queens auto care/i }));
 
     expect(await screen.findByRole('heading', { name: /vehicle details/i })).toBeInTheDocument();
     expect(within(flow).getByRole('button', { name: /use saved vehicle/i })).toBeInTheDocument();

@@ -2,5 +2,24 @@ import { ActionCard, DemoList } from '@/components/app/DemoCards';
 import { DemoAppShell, DemoSection } from '@/components/app/DemoAppShell';
 
 export default function HelpPage() {
-  return <DemoAppShell activeTab="Account" eyebrow="Support" title="Help/support" copy="Customer help center with request support, safety, billing, and provider contact paths built into the demo flow."><div className="grid gap-4 lg:grid-cols-2"><DemoSection title="Quick help"><div className="grid gap-3"><ActionCard title="Active request help" copy="Contact support during a live tow or roadside visit." href="/track" /><ActionCard title="Billing question" copy="Review demo receipts and refund paths." href="/account/payments" /><ActionCard title="Provider support" copy="Open provider-side support tools." href="/driver/support" /></div></DemoSection><DemoSection title="Popular topics"><DemoList items={[{title:'Cancel or change a request', subtitle:'Cancellation timing, fee review, and receipt support', right:'Guide'}, {title:'Provider safety', subtitle:'Verified drivers, documents, and location sharing', right:'Safety'}, {title:'Payment authorization', subtitle:'Authorization, receipts, and saved payment methods', right:'Billing'}]} /></DemoSection></div></DemoAppShell>;
+  return (
+    <DemoAppShell activeTab="Account" eyebrow="Support" title="Help/support" copy="Customer help center with request support, safety, billing, and provider contact paths.">
+      <div className="grid gap-4 lg:grid-cols-2">
+        <DemoSection title="Quick help">
+          <div className="grid gap-3">
+            <ActionCard title="Active request help" copy="Contact support during a live tow or roadside visit." href="/track" />
+            <ActionCard title="Billing question" copy="Review receipts, authorizations, cancellation fees, and refund paths." href="/account/payments" />
+            <ActionCard title="Provider support" copy="Open provider-side support tools." href="/driver/support" />
+          </div>
+        </DemoSection>
+        <DemoSection title="Popular topics">
+          <DemoList items={[
+            {title:'Cancel or change a request', subtitle:'Cancellation timing, fee review, and receipt support', right:'Guide'},
+            {title:'Provider safety', subtitle:'Verified drivers, documents, and location sharing', right:'Safety'},
+            {title:'Payment authorization', subtitle:'Authorization, receipts, and saved payment methods', right:'Billing'},
+          ]} />
+        </DemoSection>
+      </div>
+    </DemoAppShell>
+  );
 }
