@@ -2,6 +2,8 @@ import { serviceTypeIdToDbCode } from "@/features/tow-requests/supabase-reposito
 import type { ServiceTypeId } from "@/features/tow-requests/types";
 
 export type DbDriverStatus = "PENDING_APPROVAL" | "APPROVED" | "REJECTED" | "ONLINE" | "OFFLINE" | "BUSY" | "SUSPENDED";
+export type ProviderType = "COMPANY" | "OWNER_OPERATOR";
+export type ProviderComplianceStatus = "DRAFT" | "PENDING_REVIEW" | "NEEDS_INFO" | "APPROVED" | "REJECTED" | "SUSPENDED" | "EXPIRED";
 
 export type DbTowStatus =
   | "QUOTE_CREATED"
@@ -19,22 +21,34 @@ export type DbTowStatus =
   | "REFUNDED";
 
 export type ProviderApplicationInput = {
+  providerType?: ProviderType;
   companyName: string;
   contactName: string;
   email: string;
   phone: string;
+  businessAddress?: string;
   serviceArea: string;
   truckType: string;
   plateNumber: string;
   services: ServiceTypeId[];
+  guidelinesVersion?: string;
+  agreementAccepted?: boolean;
+  signerName?: string;
 };
 
 export type NormalizedProviderApplication = ProviderApplicationInput & {
+  providerType: ProviderType;
   email: string;
   phone: string;
   plateNumber: string;
+  businessAddress: string;
+  guidelinesVersion: string;
+  agreementAccepted: boolean;
+  signerName: string;
   status: "PENDING_APPROVAL";
 };
+
+const defaultProviderGuidelinesVersion = "provider-guidelines-v1";
 
 export function normalizeProviderPhone(phone: string): string {
   const trimmed = phone.trim();
@@ -47,14 +61,19 @@ export function normalizeProviderPhone(phone: string): string {
 
 export function normalizeProviderApplication(input: ProviderApplicationInput): NormalizedProviderApplication {
   return {
+    providerType: input.providerType ?? "COMPANY",
     companyName: input.companyName.trim(),
     contactName: input.contactName.trim(),
     email: input.email.trim().toLowerCase(),
     phone: normalizeProviderPhone(input.phone),
+    businessAddress: input.businessAddress?.trim() || "Address pending admin review",
     serviceArea: input.serviceArea.trim(),
     truckType: input.truckType.trim(),
     plateNumber: input.plateNumber.trim().toUpperCase(),
     services: input.services,
+    guidelinesVersion: input.guidelinesVersion?.trim() || defaultProviderGuidelinesVersion,
+    agreementAccepted: input.agreementAccepted === true,
+    signerName: input.signerName?.trim() || input.contactName.trim(),
     status: "PENDING_APPROVAL",
   };
 }
@@ -71,6 +90,8 @@ export function buildProviderApplicationRecord(input: {
   now: string;
   userId: string;
   profileId: string;
+  providerAccountId: string;
+  termsAcceptanceId: string;
   driverId: string;
   truckId: string;
   input: ProviderApplicationInput;
@@ -95,9 +116,36 @@ export function buildProviderApplicationRecord(input: {
       createdAt: input.now,
       updatedAt: input.now,
     },
+    providerAccount: {
+      id: input.providerAccountId,
+      ownerUserId: input.userId,
+      providerType: normalized.providerType,
+      legalBusinessName: normalized.companyName,
+      displayName: normalized.companyName,
+      responsibleManagerName: normalized.contactName,
+      businessAddress: normalized.businessAddress,
+      dispatchPhone: normalized.phone,
+      contactEmail: normalized.email,
+      serviceArea: normalized.serviceArea,
+      complianceStatus: "PENDING_REVIEW" as const,
+      guidelinesVersionAccepted: normalized.agreementAccepted ? normalized.guidelinesVersion : null,
+      guidelinesAcceptedAt: normalized.agreementAccepted ? input.now : null,
+      ratingAverage: 5,
+      ratingCount: 0,
+      createdAt: input.now,
+      updatedAt: input.now,
+    },
+    termsAcceptance: normalized.agreementAccepted ? {
+      id: input.termsAcceptanceId,
+      providerAccountId: input.providerAccountId,
+      version: normalized.guidelinesVersion,
+      signerName: normalized.signerName,
+      acceptedAt: input.now,
+    } : null,
     driver: {
       id: input.driverId,
       userId: input.userId,
+      providerAccountId: input.providerAccountId,
       status: normalized.status,
       createdAt: input.now,
       updatedAt: input.now,
@@ -105,6 +153,7 @@ export function buildProviderApplicationRecord(input: {
     truck: {
       id: input.truckId,
       driverId: input.driverId,
+      providerAccountId: input.providerAccountId,
       label: `${normalized.companyName} ${normalized.truckType}`,
       plateNumber: normalized.plateNumber,
       truckType: normalized.truckType,
@@ -117,6 +166,23 @@ export function buildProviderApplicationRecord(input: {
       serviceArea: normalized.serviceArea,
     },
   };
+}
+
+export function canProviderReceiveJobs(input: {
+  driverStatus: DbDriverStatus;
+  providerComplianceStatus: ProviderComplianceStatus;
+  acceptedGuidelinesVersion: string | null;
+  latestGuidelinesVersion: string;
+  requiredDocumentsApproved: boolean;
+  hasActiveTruck: boolean;
+}): boolean {
+  return (
+    ["APPROVED", "ONLINE", "OFFLINE"].includes(input.driverStatus) &&
+    input.providerComplianceStatus === "APPROVED" &&
+    input.acceptedGuidelinesVersion === input.latestGuidelinesVersion &&
+    input.requiredDocumentsApproved &&
+    input.hasActiveTruck
+  );
 }
 
 const nextStatusByCurrent: Partial<Record<DbTowStatus, DbTowStatus[]>> = {

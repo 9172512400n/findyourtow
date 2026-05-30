@@ -25,6 +25,21 @@ enum DriverStatus {
   SUSPENDED
 }
 
+enum ProviderType {
+  COMPANY
+  OWNER_OPERATOR
+}
+
+enum ProviderComplianceStatus {
+  DRAFT
+  PENDING_REVIEW
+  NEEDS_INFO
+  APPROVED
+  REJECTED
+  SUSPENDED
+  EXPIRED
+}
+
 enum ServiceTypeCode {
   STANDARD_TOW
   FLATBED_TOW
@@ -88,10 +103,52 @@ model User {
   profile      Profile?
   customer     Customer?
   driver       Driver?
+  providerAccounts ProviderAccount[]
   auditLogs    AuditLog[] @relation("AuditActor")
 
   @@index([role])
   @@map("users")
+}
+
+model ProviderAccount {
+  id                         String                   @id @default(cuid())
+  ownerUserId                String
+  providerType               ProviderType
+  legalBusinessName          String
+  displayName                String
+  responsibleManagerName     String
+  businessAddress            String
+  dispatchPhone              String
+  contactEmail               String
+  serviceArea                String
+  complianceStatus           ProviderComplianceStatus @default(PENDING_REVIEW)
+  guidelinesVersionAccepted  String?
+  guidelinesAcceptedAt       DateTime?
+  ratingAverage              Decimal                  @default(5.00) @db.Decimal(3, 2)
+  ratingCount                Int                      @default(0)
+  stripeConnectAccountId     String?                  @unique
+  createdAt                  DateTime                 @default(now())
+  updatedAt                  DateTime                 @updatedAt
+  owner                      User                     @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  drivers                    Driver[]
+  trucks                     TowTruck[]
+  termsAcceptances           ProviderTermsAcceptance[]
+
+  @@index([ownerUserId])
+  @@index([complianceStatus])
+  @@map("provider_accounts")
+}
+
+model ProviderTermsAcceptance {
+  id                String          @id @default(cuid())
+  providerAccountId String
+  version           String
+  signerName        String
+  acceptedAt        DateTime        @default(now())
+  providerAccount   ProviderAccount @relation(fields: [providerAccountId], references: [id], onDelete: Cascade)
+
+  @@index([providerAccountId, acceptedAt])
+  @@map("provider_terms_acceptances")
 }
 
 model Profile {
@@ -146,6 +203,7 @@ model Vehicle {
 model Driver {
   id                 String              @id @default(cuid())
   userId             String              @unique
+  providerAccountId  String?
   status             DriverStatus        @default(PENDING_APPROVAL)
   rating             Decimal             @default(5.00) @db.Decimal(3, 2)
   stripeConnectAccountId String?         @unique
@@ -153,6 +211,7 @@ model Driver {
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  providerAccount    ProviderAccount?    @relation(fields: [providerAccountId], references: [id], onDelete: SetNull)
   documents          DriverDocument[]
   trucks             TowTruck[]
   locations          DriverLocation[]
@@ -160,6 +219,7 @@ model Driver {
   earnings           DriverEarning[]
 
   @@index([status])
+  @@index([providerAccountId])
   @@map("drivers")
 }
 
@@ -182,6 +242,7 @@ model DriverDocument {
 model TowTruck {
   id          String            @id @default(cuid())
   driverId    String
+  providerAccountId String?
   label       String
   plateNumber String
   vin         String?
@@ -191,8 +252,10 @@ model TowTruck {
   active      Boolean           @default(true)
   services    ServiceTypeCode[]
   driver      Driver            @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  providerAccount ProviderAccount? @relation(fields: [providerAccountId], references: [id], onDelete: SetNull)
 
   @@index([driverId, active])
+  @@index([providerAccountId, active])
   @@map("tow_trucks")
 }
 

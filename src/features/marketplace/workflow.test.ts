@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   allowedNextStatuses,
   buildProviderApplicationRecord,
+  canProviderReceiveJobs,
   dbStatusToDriverAction,
   isAllowedDriverStatusTransition,
   normalizeProviderApplication,
@@ -33,24 +34,78 @@ describe("marketplace workflow", () => {
       now,
       userId: "user_1",
       profileId: "profile_1",
+      providerAccountId: "provider_1",
+      termsAcceptanceId: "terms_1",
       driverId: "driver_1",
       truckId: "truck_1",
       input: {
+        providerType: "COMPANY",
         companyName: "North Shore Towing",
         contactName: "Sam Driver",
         email: "sam@example.com",
         phone: "+19172512400",
+        businessAddress: "42 Queens Blvd, Queens, NY",
         serviceArea: "Queens",
         truckType: "Flatbed",
         plateNumber: "TOW22",
         services: ["standard_tow", "flatbed_tow"],
+        guidelinesVersion: "provider-guidelines-v1",
+        agreementAccepted: true,
+        signerName: "Sam Driver",
       },
     });
 
     expect(rows.user).toMatchObject({ id: "user_1", email: "sam@example.com", phone: "+19172512400", role: "DRIVER" });
     expect(rows.profile).toMatchObject({ id: "profile_1", userId: "user_1", firstName: "Sam", lastName: "Driver" });
-    expect(rows.driver).toMatchObject({ id: "driver_1", userId: "user_1", status: "PENDING_APPROVAL" });
-    expect(rows.truck).toMatchObject({ id: "truck_1", driverId: "driver_1", label: "North Shore Towing Flatbed", services: ["STANDARD_TOW", "FLATBED_TOW"] });
+    expect(rows.providerAccount).toMatchObject({
+      id: "provider_1",
+      ownerUserId: "user_1",
+      providerType: "COMPANY",
+      legalBusinessName: "North Shore Towing",
+      businessAddress: "42 Queens Blvd, Queens, NY",
+      complianceStatus: "PENDING_REVIEW",
+      guidelinesVersionAccepted: "provider-guidelines-v1",
+      ratingAverage: 5,
+      ratingCount: 0,
+    });
+    expect(rows.termsAcceptance).toMatchObject({
+      id: "terms_1",
+      providerAccountId: "provider_1",
+      version: "provider-guidelines-v1",
+      signerName: "Sam Driver",
+      acceptedAt: now,
+    });
+    expect(rows.driver).toMatchObject({ id: "driver_1", userId: "user_1", providerAccountId: "provider_1", status: "PENDING_APPROVAL" });
+    expect(rows.truck).toMatchObject({ id: "truck_1", driverId: "driver_1", providerAccountId: "provider_1", label: "North Shore Towing Flatbed", services: ["STANDARD_TOW", "FLATBED_TOW"] });
+  });
+
+  it("blocks job eligibility until provider compliance, documents, and latest guideline acceptance are complete", () => {
+    expect(canProviderReceiveJobs({
+      driverStatus: "APPROVED",
+      providerComplianceStatus: "APPROVED",
+      acceptedGuidelinesVersion: "provider-guidelines-v1",
+      latestGuidelinesVersion: "provider-guidelines-v1",
+      requiredDocumentsApproved: true,
+      hasActiveTruck: true,
+    })).toBe(true);
+
+    expect(canProviderReceiveJobs({
+      driverStatus: "APPROVED",
+      providerComplianceStatus: "APPROVED",
+      acceptedGuidelinesVersion: "provider-guidelines-v1",
+      latestGuidelinesVersion: "provider-guidelines-v2",
+      requiredDocumentsApproved: true,
+      hasActiveTruck: true,
+    })).toBe(false);
+
+    expect(canProviderReceiveJobs({
+      driverStatus: "ONLINE",
+      providerComplianceStatus: "PENDING_REVIEW",
+      acceptedGuidelinesVersion: "provider-guidelines-v1",
+      latestGuidelinesVersion: "provider-guidelines-v1",
+      requiredDocumentsApproved: true,
+      hasActiveTruck: true,
+    })).toBe(false);
   });
 
   it("allows drivers to advance jobs only through the operating sequence", () => {

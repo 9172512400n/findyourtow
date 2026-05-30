@@ -93,6 +93,8 @@ export async function createProviderApplication(supabase: SupabaseClient, input:
     now,
     userId: crypto.randomUUID(),
     profileId: crypto.randomUUID(),
+    providerAccountId: crypto.randomUUID(),
+    termsAcceptanceId: crypto.randomUUID(),
     driverId: crypto.randomUUID(),
     truckId: crypto.randomUUID(),
     input,
@@ -107,6 +109,14 @@ export async function createProviderApplication(supabase: SupabaseClient, input:
 
   const profile = await supabase.from("profiles").insert(rows.profile).select("id").single();
   if (profile.error) throw new Error(`Could not create provider profile: ${profile.error.message}`);
+
+  const providerAccount = await supabase.from("provider_accounts").insert(rows.providerAccount).select("id").single();
+  if (providerAccount.error) throw new Error(`Could not create provider account: ${providerAccount.error.message}`);
+
+  if (rows.termsAcceptance) {
+    const terms = await supabase.from("provider_terms_acceptances").insert(rows.termsAcceptance).select("id").single();
+    if (terms.error) throw new Error(`Could not record provider guideline acceptance: ${terms.error.message}`);
+  }
 
   const driver = await supabase.from("drivers").insert(rows.driver).select("id").single();
   if (driver.error) throw new Error(`Could not create provider driver row: ${driver.error.message}`);

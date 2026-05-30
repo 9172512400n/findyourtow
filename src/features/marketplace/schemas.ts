@@ -3,14 +3,23 @@ import { serviceTypeIds } from "@/features/tow-requests/types";
 import type { DbDriverStatus, DbTowStatus } from "./workflow";
 
 export const providerApplicationSchema = z.object({
+  providerType: z.enum(["COMPANY", "OWNER_OPERATOR"]).default("COMPANY"),
   companyName: z.string().min(2).max(140),
   contactName: z.string().min(2).max(120),
   email: z.string().email().max(180),
   phone: z.string().min(7).max(25),
+  businessAddress: z.string().min(5).max(220).optional(),
   serviceArea: z.string().min(2).max(160),
   truckType: z.string().min(2).max(80),
   plateNumber: z.string().min(2).max(40),
   services: z.array(z.enum(serviceTypeIds)).min(1).max(8),
+  guidelinesVersion: z.string().min(3).max(80).default("provider-guidelines-v1"),
+  agreementAccepted: z.boolean().default(false),
+  signerName: z.string().min(2).max(120).optional(),
+}).superRefine((value, context) => {
+  if (!value.agreementAccepted) {
+    context.addIssue({ code: "custom", path: ["agreementAccepted"], message: "Provider guidelines must be accepted before review." });
+  }
 });
 
 export const driverApprovalSchema = z.object({
