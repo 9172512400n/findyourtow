@@ -28,6 +28,14 @@ export default function TrackPage() {
       <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
         <MapExperience drivers={[liveDriver]} focus="customer" title="Active tow tracking" progress={progress} />
         <div className="space-y-4">
+          <div className="rounded-[2rem] border border-white/10 bg-white/[0.06] p-5 backdrop-blur-xl">
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-100/55">Track request</p>
+            <h2 className="mt-3 text-2xl font-black tracking-[-0.04em]">Phone or order number</h2>
+            <div className="mt-4 grid gap-2 sm:grid-cols-[1fr_auto]">
+              <input placeholder="Phone or order number" className="min-h-12 rounded-full border border-white/10 bg-black/30 px-4 text-sm font-bold text-white outline-none placeholder:text-white/34" />
+              <button className="min-h-12 rounded-full bg-white px-5 text-sm font-black text-black">Track driver</button>
+            </div>
+          </div>
           <DriverCard driver={liveDriver} />
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.06] p-5 backdrop-blur-xl">
             <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-100/55">Current trip</p>
@@ -36,12 +44,16 @@ export default function TrackPage() {
               <p>Pickup · Current location</p>
               <p>Drop-off · Trusted repair shop</p>
               <p>ETA · {eta} minutes</p>
+              <p>Provider · {driver.name} · {driver.rating} rating</p>
               <p>Route progress · {progress}%</p>
             </div>
             <div className="mt-5 rounded-full bg-white/10 p-1">
               <div className="h-3 rounded-full bg-blue-400 transition-all duration-700" style={{ width: `${progress}%` }} />
             </div>
-            <Link href="/customer/trip/demo" className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-white px-5 text-sm font-black text-black">Open full trip view</Link>
+            <div className="mt-5 grid gap-2 sm:grid-cols-2">
+              <a href="tel:+15166664941" className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-5 text-sm font-black text-black">Call provider</a>
+              <Link href="/customer/trip/demo" className="inline-flex min-h-12 items-center justify-center rounded-full bg-blue-500 px-5 text-sm font-black text-white">Open full trip view</Link>
+            </div>
           </div>
           <Card>
             <SectionLabel>Live status</SectionLabel>

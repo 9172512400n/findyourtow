@@ -193,8 +193,20 @@ export function RoadAssistNowAppFlow({ activeTab = "Home", initialStep = 0 }: { 
             </div>
             <div className="space-y-4">
               <p className="inline-flex rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.26em] text-white/52">Demo mode · live ETA</p>
-              <h1 className="text-balance text-6xl font-black leading-[0.88] tracking-[-0.075em] sm:text-7xl">Roadside help in minutes.</h1>
+              <h1 className="text-balance text-6xl font-black leading-[0.88] tracking-[-0.075em] sm:text-7xl">Roadside Assistance in Minutes.</h1>
+              <h2 className="sr-only">Roadside help in minutes</h2>
               <p className="max-w-sm text-base font-semibold leading-7 text-white/58">Towing, lockouts, jump starts, tire help, fuel delivery, and more.</p>
+            </div>
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <Link href="/request-service" className="inline-flex min-h-13 items-center justify-center rounded-full bg-white px-5 text-sm font-black text-black">Get Help Now</Link>
+              <Link href="/provider/apply" className="inline-flex min-h-13 items-center justify-center rounded-full border border-white/10 bg-white/[0.07] px-5 text-sm font-black text-white">Become a Provider</Link>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-black uppercase tracking-[0.16em] text-white/54 sm:grid-cols-4">
+              {['24/7', 'Upfront pricing', 'Live tracking', 'Verified providers'].map((badge) => <span key={badge} className="rounded-full border border-white/10 bg-white/[0.055] px-3 py-2 text-center">{badge}</span>)}
+            </div>
+            <div className="mt-4 rounded-[1.5rem] border border-white/10 bg-white/[0.055] p-4">
+              <p className="text-sm font-black text-white">Request help in 3 steps</p>
+              <p className="mt-1 text-sm font-bold text-white/50">Choose service, share location, approve your price estimate before confirmation.</p>
             </div>
             <CompactServices selectedService={data.serviceType} selectingService={selectingService} onSelect={selectService} />
             <HelpInputCard pickupAddress={data.pickupAddress} selectedService={selectedService} onPickupChange={(pickupAddress) => patch({ pickupAddress })} onUseCurrent={useCurrentLocation} onStart={startFlow} />
@@ -207,6 +219,11 @@ export function RoadAssistNowAppFlow({ activeTab = "Home", initialStep = 0 }: { 
           </div>
         </aside>
       </section>
+
+      <div className="fixed bottom-[6.6rem] right-4 z-40 flex flex-col gap-2 sm:right-6">
+        <a href="tel:+15166664941" aria-label="Call now" className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-5 text-sm font-black text-black shadow-2xl shadow-black/30">Call Now</a>
+        <button type="button" aria-label="Share my location" onClick={useCurrentLocation} className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/10 bg-blue-500 px-5 text-sm font-black text-white shadow-2xl shadow-blue-950/40">Share my location</button>
+      </div>
 
       <AppBottomNav activeTab={activeTab} />
 
