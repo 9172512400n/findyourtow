@@ -12,8 +12,13 @@ export type BackendEnv = Partial<Record<
 
 export type BackendMode = {
   demoMode: boolean;
+  productionReady: boolean;
   safeForPublicPrototype: boolean;
   canPersistTowRequests: boolean;
+  canUseMarketplaceBackend: boolean;
+  marketplaceMode: "supabase" | "demo";
+  paymentMode: "stripe" | "demo";
+  mapsMode: "mapbox" | "demo";
   missingServices: Array<"supabase" | "stripe" | "mapbox">;
   services: {
     supabase: boolean;
@@ -31,11 +36,20 @@ export function getBackendMode(env: BackendEnv = process.env as BackendEnv): Bac
   const missingServices = (Object.entries(services) as Array<[keyof typeof services, boolean]>)
     .filter(([, configured]) => !configured)
     .map(([service]) => service);
+  const productionReady = missingServices.length === 0;
 
   return {
-    demoMode: missingServices.length > 0,
-    safeForPublicPrototype: missingServices.length > 0,
+    // Deprecated compatibility flag: this now means the core marketplace is
+    // still local/demo. Missing Stripe should not force request, provider,
+    // dispatch, or location flows back into demo once Supabase is configured.
+    demoMode: !services.supabase,
+    productionReady,
+    safeForPublicPrototype: !productionReady,
     canPersistTowRequests: services.supabase,
+    canUseMarketplaceBackend: services.supabase,
+    marketplaceMode: services.supabase ? "supabase" : "demo",
+    paymentMode: services.stripe ? "stripe" : "demo",
+    mapsMode: services.mapbox ? "mapbox" : "demo",
     missingServices,
     services,
   };
@@ -43,5 +57,10 @@ export function getBackendMode(env: BackendEnv = process.env as BackendEnv): Bac
 
 export function getBackendModeLabel(env: BackendEnv = process.env as BackendEnv): string {
   const mode = getBackendMode(env);
-  return mode.demoMode ? `Advanced demo mode: missing ${mode.missingServices.join(", ")}` : "Production backend configured";
+  if (mode.productionReady) return "Production backend configured";
+  if (mode.canUseMarketplaceBackend) {
+    const notes = [mode.paymentMode === "demo" ? "payment pending Stripe" : null, mode.mapsMode === "demo" ? "fallback maps" : null].filter(Boolean).join(" · ");
+    return notes ? `Real marketplace backend · ${notes}` : "Real marketplace backend";
+  }
+  return `Advanced demo mode: missing ${mode.missingServices.join(", ")}`;
 }

@@ -5,7 +5,7 @@ Status: Approved direction from Nir; implementation starts with Phase 1.
 
 ## Goal
 
-Move RoadAssistNow from an advanced demo/PWA shell into a real marketplace foundation. The first production slice must persist customer tow requests in Supabase, support real customer/provider/admin account records, and preserve the existing mobile-first PWA request flow. This phase intentionally does not add real Stripe charges, automated dispatch offers, or push notifications yet; it creates the durable backend surface those pieces need.
+Move RoadAssistNow from an advanced demo/PWA shell into a real marketplace foundation. Nir clarified the target: make everything real now except Stripe/payment, which remains demo/simulated until Stripe is connected. The first production slice must persist customer tow requests in Supabase, support real customer/provider/admin account records, expose real admin/dispatch data, and preserve the existing mobile-first PWA request flow. Payment UI and PaymentIntent/webhook behavior may stay simulated behind a clear internal adapter until Stripe keys are set.
 
 ## Scope for Phase 1
 
@@ -14,15 +14,16 @@ Move RoadAssistNow from an advanced demo/PWA shell into a real marketplace found
 3. Use the existing demo repository only as a fallback when required backend env vars are missing.
 4. Support customer identity linkage through Supabase-compatible user/profile/customer rows.
 5. Keep admin/dispatcher surfaces reading real rows where available.
-6. Record status timeline rows for request lifecycle visibility.
-7. Add tests that prove configured Supabase mode uses real repository paths and demo fallback stays safe.
+6. Persist real provider/driver records, provider service areas, jobs/assignments, and driver location updates where the current UI/API already exposes those concepts.
+7. Record status timeline rows for request lifecycle visibility.
+8. Keep only the payment area demo/simulated until Stripe is explicitly connected.
+9. Add tests that prove configured Supabase mode uses real repository paths and demo fallback stays safe.
 
 ## Non-Goals for Phase 1
 
-- No live card charging yet. Payment APIs may continue returning demo/simulated intents until Stripe is explicitly connected in Phase 2.
-- No automated driver offer/accept timeout loop yet. Manual/admin dispatch and matching seams stay in place.
+- No live card charging yet. Payment APIs may continue returning demo/simulated intents until Stripe is explicitly connected in the final Stripe phase.
 - No native app rewrite. PWA remains the fastest path.
-- No SMS/push notification provider integration yet.
+- No paid external SMS/push notification provider integration yet unless free/local hooks already exist.
 
 ## Architecture
 
@@ -36,6 +37,8 @@ Core boundaries:
 - `src/features/tow-requests/demo-repository.ts`: fallback only.
 - `app/api/tow-requests/route.ts`: chooses real repository when available.
 - Admin/dispatch API routes: read Supabase data first when configured, otherwise demo data.
+- Provider/driver API routes: persist provider accounts, availability, service areas, assignment state, and GPS updates in Supabase when configured.
+- Payment adapter: remains simulated/demo until Stripe keys are set, but all non-payment state around the request is real.
 
 ## Data Flow
 
@@ -51,6 +54,8 @@ Core boundaries:
    - Return a normalized `TowTrip` response to the client.
 5. If Supabase is not configured, use the existing demo repository fallback.
 6. Admin/dispatcher views fetch recent Supabase tow requests when configured.
+7. Provider/driver actions write real assignment and location rows when configured.
+8. Payment screens can show simulated authorization/confirmation, but must update real request status around that simulated payment milestone so the rest of the lifecycle is durable.
 
 ## Error Handling
 
@@ -66,7 +71,9 @@ Minimum verification for Phase 1:
 
 - Unit tests for backend mode selection.
 - Supabase repository tests with mocked Supabase client proving user/profile/customer/request/timeline insert flow.
-- API route tests proving configured Supabase mode uses the Supabase repository and unconfigured mode uses demo fallback.
+- Provider/driver repository tests proving service area, assignment, and GPS update persistence.
+- API route tests proving configured Supabase mode uses Supabase repositories and unconfigured mode uses demo fallback.
+- Payment adapter tests proving payment remains simulated when Stripe is absent while real request lifecycle state is still persisted.
 - Existing request flow, pricing, vehicles, auth/admin tests remain passing.
 - Gates before commit/deploy: `git diff --check`, `npx vitest run`, `npm run lint`, `npm run build`.
 
@@ -74,15 +81,13 @@ Minimum verification for Phase 1:
 
 1. Audit current API/repository code and tests.
 2. Fix any schema drift between Supabase migrations and repository service codes/statuses.
-3. Wire API route to Supabase repository when configured.
-4. Wire admin/dispatch reads to Supabase recent-request data when configured.
-5. Add/adjust tests.
-6. Run verification, commit to `main`, push, deploy production, smoke-test live routes.
+3. Wire request API route to Supabase repository when configured.
+4. Wire admin/dispatch reads and status updates to Supabase when configured.
+5. Wire provider/driver service area, assignment, and GPS endpoints to Supabase when configured.
+6. Keep payment adapter demo/simulated, but connect it to real request lifecycle updates.
+7. Add/adjust tests.
+8. Run verification, commit to `main`, push, deploy production, smoke-test live routes.
 
-## Later Phases
+## Later Phase
 
-- Phase 2: Stripe PaymentIntents + webhook-confirmed payment status.
-- Phase 3: Mapbox real geocoding/directions + map rendering.
-- Phase 4: Driver GPS persistence and realtime subscriptions.
-- Phase 5: Dispatch matching offer/accept/timeout loop.
-- Phase 6: customer/provider/admin notifications.
+- Final Stripe phase: real Stripe PaymentIntents + webhook-confirmed payment status once Stripe account/keys are ready.

@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { buildMockTrip } from "@/features/tow-requests/mock-data";
-import { createPaymentIntentForTow } from "@/lib/stripe/payment-service";
+import { createDemoAuthorizationForStoredTowRequest, createPaymentIntentForTow } from "@/lib/stripe/payment-service";
+import { getBackendMode } from "@/lib/runtime/backend-mode";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 const paymentIntentSchema = z.object({
   towRequestId: z.string().min(3),
@@ -16,8 +18,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid payment intent request", issues: parsed.error.flatten() }, { status: 400 });
   }
 
-  // Demo fallback. Real mode will fetch the tow request from Supabase and create
-  // a Stripe PaymentIntent before allowing dispatch.
+  const mode = getBackendMode();
+  const supabase = createServerSupabaseClient();
+  if (mode.services.supabase && mode.paymentMode === "demo" && supabase) {
+    try {
+      return NextResponse.json(await createDemoAuthorizationForStoredTowRequest(supabase, parsed.data.towRequestId, parsed.data.amountCents));
+    } catch (error) {
+      return NextResponse.json({ error: error instanceof Error ? error.message : "Could not authorize demo payment" }, { status: 500 });
+    }
+  }
+
+  // Local fallback when the real marketplace backend is not configured.
   const trip = buildMockTrip({
     customerName: "Demo customer",
     phone: "+10000000000",

@@ -1,4 +1,7 @@
 import type { Coordinate } from "@/features/tow-requests/types";
+import { getBackendMode } from "@/lib/runtime/backend-mode";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type DriverLocationPing = {
   driverId: string;
@@ -6,19 +9,47 @@ export type DriverLocationPing = {
   heading?: number;
   speedMph?: number;
   sentAt: string;
-  provider: "demo" | "websocket";
+  provider: "demo" | "supabase";
 };
 
-// In demo mode this returns the payload that would be persisted to Supabase and
-// broadcast over Redis/WebSockets. Real implementation will insert driver_locations
-// and publish to rooms: customer:{towRequestId}, driver:{driverId}, dispatch:live.
-export async function saveDriverLocationPing(driverId: string, location: Coordinate): Promise<DriverLocationPing> {
+type SaveDriverLocationOptions = {
+  supabase?: SupabaseClient | null;
+  heading?: number;
+  speedMph?: number;
+};
+
+export async function saveDriverLocationPing(driverId: string, location: Coordinate, options: SaveDriverLocationOptions = {}): Promise<DriverLocationPing> {
+  const sentAt = new Date().toISOString();
+  const supabase = options.supabase ?? (getBackendMode().services.supabase ? createServerSupabaseClient() : null);
+
+  if (supabase) {
+    const insert = await supabase.from("driver_locations").insert({
+      id: crypto.randomUUID(),
+      driverId,
+      lat: location.lat,
+      lng: location.lng,
+      heading: options.heading ?? null,
+      speedMph: options.speedMph ?? null,
+      createdAt: sentAt,
+    });
+    if (insert.error) throw new Error(`Could not save driver location: ${insert.error.message}`);
+
+    return {
+      driverId,
+      location,
+      heading: options.heading,
+      speedMph: options.speedMph,
+      sentAt,
+      provider: "supabase",
+    };
+  }
+
   return {
     driverId,
     location,
-    heading: 42,
-    speedMph: 21,
-    sentAt: new Date().toISOString(),
+    heading: options.heading ?? 42,
+    speedMph: options.speedMph ?? 21,
+    sentAt,
     provider: "demo",
   };
 }
